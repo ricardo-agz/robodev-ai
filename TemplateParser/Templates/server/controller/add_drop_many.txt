@@ -1,0 +1,34 @@
+  add$$ManyName$$: async (req, res) => {
+    const { $$name$$_id, $$manyname$$_id } = req.params;
+    $$Name$$Model.findByIdAndUpdate(
+      $$name$$_id, 
+      { $push: { $$manyname$$s: $$manyname$$_id } },
+      (err, data) => {
+        if (err) {
+          res.status(500).send(err);
+          console.log(err);
+        } else {
+          res.status(200).send(data);
+          console.log('$$ManyName$$ added!');
+        }
+      }
+    )
+  },
+
+  drop$$ManyName$$: async (req, res) => {
+    const { $$name$$_id, $$manyname$$_id } = req.params;
+    $$Name$$Model.findByIdAndUpdate(
+      $$name$$_id, 
+      { $pull: { $$manyname$$s: $$manyname$$_id } },
+      (err, data) => {
+        if (err) {
+          res.status(500).send(err);
+          console.log(err);
+        } else {
+          res.status(200).send(data);
+          console.log('$$ManyName$$ dropped!');
+        }
+      }
+    )
+  },
+

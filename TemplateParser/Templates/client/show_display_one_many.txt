@@ -1,0 +1,13 @@
+        <div className='displayContainer'>
+          <h3>$$ManyName$$s</h3>
+          <Button variant={'contained'} onClick={() => navigate(`/$$name$$s/${id}/$$manyname$$s/new`)}>New $$ManyName$$</Button>
+          <ul>
+          {$$name$$.$$manyname$$s && $$name$$.$$manyname$$s.map(($$manyname$$, i) => (
+            <div className='listItem' key={i}>
+              <li>{$$manyname$$.title}</li>
+              <Button variant={'outlined'} size={'small'} 
+                onClick={() => navigate(`/$$manyname$$s/${$$manyname$$._id}`)}>show</Button>
+            </div>
+          ))}
+          </ul>
+        </div>

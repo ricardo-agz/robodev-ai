@@ -1,0 +1,282 @@
+{
+  "project_name": "process21",
+  "db_params": [
+    {
+      "model_name": "user",
+      "auth": true,
+      "schema": [
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "charity",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "username",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "password",
+          "type": "String",
+          "required": true
+        }
+      ],
+      "has_many": [
+        ["paymentmethod", "paymentmethods"],
+        ["workoutgroup", "workoutgroups"],
+        ["monthlypledge", "monthlypledges"]
+      ],
+      "belongs_to": [],
+      "routes": [
+        {
+          "route": "index",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "show",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "create",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "update",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "delete",
+          "middleware": "",
+          "logic": ""
+        }
+      ]
+    },
+    {
+      "model_name": "paymentmethod",
+      "schema": [
+        {
+          "name": "card_number",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "expiration_date",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "CVV",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "mongoose.Schema.Types.ObjectId",
+          "required": true
+        }
+      ],
+      "has_many": [],
+      "belongs_to": [["user", "owner"]],
+      "auth": false,
+      "routes": [
+        {
+          "route": "index",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "show",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "create",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "update",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "delete",
+          "middleware": "",
+          "logic": ""
+        }
+      ]
+    },
+    {
+      "model_name": "monthlypledge",
+      "schema": [
+        {
+          "name": "payment_amount",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "active",
+          "type": "Boolean",
+          "required": true
+        },
+        {
+          "name": "user",
+          "type": "mongoose.Schema.Types.ObjectId",
+          "required": true
+        }
+      ],
+      "has_many": [
+        ["workoutplan", "workoutplans"]
+      ],
+      "belongs_to": [["user", "user"]],
+      "auth": false,
+      "routes": [
+        {
+          "route": "index",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "show",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "create",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "update",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "delete",
+          "middleware": "",
+          "logic": ""
+        }
+      ]
+    },
+    {
+      "model_name": "workoutplan",
+      "schema": [
+        {
+          "name": "target_days",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "curr_days_met",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "weekly_plan",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "monthlypledge",
+          "type": "mongoose.Schema.Types.ObjectId",
+          "required": true
+        }
+      ],
+      "has_many": [],
+      "belongs_to": [["monthlypledge", "pledge"]],
+      "auth": false,
+      "routes": [
+        {
+          "route": "find",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "all",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "create",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "update",
+          "middleware": "",
+          "logic": " "
+        },
+        {
+          "route": "delete",
+          "middleware": "",
+          "logic": ""
+        }
+      ]
+    },
+    {
+      "model_name": "workoutgroup",
+      "schema": [
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        }
+      ],
+      "has_many": [
+        ["user", "members"]
+      ],
+      "belongs_to": [],
+      "auth": false,
+      "routes": [
+        {
+          "route": "index",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "show",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "create",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "update",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "delete",
+          "middleware": "",
+          "logic": ""
+        }
+      ]
+    }
+  ],
+  "auth_object": "user",
+  "server_port": "8080",
+  "mongostr": "mongodb+srv://rgon:Neutrino@neutrinov2.yajh4.mongodb.net/test",
+  "email": "mominayaan71@gmail.com"
+}
