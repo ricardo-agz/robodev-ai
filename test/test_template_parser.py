@@ -37,11 +37,11 @@ class TestRoute(unittest.TestCase):
         auth_object='user',
         email="test@email.co"
       )
-    server_index = ServerIndexPage(project)
-    server_index.write_out_file()
-    server_index.close_files()
-    user_controler = ControllerPage(project, user)
-    user_controler.write_out_file()
-    user_controler.close_files()
+    # server_index = ServerIndexPage(project)
+    # server_index.write_out_file()
+    # server_index.close_files()
+    # user_controler = ControllerPage(project, user)
+    # user_controler.write_out_file()
+    # user_controler.close_files()
 
   

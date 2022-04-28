@@ -5,6 +5,7 @@ from TemplateParser.Project import Project
 from TemplateParser.Route import Route
 from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
 from TemplateParser.Server.Controller.Controller import ControllerPage
+from TemplateParser.Server.Model.ModelPage import ModelPage
 from TemplateParser.helpers import camel_to_snake
 
 def get_method_from_route(route : str) -> str:
@@ -130,6 +131,14 @@ def generator(builder_data):
       model_controler = ControllerPage(project, model)
       model_controler.write_out_file()
       model_controler.close_files()
+    os.chdir(SERVER_PATH)
+
+    # BUILD MODEL FILES
+    os.chdir('./models')
+    for model in project.models:
+      model_page = ModelPage(project, model)
+      model_page.write_out_file()
+      model_page.close_files()
     os.chdir(SERVER_PATH)
 
 

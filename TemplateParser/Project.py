@@ -66,8 +66,31 @@ class Project:
       if model.name.lower() == model_name.strip().lower():
         return model
 
-    return None
+    raise Exception(f"{model_name} does not exist")
 
+  def get_one_to_many_complement_alias(self, model, alias):
+    """
+    Returns compementary alias in one-to-many relationship
+    ex. User has_many Post as "posts", Post belongs_to User as "author"
+        get_complement_alias(user, "posts") -> "author"
+    """
+    # model passed is parent
+    for child, a in model.one_to_many:
+      if alias.lower() == a.lower():
+        for parent_name, a2 in child.belongs_to:
+          if parent_name.lower() == model.name.lower():
+            return a2
+
+    # model passed is child
+    for parent_name, a in model.belongs_to:
+      parent = self.model_from_name(parent_name)
+      if alias.lower() == a.lower():
+        for child, a2 in parent.one_to_many:
+          if child.name.lower() == model.name.lower():
+            return a2
+
+    # relationship does not exist
+    return None      
 
   def set_relations(self):
     '''

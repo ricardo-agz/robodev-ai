@@ -46,6 +46,11 @@ $$dyn:0
 $$dyn:1
 $$MANY_TO_MANY
 
+// Default response for any other request
+app.use((_req, res) => {
+  res.status(404).send({ message: "404 not found" });
+});
+
 app.listen(
 	PORT,
 	console.log("Server running on port $$PORT$$...")
