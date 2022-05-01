@@ -1,13 +1,13 @@
   login: async (req, res) => {
-    const user = await $$Name$$Model.findOne({ username: req.body.username });
-    if (!user) return res.status(400).json({ message: "Invalid username" });
+    const $$name$$ = await $$Name$$Model.findOne({ username: req.body.username });
+    if (!$$name$$) return res.status(400).json({ message: "Invalid username" });
 
-    const checkpassword = await bcrypt.compare(req.body.password, user.password);
+    const checkpassword = await bcrypt.compare(req.body.password, $$name$$.password);
     if (!checkpassword) return res.status(400).json({ message: "Incorrect password" });
 
     const payload = {
-      id: user._id.toString(),
-      username: user.username,
+      id: $$name$$._id.toString(),
+      username: $$name$$.username,
     }
     jwt.sign(
       payload,
@@ -15,7 +15,7 @@
       (err, token) => {
         if (err) return res.json({ message: err });
         return res.json({
-          user: user._doc,
+          $$nameCamel$$Id: $$name$$._id.toString(),
           token: "Bearer " + token
         });
       }
@@ -32,9 +32,9 @@
     } else if (takenEmail) {
       res.status(400).json({ message: "Email already exists" });
     } else {
-      user.password = await bcrypt.hash(req.body.password, 10);
-      user.email = user.email.toLowerCase();
-      user.username = user.username.toLowerCase();
+      $$name$$.password = await bcrypt.hash(req.body.password, 10);
+      $$name$$.email = $$name$$.email.toLowerCase();
+      $$name$$.username = $$name$$.username.toLowerCase();
       const db$$Name$$ = new $$Name$$Model($$name$$);
       db$$Name$$.save();
       res.json({ message: "Success" });

@@ -52,6 +52,12 @@ class TemplateParser:
     if "$$name$$" in line:
       line = line.replace("$$name$$", name.lower())
       out = True
+    if "$$nameCamel$$" in line:
+      line = line.replace("$$nameCamel$$", camel_case(name))
+      out = True
+    if "$$pluralname$$" in line:
+      line = line.replace("$$name$$", self.model.plural.lower())
+      out = True
     if "$$Name$$" in line:
       line = line.replace("$$Name$$", name)
       out = True

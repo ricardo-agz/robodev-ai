@@ -1,21 +1,27 @@
 import os
 from TemplateParser.TemplateParser import TemplateParser
 from TemplateParser.Project import Project
-from TemplateParser.helpers import append_at_index
+from TemplateParser.Model import Model
+from TemplateParser.helpers import append_at_index, camel_case, pascal_case
 
 class ControllerPage(TemplateParser):
   def __init__(
       self,
       project : Project,
-      model
+      model : Model,
+      is_auth : bool = False
     ) -> None:
 
     __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
     """ CONSTANTS """
-    in_file = "./server_controller.js"
-    out_file = f"./{model.name}Controller.js"
+    if is_auth:
+      in_file = "./auth_controller.js"
+      out_file = f"./authController.js"
+    else:
+      in_file = "./server_controller.js"
+      out_file = f"./{camel_case(model.name)}Controller.js"
 
     super().__init__(
       in_file, 
@@ -25,6 +31,7 @@ class ControllerPage(TemplateParser):
       model
     )
 
+    self.is_auth = is_auth
     self.parse_file()
 
   def add_populate(self):
@@ -54,16 +61,17 @@ class ControllerPage(TemplateParser):
             self.out_lines = self.out_lines + insert
 
       #----- AUTH -----
-      elif "$$AUTH$$:0" in line:
+      elif "$$AUTH$$:0" in line and self.is_auth:
         if self.model.auth:
           insert = [
             'const jwt = require("jsonwebtoken");\n',
             'const bcrypt = require("bcrypt");\n',
-            "require('dotenv').config();\n"
+            "require('dotenv').config();\n",
+            f"\nconst {self.model.name} = require('../models/{camel_case(self.model.name)}');\n"
           ]
           self.out_lines = self.out_lines + insert
           
-      elif "$$AUTH$$:1" in line:
+      elif "$$AUTH$$:1" in line and self.is_auth:
         if self.model.auth:
           auth_f = "server_auth.txt"
           insert = self.add_snip_dynamic(auth_f)

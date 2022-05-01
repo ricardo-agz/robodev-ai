@@ -4,14 +4,20 @@ import inflect
 inflectEngine = inflect.engine()
 
 def pascal_case(s):
-  s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
-  fst = s[0].upper()
-
-  return fst + ''.join([s[0].lower(), s[1:]])[1:]
+  if "_" in s:
+    s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
+    fst = s[0].upper()
+    return fst + ''.join([s[0].lower(), s[1:]])[1:]
+  else:
+    return s[0].upper() + s[1:]
 
 def camel_case(s):
-  s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
-  return ''.join([s[0].lower(), s[1:]])
+  if "_" in s:
+    s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
+    fst = s[0].upper()
+    return fst + ''.join([s[0].lower(), s[1:]])[1:]
+  else:
+    return s[0].lower() + s[1:]
 
 def camel_to_snake(name):
   name = sub('(.)([A-Z][a-z]+)', r'\1_\2', name)

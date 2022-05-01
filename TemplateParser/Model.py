@@ -159,6 +159,15 @@ class Model:
     return self_referencing
 
   # GETTERS
+
+  def get_frontend_routes(self) -> list[Route]:
+    out = []
+    for route in self.routes:
+      if route.name == "index" or route.name == "show" or \
+        route.name == "create" or route.name == "update":
+        out.append(route)
+    return out
+
   def get_params(self):
     return self.schema
 

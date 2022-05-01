@@ -1,25 +1,12 @@
-const $$Name$$Model = require('../models/$$Name$$');
+const $$Name$$ = require('../models/$$nameCamel$$');
 $$AUTH$$:0
 
 const $$Name$$Controller = {
 
-  find: async (req, res) => {
-    const { id } = req.params;
-    try {
-      const data = await $$Name$$Model.findById(id)
-        $$ONE_TO_MANY:ONE
-        $$logic$$:find
-      res.status(200).send(data);
-    } catch (err) {
-      res.status(400).send(err.message);
-      console.log(err);
-    }
-  },
-
   // REMOVE TO ENABLE PAGINATION
-  all: async (req, res) => {
+  index: async (req, res) => {
     try {
-      const data = await $$Name$$Model.find()
+      const data = await $$Name$$.find()
         $$ONE_TO_MANY:ONE
         $$logic$$:all
       res.status(200).send(data);
@@ -61,6 +48,19 @@ const $$Name$$Controller = {
     });
   */
 
+  show: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const data = await $$Name$$.findById(id)
+        $$ONE_TO_MANY:ONE
+        $$logic$$:find
+      res.status(200).send(data);
+    } catch (err) {
+      res.status(400).send(err.message);
+      console.log(err);
+    }
+  },
+
   create: async (req, res) => {
     $$dynamic:0
     try {
@@ -76,9 +76,9 @@ const $$Name$$Controller = {
 
   update: async (req, res) => {
     const { id } = req.params;
-    const data = await $$Name$$Model.findById(id);
+    const data = await $$Name$$.findById(id);
     $$logic$$:update
-    $$Name$$Model.findByIdAndUpdate(id, 
+    $$Name$$.findByIdAndUpdate(id, 
     {
       $$dynamic:1
     },
@@ -95,10 +95,10 @@ const $$Name$$Controller = {
 
   delete: async (req, res) => {
     const { id } = req.params;
-    const data = await $$Name$$Model.findById(id);
+    const data = await $$Name$$.findById(id);
     $$logic$$:delete
     try {
-      $$Name$$Model.findByIdAndDelete(id).exec();
+      $$Name$$.findByIdAndDelete(id).exec();
       res.status(200).send('$$Name$$ deleted');
       console.log('$$Name$$ deleted!');
     } catch (err) {

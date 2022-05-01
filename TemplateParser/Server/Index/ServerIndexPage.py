@@ -14,7 +14,7 @@ class ServerIndexPage(TemplateParser):
 
     """ CONSTANTS """
     in_file = "./server_index.js"
-    out_file = "./index.js"
+    out_file = "./server.js"
 
     super().__init__(
       in_file, 
@@ -43,6 +43,16 @@ class ServerIndexPage(TemplateParser):
         if n_dyn == 1:
           insert = self.write_routes()
           self.out_lines = self.out_lines + insert
+
+      elif "$$importJWT$$" in line:
+        insert = "const jwt = require('jsonwebtoken');\n"
+        if self.project.auth_object:
+          self.out_lines.append(insert)
+
+      elif "$$verifyJWT$$" in line:
+        insert = "const verifyJWT = require('./middlewares/verifyJWT');\n"
+        if self.project.auth_object:
+          self.out_lines.append(insert)
 
       else:
         self.out_lines.append(line)

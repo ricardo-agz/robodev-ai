@@ -50,15 +50,18 @@ class Project:
     self.models = models
     self.auth_object = self.model_from_name(auth_object)
     self.server_port = server_port
-    self.link = f"http://localhost:3000/{server_port}"
+    self.link = f"http://localhost:{server_port}"
     self.mongostr = mongostr
     self.email = email
     self.styled = styled
     self.set_relations()
     self.add_many_to_many_routes()
 
+    # for model in self.models:
+    #   print(model.name)
 
-  def model_from_name(self, model_name):
+
+  def model_from_name(self, model_name : str) -> Model:
     '''
     Returns matching Model object (if any) from given model_name
     '''
@@ -66,9 +69,12 @@ class Project:
       if model.name.lower() == model_name.strip().lower():
         return model
 
-    raise Exception(f"{model_name} does not exist")
+    # raise Exception(f"{model_name} does not exist, models = {str(models_list)}")
+    models_list = [model.name for model in self.models]
+    # print(f"{model_name} does not exist, models = {str(models_list)}")
+    return None
 
-  def get_one_to_many_complement_alias(self, model, alias):
+  def get_one_to_many_complement_alias(self, model : Model, alias : str) -> str:
     """
     Returns compementary alias in one-to-many relationship
     ex. User has_many Post as "posts", Post belongs_to User as "author"
@@ -92,7 +98,7 @@ class Project:
     # relationship does not exist
     return None      
 
-  def set_relations(self):
+  def set_relations(self) -> None:
     '''
     Iterates through list of Models and updates their one_to_many and many_to_many lists
     '''
@@ -102,9 +108,7 @@ class Project:
     '''
     for model in self.models:
       if len(model.get_belongs_to()) > 0:
-        for parent in model.get_belongs_to():
-          parent_name = parent[0]
-          alias = parent[1]
+        for parent_name, alias in model.get_belongs_to():
           new_param = {"name": parent_name, "type": "mongoose.Schema.Types.ObjectId", "required": True, "alias": alias}
           model.add_to_schema(new_param)
 
@@ -131,7 +135,7 @@ class Project:
       model.set_one_to_many(model_one_to_many)
       model.set_many_to_many(model_many_to_many)
 
-  def add_many_to_many_routes(self):
+  def add_many_to_many_routes(self) -> None:
     for model in self.models:
       for (many_model, alias) in model.many_to_many:
         add_route_name = f"add{singularize(alias.title())}" if alias else f"add{many_model.name}"
@@ -139,7 +143,7 @@ class Project:
         many_id = f"{camel_case(many_model.name)}Id"
         add_route = Route(
           name=add_route_name, 
-          method="post", 
+          method="post",
           path=f"/{model.plural.lower()}/:id/{camel_to_dash(add_route_name)}/:{many_id}",
           model=model
         )

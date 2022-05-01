@@ -2,7 +2,8 @@ import os
 from TemplateParser.TemplateParser import TemplateParser
 from TemplateParser.Project import Project
 from TemplateParser.Model import Model
-from TemplateParser.helpers import append_at_index
+from TemplateParser.helpers import camel_case, pascal_case
+
 
 class ModelPage(TemplateParser):
   def __init__(
@@ -16,7 +17,7 @@ class ModelPage(TemplateParser):
 
     """ CONSTANTS """
     in_file = "./server_model.js"
-    out_file = f"./{model.name}.js"
+    out_file = f"./{camel_case(model.name)}.js"
 
     super().__init__(
       in_file, 
@@ -59,6 +60,57 @@ class ModelPage(TemplateParser):
         self.out_lines.append(f"{self.model.name}Schema.set('toObject', {{ virtuals: true }});\n")
         self.out_lines.append(f"{self.model.name}Schema.set('toJSON', {{ virtuals: true }});\n")
 
+      elif "$$DYNAMIC_PARAMS$$" in line:
+        for param in self.model.schema:
+          p_name = param["name"]
+          p_type = param["type"]
+          req = param["required"]
+          alias = param['alias'] if 'alias' in param else None
+          
+          """
+          username: {
+            type: String,
+            required: true
+          },
+          """
+          self.out_lines.append(f"\t{alias if alias else p_name}: {{\n")
+          if p_type == "Text":
+            self.out_lines.append(f"\t\ttype: String,\n")
+          else:
+            self.out_lines.append(f"\t\ttype: {p_type},\n")
+
+          """
+          user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+          },
+          """
+          parent = self.project.model_from_name(p_name)
+          if len(self.model.belongs_to) > 0 and parent:
+            self.out_lines.append(f"\t\tref: '{parent.name}',\n")
+          self.out_lines.append(f"\t\trequired: {str(req).lower()}\n")
+          self.out_lines.append(f"\t}},\n")
+
+      elif "$$MANY_ARRAY$$" in line:
+        i = 0
+        for many_model, alias in self.model.many_to_many:
+          """
+          courses: [
+            {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "Course"
+            }
+          ]
+          """
+          self.out_lines.append(f"\t{alias}: [\n")
+          self.out_lines.append(f"\t\t{{\n")
+          self.out_lines.append(f"\t\t\ttype: mongoose.Schema.Types.ObjectId,\n")
+          self.out_lines.append(f"\t\t\tref: '{many_model.name}'\n")
+          self.out_lines.append(f"\t\t}}\n")
+          self.out_lines.append(f"\t]{',' if i < len(self.model.many_to_many)-1 else ''}\n")
+          i += 1
+      
       else:
         self.out_lines.append(line)
 

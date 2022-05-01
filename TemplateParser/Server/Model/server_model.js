@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const $$Name$$Schema = new mongoose.Schema({
-	$$dynamic:0
-  $$dynamic:1
-})
+	$$DYNAMIC_PARAMS$$
+  $$MANY_ARRAY$$
+});
 
 $$ONE_TO_MANY:ONE
 

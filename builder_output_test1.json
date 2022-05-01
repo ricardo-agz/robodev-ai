@@ -34,18 +34,19 @@
       "has_many": [
         ["paymentmethod", "paymentmethods"],
         ["workoutgroup", "workoutgroups"],
-        ["monthlypledge", "monthlypledges"]
+        ["monthlypledge", "monthlypledges"],
+        ["user", "friends"]
       ],
       "belongs_to": [],
       "routes": [
         {
           "route": "index",
-          "middleware": "",
+          "middleware": "verifyJWT",
           "logic": " "
         },
         {
           "route": "show",
-          "middleware": "",
+          "middleware": "verifyJWT",
           "logic": " "
         },
         {
@@ -55,18 +56,18 @@
         },
         {
           "route": "update",
-          "middleware": "",
+          "middleware": "verifyJWT",
           "logic": " "
         },
         {
           "route": "delete",
-          "middleware": "",
+          "middleware": "verifyJWT",
           "logic": ""
         }
       ]
     },
     {
-      "model_name": "paymentmethod",
+      "model_name": "paymentMethod",
       "schema": [
         {
           "name": "card_number",
@@ -86,11 +87,6 @@
         {
           "name": "CVV",
           "type": "Number",
-          "required": true
-        },
-        {
-          "name": "user",
-          "type": "mongoose.Schema.Types.ObjectId",
           "required": true
         }
       ],
@@ -126,7 +122,7 @@
       ]
     },
     {
-      "model_name": "monthlypledge",
+      "model_name": "MonthlyPledge",
       "schema": [
         {
           "name": "payment_amount",
@@ -136,11 +132,6 @@
         {
           "name": "active",
           "type": "Boolean",
-          "required": true
-        },
-        {
-          "name": "user",
-          "type": "mongoose.Schema.Types.ObjectId",
           "required": true
         }
       ],
@@ -178,7 +169,7 @@
       ]
     },
     {
-      "model_name": "workoutplan",
+      "model_name": "WorkoutPlan",
       "schema": [
         {
           "name": "target_days",
@@ -194,11 +185,6 @@
           "name": "weekly_plan",
           "type": "String",
           "required": true
-        },
-        {
-          "name": "monthlypledge",
-          "type": "mongoose.Schema.Types.ObjectId",
-          "required": true
         }
       ],
       "has_many": [],
@@ -206,12 +192,12 @@
       "auth": false,
       "routes": [
         {
-          "route": "find",
+          "route": "index",
           "middleware": "",
           "logic": " "
         },
         {
-          "route": "all",
+          "route": "show",
           "middleware": "",
           "logic": " "
         },
@@ -233,7 +219,7 @@
       ]
     },
     {
-      "model_name": "workoutgroup",
+      "model_name": "WorkoutGroup",
       "schema": [
         {
           "name": "name",
