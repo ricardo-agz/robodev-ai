@@ -1,0 +1,17 @@
+
+        {/* $$Name$$ $$Alias$$ */}
+        <h3>$$Alias$$</h3>
+          <Link to={`/$$pluralname$$/${id}/$$alias$$/new`}>
+            <button>New $$SingleAlias$$</button>  
+          </Link>
+          <ul>
+
+          {$$nameCamel$$.$$aliasCamel$$ && $$nameCamel$$.$$aliasCamel$$.map(($$singleAliasCamel$$, i) => (
+            <div className="listItem" key={i}>
+              <li>{$$singleAliasCamel$$.$$FIRST_PARAM$$}</li>
+              <Link to={`/$$manynames$$/${$$singleAliasCamel$$._id}`}>
+                <button className="listButton">show</button>
+              </Link>
+            </div>
+          ))}
+        </ul>

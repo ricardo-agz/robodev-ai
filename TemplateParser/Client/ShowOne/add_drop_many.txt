@@ -1,0 +1,18 @@
+
+  function add$$SingleAlias$$() {
+    try {
+      axios.post(`${configData.SERVER_URL}/$$name$$/${id}/add-$$singleAlias$$/${$$singelAliasCamel$$Id}`$$mmheader$$);
+    } catch (e) {
+      console.log(e);
+    };
+    window.location.reload();
+  };
+
+  function drop$$SingleAlias$$(droppedId) {
+    try {
+      axios.post(`${configData.SERVER_URL}/$$name$$/${id}/drop-$$singleAlias$$/${droppedId}`$$mmheader$$);
+    } catch (e) {
+      console.log(e);
+    };
+    window.location.reload();
+  };

@@ -32,9 +32,9 @@
         }
       ],
       "has_many": [
-        ["paymentmethod", "paymentmethods"],
-        ["workoutgroup", "workoutgroups"],
-        ["monthlypledge", "monthlypledges"],
+        ["paymentmethod", "paymentMethods"],
+        ["workoutgroup", "workoutGroups"],
+        ["monthlypledge", "monthlyPledges"],
         ["user", "friends"]
       ],
       "belongs_to": [],

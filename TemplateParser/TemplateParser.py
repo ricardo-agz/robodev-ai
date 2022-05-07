@@ -23,7 +23,118 @@ class TemplateParser:
     self.model = model
     self.alias = alias
     self.many_model = many_model
+    self.error_check_template()
+    self.parse_embedded_code()
     self.init_parse_lines()
+
+
+  def error_check_template(self):
+    stack = []
+    for line in self.lines:
+      if "<$" in line and "$>" in line:
+        func_str = line[line.find("<$")+2 : line.find("$>")].strip()
+
+        if "begin" in func_str:
+          if len(stack) != 0:
+            raise Exception("<$ begin $> statement must be followed by an <$ end $>")
+          
+          if "if" in func_str:
+            temp_line = func_str.split("if")
+            condition = temp_line[1]
+            try:
+              eval(condition)
+            except:
+              raise Exception("Invalid conditional in <$ begin $> statement")
+
+          stack.append("begin")
+
+        elif "end" in func_str:
+          if len(stack) != 1:
+            raise Exception("Out of order <$ end $> statement")
+          stack.pop()
+
+    if len(stack) != 0:
+      raise Exception("Unequal number of <$ begin $> and <$ end $> statements")
+
+
+  def parse_embedded_code(self):
+    blocks = []
+    new_lines = []
+    toggle_block = False
+    conditional_met = True
+
+    for i in range(len(self.lines)):
+      line = self.lines[i]
+      is_open_close = False
+
+      # if <$ begin $>
+      if "<$" in line and "$>" in line:
+        func_str = line[line.find("<$")+2 : line.find("$>")].strip()
+
+        # is opening or closing statement
+        if "begin" in func_str or "end" in func_str:
+          is_open_close = True
+
+        if "begin" in func_str:
+          toggle_block = True
+
+          # if conditional
+          if "if" in func_str:
+            temp_line = func_str.split("if")
+            condition = temp_line[1]
+            conditional_met = eval(condition)
+
+        elif "end" in func_str:
+          toggle_block = False
+          conditional_met = True
+
+      if not toggle_block or (toggle_block and conditional_met):
+        if not is_open_close:
+          new_lines.append(line)
+
+    self.lines = new_lines
+    
+    '''
+    for i in range(len(self.lines)):
+      line_i = self.lines[i]
+      toggle_block = False
+
+      # if <$ begin $>
+      if "<$" in line_i and "$>" in line_i:
+        func_str_i = line_i[line_i.find("<$")+2 : line_i.find("$>")].strip()
+        if "begin" in func_str_i:
+          toggle_block = True
+          if "if" in func_str_i:
+            temp_line = func_str_i.split("if")
+            condition = temp_line[1]
+          temp = []
+          # continue until <$ end $>
+          for j in range(i+1, len(self.lines)):
+            line_j = self.lines[j]
+            if "<$" in line_j and "$>" in line_j:
+              func_str_j = line_j[line_j.find("<$")+2 : line_j.find("$>")].strip()
+              if func_str_j == "end":
+                toggle_block = False
+                i = j
+                break
+            temp.append(line_j)
+          blocks.append(temp)
+    '''
+
+    # print("end print embedded:")
+    # print(blocks)
+    # print("-----")
+
+
+
+    # for i, line in enumerate(self.lines):
+    #   if "<$=" in line and "$>" in line:
+    #     func_str = line[line.find("<$=")+3 : line.find("$>")].strip()
+    #     if func_str == "begin":
+    #       for j in range()
+
+
+
 
 
   def close_files(self):
@@ -35,10 +146,22 @@ class TemplateParser:
     self.lines = [self.insert_var_in_line(line) for line in self.lines]
 
 
-  def add_snip_dynamic(self, in_file, many_model=None, alias=None):
+  def add_snip_dynamic(self, in_file, many_model=None, alias=None, custom_replacement:list[tuple]=None):
     in_file = open(os.path.join(self.__location__, in_file), "r")
     lines = in_file.readlines()
     in_file.close()
+
+    # if custom replacement
+    if custom_replacement:
+      for custom, replacement in custom_replacement:
+        for i in range(len(lines)):
+          line = lines[i]
+          if custom in line:
+            line = line.replace(custom, replacement)
+            # print(f"custom: {custom}, replacement: {replacement}")
+            lines[i] = line
+            # print(f"new line: {line}")
+
     return [self.insert_var_in_line(line, many_model, alias) for line in lines]
     
     
@@ -49,6 +172,20 @@ class TemplateParser:
       many_name = many_model.name
     out = False
 
+    if "$$EVAL=" in line:
+      # print("eval here")
+      func_str = line[line.find("$$EVAL=")+7:line.find("END$$")].strip()
+      # print(eval(func_str))
+
+    if "<$=" in line and "$>" in line:
+      # print("new eval here")
+      func_str = line[line.find("<$=")+3 : line.find("$>")].strip()
+      evaluated = eval(func_str)
+      # print(eval(func_str))
+      new_line =  line[:line.find("<$=")+3] + evaluated + line[line.find("$>") :]
+      new_line = new_line.replace("<$=", "").replace("$>", "")
+      line = new_line
+
     if "$$name$$" in line:
       line = line.replace("$$name$$", name.lower())
       out = True
@@ -56,7 +193,10 @@ class TemplateParser:
       line = line.replace("$$nameCamel$$", camel_case(name))
       out = True
     if "$$pluralname$$" in line:
-      line = line.replace("$$name$$", self.model.plural.lower())
+      line = line.replace("$$pluralname$$", self.model.plural.lower())
+      out = True
+    if "$$PluralName$$" in line:
+      line = line.replace("$$PluralName$$", self.model.plural)
       out = True
     if "$$Name$$" in line:
       line = line.replace("$$Name$$", name)
@@ -67,17 +207,26 @@ class TemplateParser:
     if "$$manyname$$" in line:
       line = line.replace("$$manyname$$", many_name.lower())
       out = True
+    if "$$manynames$$" in line:
+      line = line.replace("$$manynames$$", many_model.plural.lower())
+      out = True
     if "$$Alias$$" in line:
       line = line.replace("$$Alias$$", pascal_case(alias) if alias else many_name)
       out = True
     if "$$alias$$" in line:
       line = line.replace("$$alias$$", alias.lower() if alias else many_name.lower())
       out = True
+    if "$$aliasCamel$$" in line:
+      line = line.replace("$$aliasCamel$$", camel_case(alias) if alias else camel_case(many_name))
+      out = True
     if "$$SingleAlias$$" in line:
       line = line.replace("$$SingleAlias$$", pascal_case(singularize(alias)) if alias else many_name)
       out = True
     if "$$singleAlias$$" in line:
       line = line.replace("$$singleAlias$$", singularize(alias).lower() if alias else many_name.lower())
+      out = True
+    if "$$singleAliasCamel$$" in line:
+      line = line.replace("$$singleAliasCamel$$", camel_case(singularize(alias)) if alias else camel_case(many_name))
       out = True
     if "$$header$$" in line:
       if self.project.auth_object:

@@ -147,33 +147,6 @@ class ControllerPage(TemplateParser):
       #       else:
       #         out_f.write("\t\t\t" + a)
       #   out_f.write("\n")  
-
-
-
-
-
-
-      # if "$$" in line and "dyn" in line:
-      #   line = line.strip().split(":")
-      #   if len(line) <= 1:
-      #     continue
-
-      #   n_dyn = int(line[1])
-
-      #   """ CONTROLLER DECLARATIONS """
-      #   if n_dyn == 0:
-      #     # insert = self.add_controller_declarations()
-      #     # new_lines = append_at_index(new_lines, insert, i)
-      #     pass
-          
-      #   """ ROUTE DECLARATIONS """
-      #   if n_dyn == 1:
-      #     # insert = self.write_routes()
-      #     # new_lines = append_at_index(new_lines, insert, i)
-      #     pass
-
-      j += 1
-    self.lines = new_lines
   '''
 
   def add_controller_declarations(self):

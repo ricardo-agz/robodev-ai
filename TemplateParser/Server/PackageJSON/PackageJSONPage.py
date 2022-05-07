@@ -30,25 +30,3 @@ class PackageJSONPage(TemplateParser):
     )
 
     self.parse_file()
-
-  
-  def get_auth_imports(self):
-    """
-    "bcrypt": "^5.0.1",
-    "jsonwebtoken": "^8.5.1",
-    """
-    insert = [
-      f'\t\t"bcrypt": "^5.0.1",\n',
-      f'\t\t"jsonwebtoken": "^8.5.1",\n',
-    ]
-    return insert
-
-
-  def parse_file(self):
-    for line in self.lines:
-      if "$$AUTH_IMPORTS" in line:
-        insert = self.get_auth_imports()
-        self.out_lines = self.out_lines + insert
-      
-      else:
-        self.out_lines.append(line)

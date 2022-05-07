@@ -10,6 +10,8 @@ from TemplateParser.Client.Manifest.ManifestPage import ManifestPage
 from TemplateParser.Client.Nav.NavPage import NavPage
 from TemplateParser.Client.Package.PackagePage import ClientPackagePage
 from TemplateParser.Client.PrivateRoute.PrivateRoute import PrivateRoutePage
+# from TemplateParser.Client.ShowOne.ShowAllPage import ShowAllPage
+from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
 from TemplateParser.Client.UseApi.UseApiPage import UseApiPage
 from TemplateParser.Client.UseAuth.UseAuthPage import UseAuthPage
 from TemplateParser.Client.UseFind.UseFindPage import UseFindPage
@@ -199,7 +201,6 @@ def generator(builder_data):
     # BUILD MODEL FILES
     os.chdir('./models')
     for model in project.models:
-      print("here man")
       model_page = ModelPage(project, model)
       model_page.write_out_file()
       model_page.close_files()
@@ -284,6 +285,15 @@ def generator(builder_data):
     use_api = UseApiPage(project)
     use_api.write_out_file()
     use_api.close_files()
+
+    os.chdir(CLIENT_PATH)
+    os.chdir('./src/pages')
+    for model in project.models:
+      os.chdir(f'./{camel_case(model.name)}')
+      show_one = ShowOnePage(project, model)
+      show_one.write_out_file()
+      show_one.close_files()
+      os.chdir('..')
 
 
   # except Exception as e:

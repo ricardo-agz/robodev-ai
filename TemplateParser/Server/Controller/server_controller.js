@@ -1,6 +1,7 @@
 const $$Name$$ = require('../models/$$nameCamel$$');
 $$AUTH$$:0
 
+
 const $$Name$$Controller = {
 
   // REMOVE TO ENABLE PAGINATION

@@ -33,7 +33,7 @@ class RoutesPage(TemplateParser):
         self.out_lines = self.out_lines + insert
 
       elif "$$AUTH_CONTROLLER$$" in line and self.project.auth_object:
-        self.out_lines.append("const AuthController = require('./controllers/authController');")
+        self.out_lines.append("const AuthController = require('../controllers/authController');\n")
 
       elif "$$ROUTES$$" in line:
         insert = self.write_routes()

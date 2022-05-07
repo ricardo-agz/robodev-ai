@@ -19,6 +19,9 @@ def camel_case(s):
   else:
     return s[0].lower() + s[1:]
 
+def title_space_case(s):
+  return sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', s)
+
 def camel_to_snake(name):
   name = sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
   return sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()

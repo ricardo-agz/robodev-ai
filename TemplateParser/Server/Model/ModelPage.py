@@ -38,11 +38,12 @@ class ModelPage(TemplateParser):
       foreignField: 'user'
     });
     """
+    complement_alias = camel_case(self.project.get_one_to_many_complement_alias(self.model, alias))
     insert = [
-      f"{self.model.name}Schema.virtual('{alias.lower()}', {{\n",
+      f"{self.model.name}Schema.virtual('{camel_case(alias)}', {{\n",
       f"\tref: '{many_model.name}',\n",
       f"\tlocalField: '_id',\n",
-      f"\tforeignField: '{self.project.get_one_to_many_complement_alias(self.model, alias)}'\n",
+      f"\tforeignField: '{complement_alias}'\n",
       f"}});\n\n",
     ]
     return insert
