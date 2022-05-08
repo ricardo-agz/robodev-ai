@@ -7,6 +7,7 @@ import authHeader from '../../services/auth-header';
 import '../../App.css';
 import configData from '../../../config.json'
 
+
 export default function UserShow(props) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -15,14 +16,9 @@ export default function UserShow(props) {
 	const [friendId, setFriendId] = useState();
 
   function handleDelete() {
-    axios.delete(`${configData.SERVER_URL}/user/${id}`<%= "{ headers: authHeader() }" if self.project.auth_object else "" %>);
+    axios.delete(`${configData.SERVER_URL}/user/${id}`, { headers: authHeader() });
     navigate('/users');
   }
-
-  This is only included if auth object
-  second line here
-
-
 
 
   function addWorkoutGroup() {
@@ -80,40 +76,40 @@ export default function UserShow(props) {
         </div>
 
 
+        {/* User Payment Methods */}
+        <h3>Payment Methods</h3>
+        <Link to={`/user/${id}/paymentmethods/new`}>
+          <button>New paymentMethod</button>  
+        </Link>    
 
-        {/* User PaymentMethods */}
-        <h3>PaymentMethods</h3>
-          <Link to={`/users/${id}/paymentmethods/new`}>
-            <button>New PaymentMethod</button>  
-          </Link>
-          <ul>
+        <ul>
+        {user.paymentMethods && user.paymentMethods.map((paymentMethod, i) => (
+          <div className="listItem" key={i}>
+            <li>{paymentMethod._id}</li>
+            <Link to={`/paymentmethods/${paymentMethod._id}`}>
+              <button className="listButton">show</button>
+            </Link>
+          </div>
+        ))}
+        </ul> 
 
-          {user.paymentMethods && user.paymentMethods.map((paymentMethod, i) => (
-            <div className="listItem" key={i}>
-              <li>{paymentMethod.card_number}</li>
-              <Link to={`/paymentmethods/${paymentMethod._id}`}>
-                <button className="listButton">show</button>
-              </Link>
-            </div>
-          ))}
-        </ul>
+        {/* User Monthly Pledges */}
+        <h3>Monthly Pledges</h3>
+        <Link to={`/user/${id}/monthlypledges/new`}>
+          <button>New monthlyPledge</button>  
+        </Link>    
 
-        {/* User MonthlyPledges */}
-        <h3>MonthlyPledges</h3>
-          <Link to={`/users/${id}/monthlypledges/new`}>
-            <button>New MonthlyPledge</button>  
-          </Link>
-          <ul>
+        <ul>
+        {user.monthlyPledges && user.monthlyPledges.map((monthlyPledge, i) => (
+          <div className="listItem" key={i}>
+            <li>{monthlyPledge._id}</li>
+            <Link to={`/monthlypledges/${monthlyPledge._id}`}>
+              <button className="listButton">show</button>
+            </Link>
+          </div>
+        ))}
+        </ul> 
 
-          {user.monthlyPledges && user.monthlyPledges.map((monthlyPledge, i) => (
-            <div className="listItem" key={i}>
-              <li>{monthlyPledge.payment_amount}</li>
-              <Link to={`/monthlypledges/${monthlyPledge._id}`}>
-                <button className="listButton">show</button>
-              </Link>
-            </div>
-          ))}
-        </ul>
       </div>
     );
   }

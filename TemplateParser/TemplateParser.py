@@ -1,6 +1,6 @@
 import os
 from TemplateParser.Project import Project
-from TemplateParser.helpers import camel_case, pascal_case, singularize
+from TemplateParser.helpers import camel_case, pascal_case, singularize, title_space_case, pluralize
 
 class TemplateParser:
 
@@ -26,6 +26,7 @@ class TemplateParser:
     self.error_check_template()
     self.parse_embedded_code()
     self.init_parse_lines()
+    
 
 
   def error_check_template(self):
@@ -48,20 +49,34 @@ class TemplateParser:
 
           stack.append("begin")
 
+        elif "for " in func_str and " in " in func_str:
+          var_name = line[line.find("for ")+4 : line.find(" in")].strip()
+          array = line[line.find(" in ")+4 : line.find("$>")].strip()
+
+          if len(stack) > 0 and stack[-1] == "for":
+            raise Exception("Nested for loops not yet supported")
+          if not var_name.isalnum() and "," not in var_name:
+            raise Exception("Invalid iterable name")
+          try:
+            eval(array)
+          except:
+            raise Exception("Invalid array declaration")
+
+          stack.append("for")
+
         elif "end" in func_str:
-          if len(stack) != 1:
-            raise Exception("Out of order <$ end $> statement")
           stack.pop()
 
     if len(stack) != 0:
-      raise Exception("Unequal number of <$ begin $> and <$ end $> statements")
+      raise Exception("Unequal number of open and close statements")
 
 
   def parse_embedded_code(self):
-    blocks = []
     new_lines = []
     toggle_block = False
     conditional_met = True
+    stack = []
+    skip_lines = []
 
     for i in range(len(self.lines)):
       line = self.lines[i]
@@ -72,10 +87,11 @@ class TemplateParser:
         func_str = line[line.find("<$")+2 : line.find("$>")].strip()
 
         # is opening or closing statement
-        if "begin" in func_str or "end" in func_str:
+        if "begin" in func_str or "end" in func_str or ("for " in func_str and " in " in func_str):
           is_open_close = True
 
         if "begin" in func_str:
+          stack.append("begin")
           toggle_block = True
 
           # if conditional
@@ -84,56 +100,64 @@ class TemplateParser:
             condition = temp_line[1]
             conditional_met = eval(condition)
 
+        # embedded for loop
+        if "for " in func_str and " in " in func_str:
+          stack.append("for")
+          toggle_block = True
+          var_name = line[line.find("for ")+4 : line.find(" in")].strip()
+          array = line[line.find(" in ")+4 : line.find("$>")].strip()
+          eval_arr = eval(array)
+          block = []
+          split_name = False
+
+          # for one, two in array
+          if "," in var_name:
+            temp = var_name.split(",")
+            var1 = temp[0].strip()
+            var2 = temp[1].strip()
+            split_name = True
+
+          # add line to block until reaching <$ end $>
+          j = i+1
+          line_j = self.lines[j]
+          while not ("<$" in line_j and "end" in line_j and "$>" in line_j):
+            # replace variable names with array at index
+            if split_name:
+              line_j = line_j.replace(var1, f"{array}[i][0]").replace(var2, f"{array}[i][1]")
+            else:
+              line_j = line_j.replace(var_name, f"{array}[i]")
+            block.append(line_j)
+            skip_lines.append(j)
+            j+=1
+            line_j = self.lines[j]
+
+          # must replace [i] index with actual index
+          for x in range(len(eval_arr)):
+            new_block = [block_line.replace("[i]", f"[{x}]") for block_line in block]
+
+            # insert in-line python injections 
+            for b_index in range(len(new_block)):
+              block_line = new_block[b_index]
+              # injection block
+              if "<$=" in block_line and "$>" in block_line:
+                func_str = block_line[block_line.find("<$=")+3 : block_line.find("$>")].strip()
+                # evaluate and replace
+                evaluated = eval(func_str)
+                temp_line =  block_line[:block_line.find("<$=")+3] + evaluated + block_line[block_line.find("$>") :]
+                temp_line = temp_line.replace("<$=", "").replace("$>", "")
+                new_block[b_index] = temp_line
+
+            new_lines = new_lines + new_block
+                    
         elif "end" in func_str:
           toggle_block = False
           conditional_met = True
 
       if not toggle_block or (toggle_block and conditional_met):
-        if not is_open_close:
+        if not is_open_close and i not in skip_lines:
           new_lines.append(line)
 
     self.lines = new_lines
-    
-    '''
-    for i in range(len(self.lines)):
-      line_i = self.lines[i]
-      toggle_block = False
-
-      # if <$ begin $>
-      if "<$" in line_i and "$>" in line_i:
-        func_str_i = line_i[line_i.find("<$")+2 : line_i.find("$>")].strip()
-        if "begin" in func_str_i:
-          toggle_block = True
-          if "if" in func_str_i:
-            temp_line = func_str_i.split("if")
-            condition = temp_line[1]
-          temp = []
-          # continue until <$ end $>
-          for j in range(i+1, len(self.lines)):
-            line_j = self.lines[j]
-            if "<$" in line_j and "$>" in line_j:
-              func_str_j = line_j[line_j.find("<$")+2 : line_j.find("$>")].strip()
-              if func_str_j == "end":
-                toggle_block = False
-                i = j
-                break
-            temp.append(line_j)
-          blocks.append(temp)
-    '''
-
-    # print("end print embedded:")
-    # print(blocks)
-    # print("-----")
-
-
-
-    # for i, line in enumerate(self.lines):
-    #   if "<$=" in line and "$>" in line:
-    #     func_str = line[line.find("<$=")+3 : line.find("$>")].strip()
-    #     if func_str == "begin":
-    #       for j in range()
-
-
 
 
 
@@ -172,19 +196,19 @@ class TemplateParser:
       many_name = many_model.name
     out = False
 
-    if "$$EVAL=" in line:
-      # print("eval here")
-      func_str = line[line.find("$$EVAL=")+7:line.find("END$$")].strip()
-      # print(eval(func_str))
-
+    # python injection block
     if "<$=" in line and "$>" in line:
-      # print("new eval here")
       func_str = line[line.find("<$=")+3 : line.find("$>")].strip()
       evaluated = eval(func_str)
-      # print(eval(func_str))
       new_line =  line[:line.find("<$=")+3] + evaluated + line[line.find("$>") :]
       new_line = new_line.replace("<$=", "").replace("$>", "")
       line = new_line
+      
+    if "<$#" in line and "$>" in line:
+      return ""
+
+    if "<!--" in line and "-->" in line:
+      return ""
 
     if "$$name$$" in line:
       line = line.replace("$$name$$", name.lower())
@@ -197,6 +221,9 @@ class TemplateParser:
       out = True
     if "$$PluralName$$" in line:
       line = line.replace("$$PluralName$$", self.model.plural)
+      out = True
+    if "$$pluralName$$" in line:
+      line = line.replace("$$pluralName$$", camel_case(self.model.plural))
       out = True
     if "$$Name$$" in line:
       line = line.replace("$$Name$$", name)

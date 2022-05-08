@@ -10,6 +10,7 @@ from TemplateParser.Client.Manifest.ManifestPage import ManifestPage
 from TemplateParser.Client.Nav.NavPage import NavPage
 from TemplateParser.Client.Package.PackagePage import ClientPackagePage
 from TemplateParser.Client.PrivateRoute.PrivateRoute import PrivateRoutePage
+from TemplateParser.Client.ShowAll.ShowAllPage import ShowAllPage
 # from TemplateParser.Client.ShowOne.ShowAllPage import ShowAllPage
 from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
 from TemplateParser.Client.UseApi.UseApiPage import UseApiPage
@@ -293,6 +294,10 @@ def generator(builder_data):
       show_one = ShowOnePage(project, model)
       show_one.write_out_file()
       show_one.close_files()
+
+      show_all = ShowAllPage(project, model)
+      show_all.write_out_file()
+      show_all.close_files()
       os.chdir('..')
 
 

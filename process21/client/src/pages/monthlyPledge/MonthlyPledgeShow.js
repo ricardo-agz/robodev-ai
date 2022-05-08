@@ -7,20 +7,16 @@ import authHeader from '../../services/auth-header';
 import '../../App.css';
 import configData from '../../../config.json'
 
+
 export default function MonthlyPledgeShow(props) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { result: monthlypledge, loading, error, refresh } = useApi(`${configData.SERVER_URL}/monthlypledge/${id}`);
+  const { result: monthlyPledge, loading, error, refresh } = useApi(`${configData.SERVER_URL}/monthlypledge/${id}`);
 
   function handleDelete() {
-    axios.delete(`${configData.SERVER_URL}/monthlypledge/${id}`<%= "{ headers: authHeader() }" if self.project.auth_object else "" %>);
+    axios.delete(`${configData.SERVER_URL}/monthlypledge/${id}`, { headers: authHeader() });
     navigate('/monthlypledges');
   }
-
-  This is only included if auth object
-  second line here
-
-
 
 
   if (error) {
@@ -42,23 +38,23 @@ export default function MonthlyPledgeShow(props) {
         </div>
 
 
-
-        {/* MonthlyPledge Workoutplans */}
+        {/* Monthly Pledge Workoutplans */}
         <h3>Workoutplans</h3>
-          <Link to={`/monthlypledges/${id}/workoutplans/new`}>
-            <button>New Workoutplan</button>  
-          </Link>
-          <ul>
+        <Link to={`/monthlypledge/${id}/workoutplans/new`}>
+          <button>New workoutplan</button>  
+        </Link>    
 
-          {monthlyPledge.workoutplans && monthlyPledge.workoutplans.map((workoutplan, i) => (
-            <div className="listItem" key={i}>
-              <li>{workoutplan.target_days}</li>
-              <Link to={`/workoutplans/${workoutplan._id}`}>
-                <button className="listButton">show</button>
-              </Link>
-            </div>
-          ))}
-        </ul>
+        <ul>
+        {monthlyPledge.workoutplans && monthlyPledge.workoutplans.map((workoutplan, i) => (
+          <div className="listItem" key={i}>
+            <li>{workoutplan._id}</li>
+            <Link to={`/workoutplans/${workoutplan._id}`}>
+              <button className="listButton">show</button>
+            </Link>
+          </div>
+        ))}
+        </ul> 
+
       </div>
     );
   }

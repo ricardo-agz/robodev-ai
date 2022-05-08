@@ -15,7 +15,7 @@ class ShowOnePage(TemplateParser):
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
     """ CONSTANTS """
-    in_file = "./show_one_page.js"
+    in_file = "./show_one_page.js.enp"
     out_file = f"./{model.name}Show.js"
 
     super().__init__(

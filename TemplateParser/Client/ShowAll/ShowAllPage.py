@@ -35,7 +35,7 @@ class ShowAllPage(TemplateParser):
         self.out_lines.append("import authHeader from '../../services/auth-header';\n")
 
       elif "$$DYNAMIC_PARAMS$$" in line and self.project.auth_object:
-        self.out_lines.append(f"\t\t\t\t\t\t<li key={{i}}>{{{self.model.name.lower()}.{self.model.schema[0]['name']}}}</li>\n")
+        self.out_lines.append(f"\t\t\t\t\t\t<li key={{i}}>{{{camel_case(self.model.name)}.{self.model.schema[0]['name']}}}</li>\n")
 
       else:
         self.out_lines.append(line)

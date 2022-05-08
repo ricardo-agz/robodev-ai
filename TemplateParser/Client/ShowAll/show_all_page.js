@@ -8,7 +8,7 @@ $$AUTH_IMPORTS$$
 import configData from '../../../config.json'
 
 export default function $$Name$$s() {
-  const { result: $$pluralname$$, loading, error, refresh } = useApi(`${configData.SERVER_URL}/$$pluralname$$`);
+  const { result: <$= camel_case(self.model.plural) $>, loading, error, refresh } = useApi(`${configData.SERVER_URL}/$$pluralname$$`);
   const navigate = useNavigate();
 
   function handleDelete(id) {
@@ -18,23 +18,23 @@ export default function $$Name$$s() {
 
   if (error) {
     return <div>Error: {error.message}</div>;
-  } else if (loading || !$$pluralname$$) {
+  } else if (loading || !<$= camel_case(self.model.plural) $>) {
     return <CircularProgress />;
   } else {
     return (
       <div className='container'>
-        <h1>$$PluralName$$</h1>
+        <h1><$= title_space_case(self.model.plural) $></h1>
         <Button 
           variant={"contained"}
           onClick={() => navigate("/$$pluralname$$/new")}
         >
-        new $$name$$
+        New <$= title_space_case(self.model.name) $>
         </Button>
 
         <ul>
-        {$$pluralname$$.map(($$name$$, i) => (
+        {<$= camel_case(self.model.plural) $>.map(($$nameCamel$$, i) => (
           <div className="listItem" key={i}>
-            $$DYNAMIC_PARAMS$$
+            <$= f"<li key={{i}}>{{{camel_case(self.model.name)}.{self.model.schema[0]['name']}}}</li>" $>
             <ButtonGroup variant="outlined" size="small">
               <Button onClick={() => navigate(`/$$name$$/${$$name$$._id}`)}>show</Button>
               <Button onClick={() => navigate(`/$$name$$/${$$name$$._id}/edit`)}>edit</Button>

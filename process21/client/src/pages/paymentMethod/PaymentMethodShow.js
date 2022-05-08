@@ -7,20 +7,16 @@ import authHeader from '../../services/auth-header';
 import '../../App.css';
 import configData from '../../../config.json'
 
+
 export default function PaymentMethodShow(props) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { result: paymentmethod, loading, error, refresh } = useApi(`${configData.SERVER_URL}/paymentmethod/${id}`);
+  const { result: paymentMethod, loading, error, refresh } = useApi(`${configData.SERVER_URL}/paymentmethod/${id}`);
 
   function handleDelete() {
-    axios.delete(`${configData.SERVER_URL}/paymentmethod/${id}`<%= "{ headers: authHeader() }" if self.project.auth_object else "" %>);
+    axios.delete(`${configData.SERVER_URL}/paymentmethod/${id}`, { headers: authHeader() });
     navigate('/paymentmethods');
   }
-
-  This is only included if auth object
-  second line here
-
-
 
 
   if (error) {

@@ -1,0 +1,71 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Button, ButtonGroup, CircularProgress, TextField } from '@mui/material';
+import useApi from '../../hooks/useApi';
+<$= "import authHeader from '../../services/auth-header';" if self.project.auth_object else "" $>
+import '../../App.css';
+import configData from '../../../config.json'
+
+
+export default function <$= self.model.name $>Show(props) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { result: <$= camel_case(self.model.name) $>, loading, error, refresh } = useApi(`${configData.SERVER_URL}/$$name$$/${id}`);
+  $$MANY_TO_MANY:0
+
+  function handleDelete() {
+    axios.delete(`${configData.SERVER_URL}/$$name$$/${id}`<$= ", { headers: authHeader() }" if self.project.auth_object else "" $>);
+    navigate('/$$pluralname$$');
+  }
+
+  $$MANY_TO_MANY:1
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  } else if (loading || !$$name$$) {
+    return <CircularProgress />;
+  } else {
+    return (
+      <div className='container'>
+        <div className='row'>
+          <h1 className='paddedRight'>$$Name$$ {id}</h1>
+
+          <Button variant="outlined" style={{marginRight: 15}}
+            onClick={() => navigate(`/$$name$$/${id}/edit`)}>edit
+          </Button>
+          <Button variant="contained" color="error" 
+            onClick={handleDelete}>delete
+          </Button>
+        </div>
+
+        $$dynamic:0
+
+        <!-- ONE TO MANY DISPLAY -->
+        <$ for many_model, alias in self.model.one_to_many $>
+        {/* <$= f"{title_space_case(self.model.name)} {title_space_case(alias)}" $> */}
+        <h3><$= title_space_case(alias) $></h3>
+        <!-- ex. `/user/${id}/posts/new` -->
+        <Link to={`/<$= f"{self.model.name.lower()}/${{id}}/{alias.lower()}/new" $>`}>
+          <button>New <$= singularize(alias) $></button>  
+        </Link>    
+
+        <ul>
+        <!-- ex. user.posts && user.posts.map(post, i) => ( -->
+        {<$= f"{camel_case(self.model.name)}.{camel_case(alias)} && {camel_case(self.model.name)}.{camel_case(alias)}.map(({singularize(camel_case(alias))}, i) => (" $>
+          <div className="listItem" key={i}>
+            <li>{<$= singularize(camel_case(alias)) $>._id}</li>
+            <!-- ex. `/posts/${post._id}` -->
+            <Link to={`/<$= f"{many_model.plural.lower()}/${{{singularize(camel_case(alias))}._id}}" $>`}>
+              <button className="listButton">show</button>
+            </Link>
+          </div>
+        ))}
+        </ul> 
+
+        <$ end $>
+        $$MANY_TO_MANY:2
+      </div>
+    );
+  }
+}

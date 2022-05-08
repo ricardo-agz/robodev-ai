@@ -7,20 +7,16 @@ import authHeader from '../../services/auth-header';
 import '../../App.css';
 import configData from '../../../config.json'
 
+
 export default function WorkoutPlanShow(props) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { result: workoutplan, loading, error, refresh } = useApi(`${configData.SERVER_URL}/workoutplan/${id}`);
+  const { result: workoutPlan, loading, error, refresh } = useApi(`${configData.SERVER_URL}/workoutplan/${id}`);
 
   function handleDelete() {
-    axios.delete(`${configData.SERVER_URL}/workoutplan/${id}`<%= "{ headers: authHeader() }" if self.project.auth_object else "" %>);
+    axios.delete(`${configData.SERVER_URL}/workoutplan/${id}`, { headers: authHeader() });
     navigate('/workoutplans');
   }
-
-  This is only included if auth object
-  second line here
-
-
 
 
   if (error) {
