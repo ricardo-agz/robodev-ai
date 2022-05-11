@@ -1,0 +1,49 @@
+import React from 'react';
+import '../../App.css';
+import { useNavigate } from 'react-router-dom';
+import ValidatedForm from './ValidatedForm';
+import axios from 'axios';
+<$= "import authHeader from '../../services/auth-header';" if self.project.auth_object else "" $>
+import configData from '../../config.json'
+
+export default function $$Name$$New() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+	<!-- // const handleSubmit = (name, username, age) => { -->
+	$$HANDLE_SUBMIT$$
+    setLoading(true);
+    setError(null);
+		axios.post(`${configData.SERVER_URL}/<$= self.model.plural.lower() $>`, {
+    <$ for param in self.model.schema $>
+      <!-- username: username, (comma on all except last) -->
+      <$= f"{param['name']}: {param['name']}{',' if _index_ < _len_ - 1 else ''}" $>
+    <$ end $>
+    }$$header$$)
+    .then(_res => {
+      navigate("/<$= self.model.plural.lower() if not self.model.auth else "login" $>")
+    })
+    .catch(err => {
+      setError(err.response.data.message);
+    })
+    .then(_res => {
+      setLoading(false);
+    })
+	};
+
+	return (
+		<div className='container'>
+			<h1>Edit <$= title_space_case(self.model.name) $></h1>
+
+      {/* ERROR DISPLAY */}
+      { error &&
+        <p style={{color: "red"}}>{error}</p>
+      }
+
+			<!-- <ValidatedForm submit={(name, username) => handleSubmit(name, username)} model={user}/> -->
+      {/* FORM DISPLAY */}
+      $$VALIDATED_FORM$$
+		</div>
+	)
+}

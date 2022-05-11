@@ -11,11 +11,14 @@ from TemplateParser.Client.Nav.NavPage import NavPage
 from TemplateParser.Client.Package.PackagePage import ClientPackagePage
 from TemplateParser.Client.PrivateRoute.PrivateRoute import PrivateRoutePage
 from TemplateParser.Client.ShowAll.ShowAllPage import ShowAllPage
+from TemplateParser.Client.ShowEdit.ShowEditPage import ShowEditPage
+from TemplateParser.Client.ShowNew.ShowNewPage import ShowNewPage
 # from TemplateParser.Client.ShowOne.ShowAllPage import ShowAllPage
 from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
 from TemplateParser.Client.UseApi.UseApiPage import UseApiPage
 from TemplateParser.Client.UseAuth.UseAuthPage import UseAuthPage
 from TemplateParser.Client.UseFind.UseFindPage import UseFindPage
+from TemplateParser.Client.ValidatedForm.ValidatedFormPage import ValidatedFormPage
 from TemplateParser.Model import Model
 from TemplateParser.Project import Project
 from TemplateParser.Route import Route
@@ -278,9 +281,11 @@ def generator(builder_data):
       auth_header.close_files()
 
     os.chdir(CLIENT_PATH)
+    os.chdir("./src")
     json_config = ConfigJsonPage(project)
     json_config.write_out_file()
     json_config.close_files()
+    os.chdir(CLIENT_PATH)
 
     os.chdir('./src/hooks')
     use_api = UseApiPage(project)
@@ -298,6 +303,18 @@ def generator(builder_data):
       show_all = ShowAllPage(project, model)
       show_all.write_out_file()
       show_all.close_files()
+
+      show_edit = ShowEditPage(project, model)
+      show_edit.write_out_file()
+      show_edit.close_files()
+
+      show_new = ShowNewPage(project, model)
+      show_new.write_out_file()
+      show_new.close_files()
+
+      form_page = ValidatedFormPage(project, model)
+      form_page.write_out_file()
+      form_page.close_files()
       os.chdir('..')
 
 

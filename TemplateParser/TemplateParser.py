@@ -133,7 +133,11 @@ class TemplateParser:
 
           # must replace [i] index with actual index
           for x in range(len(eval_arr)):
-            new_block = [block_line.replace("[i]", f"[{x}]") for block_line in block]
+            new_block = [block_line
+                          .replace("[i]", f"[{x}]")
+                          .replace("_index_", f"{x}")
+                          .replace("_len_", f"{len(eval_arr)}") 
+                          for block_line in block]
 
             # insert in-line python injections 
             for b_index in range(len(new_block)):

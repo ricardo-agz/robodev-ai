@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 import useApi from '../../hooks/useApi';
 $$AUTH_IMPORTS$$
-import configData from '../../../config.json'
+import configData from '../../config.json'
 
 export default function $$Name$$s() {
   const { result: <$= camel_case(self.model.plural) $>, loading, error, refresh } = useApi(`${configData.SERVER_URL}/$$pluralname$$`);
