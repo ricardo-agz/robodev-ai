@@ -18,6 +18,43 @@ This folder holds all the main logic components for generating the code
     - Abstract class that all project Pages inherit from.
     Ex. Server's server.js is its own class inheriting from TemplateParser
 
+Example Usage: (snip from `test_project.py`)
+```
+user_schema = [
+  {'name': 'username', 'type': 'String', 'required': True},
+  {'name': 'email', 'type': 'String', 'required': True},
+  {'name': 'password', 'type': 'String', 'required': True},
+]
+post_schema = [
+  {'name': 'title', 'type': 'String', 'required': True},
+  {'name': 'content', 'type': 'Text', 'required': True},
+]
+user = \
+  Model(
+    name='user', 
+    schema=user_schema, 
+    has_many=[('user', 'friends'), ('post', 'posts'), ('user', 'blocked')]
+  )
+post = \
+  Model(
+    name='post', 
+    schema=post_schema, 
+    has_many=[('user', 'friends'), ('post', 'posts')],
+    belongs_to=[('user', 'author')]
+  )
+project = \
+  Project(
+    "test_project",
+    models=[user, post],
+    auth_object='user',
+    email="test@email.co"
+  )
+
+expected = [(post, "posts")]
+actual = user.get_one_to_many()
+self.assertEqual(expected, actual)
+```
+
 Client and Server
 - These folders are just for organization, they divide each page by which sub project they belong to
   i.e. Frontend's App.js file could be found under './Client/App'
