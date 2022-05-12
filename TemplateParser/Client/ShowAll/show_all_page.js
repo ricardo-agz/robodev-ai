@@ -12,7 +12,7 @@ export default function $$Name$$s() {
   const navigate = useNavigate();
 
   function handleDelete(id) {
-    axios.delete(`${configData.SERVER_URL}/$$name$$/${id}`$$header$$);
+    axios.delete(`${configData.SERVER_URL}/$$names$$/${id}`$$header$$);
     window.location.reload();
   }
 
@@ -36,9 +36,9 @@ export default function $$Name$$s() {
           <div className="listItem" key={i}>
             <$= f"<li key={{i}}>{{{camel_case(self.model.name)}.{self.model.schema[0]['name']}}}</li>" $>
             <ButtonGroup variant="outlined" size="small">
-              <Button onClick={() => navigate(`/$$name$$/${$$name$$._id}`)}>show</Button>
-              <Button onClick={() => navigate(`/$$name$$/${$$name$$._id}/edit`)}>edit</Button>
-              <Button color="error" onClick={() => handleDelete($$name$$._id)}>delete</Button>
+              <Button onClick={() => navigate(`/$$name$$/${$$nameCamel$$._id}`)}>show</Button>
+              <Button onClick={() => navigate(`/$$name$$/${$$nameCamel$$._id}/edit`)}>edit</Button>
+              <Button color="error" onClick={() => handleDelete($$nameCamel$$._id)}>delete</Button>
             </ButtonGroup>
           </div>
         ))}

@@ -1,6 +1,6 @@
 from TemplateParser.Model import Model
 from TemplateParser.Route import Route
-from TemplateParser.helpers import camel_case, camel_to_dash, singularize
+from TemplateParser.helpers import camel_case, camel_to_dash, pascal_case, singularize
 
 def val_in_tuple_arr(val, tup_arr):
   for (model_name, alias) in tup_arr:
@@ -138,8 +138,8 @@ class Project:
   def add_many_to_many_routes(self) -> None:
     for model in self.models:
       for (many_model, alias) in model.many_to_many:
-        add_route_name = f"add{singularize(alias.title())}" if alias else f"add{many_model.name}"
-        drop_route_name = f"drop{singularize(alias.title())}" if alias else f"add{many_model.name}"
+        add_route_name = f"add{singularize(pascal_case(alias))}" if alias else f"add{many_model.name}"
+        drop_route_name = f"drop{singularize(pascal_case(alias))}" if alias else f"add{many_model.name}"
         many_id = f"{camel_case(many_model.name)}Id"
         add_route = Route(
           name=add_route_name, 

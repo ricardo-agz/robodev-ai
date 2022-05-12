@@ -2,7 +2,8 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { $$Name$$Context } from './$$Name$$Context';
-import configData from "./config.json";
+import configData from '../config.json';
+import authHeader from '../services/auth-header';
 
 export default function useAuth() {
   const navigate = useNavigate();

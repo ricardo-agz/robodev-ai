@@ -1,9 +1,15 @@
 import os
-from venv import create
+from TemplateParser.Model import Model
+from TemplateParser.Project import Project
+from TemplateParser.Route import Route
 from TemplateParser.Client.App.AppPage import AppPage
+from TemplateParser.Client.AppCss.AppCss import AppCss
 from TemplateParser.Client.AuthContext.AuthContextPage import AuthContextPage
 from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
 from TemplateParser.Client.ConfigJson.ConfigJsonPage import ConfigJsonPage
+from TemplateParser.Client.ExportIndex.ExportIndexPage import ExportIndexPage
+from TemplateParser.Client.Home.HomePage import HomePage
+from TemplateParser.Client.IndexCss.SrcIndexCss import SrcIndexCss
 from TemplateParser.Client.IndexHtml.IndexHtmlPage import IndexHtmlPage
 from TemplateParser.Client.LoginPage.LoginPage import LoginPage
 from TemplateParser.Client.Manifest.ManifestPage import ManifestPage
@@ -13,15 +19,12 @@ from TemplateParser.Client.PrivateRoute.PrivateRoute import PrivateRoutePage
 from TemplateParser.Client.ShowAll.ShowAllPage import ShowAllPage
 from TemplateParser.Client.ShowEdit.ShowEditPage import ShowEditPage
 from TemplateParser.Client.ShowNew.ShowNewPage import ShowNewPage
-# from TemplateParser.Client.ShowOne.ShowAllPage import ShowAllPage
 from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
+from TemplateParser.Client.SrcIndex.SrcIndexPage import SrcIndexPage
 from TemplateParser.Client.UseApi.UseApiPage import UseApiPage
 from TemplateParser.Client.UseAuth.UseAuthPage import UseAuthPage
 from TemplateParser.Client.UseFind.UseFindPage import UseFindPage
 from TemplateParser.Client.ValidatedForm.ValidatedFormPage import ValidatedFormPage
-from TemplateParser.Model import Model
-from TemplateParser.Project import Project
-from TemplateParser.Route import Route
 from TemplateParser.Server.Database.DatabasePage import DatabasePage
 from TemplateParser.Server.DotEnv.DotEnvPage import DotEnvPage
 from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
@@ -59,13 +62,13 @@ def get_path_from_route(route : str, model : Model) -> str:
   if route == "index":
     return f"/{model.plural.lower()}"
   elif route == "show":
-    return f"/{model.name.lower()}/:id"
+    return f"/{model.plural.lower()}/:id"
   elif route == "create":
     return  f"/{model.plural.lower()}"
   elif route == "update":
-    return f"/{model.name.lower()}/:id/edit"
+    return f"/{model.plural.lower()}/:id/edit"
   elif route == "delete" or route == "destroy":
-    return f"/{model.name.lower()}/:id"
+    return f"/{model.plural.lower()}/:id"
   else:
     return ""
 
@@ -244,6 +247,26 @@ def generator(builder_data):
     app_page.write_out_file()
     app_page.close_files()
 
+    home_page = HomePage(project)
+    home_page.write_out_file()
+    home_page.close_files()
+
+    json_config = ConfigJsonPage(project)
+    json_config.write_out_file()
+    json_config.close_files()
+
+    src_index = SrcIndexPage(project)
+    src_index.write_out_file()
+    src_index.close_files()
+
+    index_css = SrcIndexCss(project)
+    index_css.write_out_file()
+    index_css.close_files()
+
+    app_css = AppCss(project)
+    app_css.write_out_file()
+    app_css.close_files()
+
     if project.auth_object:
       os.chdir('./auth')
       private_route = PrivateRoutePage(project, project.auth_object)
@@ -281,11 +304,6 @@ def generator(builder_data):
       auth_header.close_files()
 
     os.chdir(CLIENT_PATH)
-    os.chdir("./src")
-    json_config = ConfigJsonPage(project)
-    json_config.write_out_file()
-    json_config.close_files()
-    os.chdir(CLIENT_PATH)
 
     os.chdir('./src/hooks')
     use_api = UseApiPage(project)
@@ -315,6 +333,10 @@ def generator(builder_data):
       form_page = ValidatedFormPage(project, model)
       form_page.write_out_file()
       form_page.close_files()
+
+      export_index = ExportIndexPage(project, model)
+      export_index.write_out_file()
+      export_index.close_files()
       os.chdir('..')
 
 

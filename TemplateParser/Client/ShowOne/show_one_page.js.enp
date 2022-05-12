@@ -11,11 +11,15 @@ import configData from '../../config.json'
 export default function <$= self.model.name $>Show(props) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { result: <$= camel_case(self.model.name) $>, loading, error, refresh } = useApi(`${configData.SERVER_URL}/$$name$$/${id}`);
+  const { result: <$= f"{camel_case(self.model.name)}, loading, error, refresh }} = useApi(`${{configData.SERVER_URL}}/{self.model.plural.lower()}" $>/${id}`);
   $$MANY_TO_MANY:0
 
+  /*
+   * Delete $$name$$
+   */
   function handleDelete() {
-    axios.delete(`${configData.SERVER_URL}/$$name$$/${id}`<$= ", { headers: authHeader() }" if self.project.auth_object else "" $>);
+    <$= f"axios.delete(`${{configData.SERVER_URL}}/{self.model.plural.lower()}/${{id}}`{', { headers: authHeader() }' if self.project.auth_object else ''}" $>);
+    axios.delete(`${configData.SERVER_URL}/$$names$$/${id}`<$= ", { headers: authHeader() }" if self.project.auth_object else "" $>);
     navigate('/$$pluralname$$');
   }
 
@@ -23,7 +27,7 @@ export default function <$= self.model.name $>Show(props) {
 
   if (error) {
     return <div>Error: {error.message}</div>;
-  } else if (loading || !$$name$$) {
+  } else if (loading || !$$nameCamel$$) {
     return <CircularProgress />;
   } else {
     return (
@@ -33,7 +37,7 @@ export default function <$= self.model.name $>Show(props) {
 
           {/* EDIT */}
           <Button variant="outlined" style={{marginRight: 15}}
-            onClick={() => navigate(`/$$name$$/${id}/edit`)}>edit
+            onClick={() => navigate(`/$$pluralname$$/${id}/edit`)}>edit
           </Button>
 
           {/* DELETE */}
@@ -48,8 +52,8 @@ export default function <$= self.model.name $>Show(props) {
         <$ for many_model, alias in self.model.one_to_many $>
         {/* <$= f"{title_space_case(self.model.name)} {title_space_case(alias)}" $> */}
         <h3><$= title_space_case(alias) $></h3>
-        <!-- ex. `/user/${id}/posts/new` -->
-        <Link to={`/<$= f"{self.model.name.lower()}/${{id}}/{alias.lower()}/new" $>`}>
+        <!-- ex. `/users/${id}/posts/new` -->
+        <Link to={`/<$= f"{self.model.plural.lower()}/${{id}}/{alias.lower()}/new" $>`}>
           <button>New <$= singularize(alias) $></button>  
         </Link>    
 
@@ -67,7 +71,40 @@ export default function <$= self.model.name $>Show(props) {
         </ul> 
 
         <$ end $>
-        $$MANY_TO_MANY:2
+        
+        <!-- MANY TO MANY DISPLAY -->
+        <$ for many_model, alias in self.model.many_to_many $>
+        {/* <$= title_space_case(alias) $>*/}
+        <div className='displayContainer'>
+					<h3><$= title_space_case(alias) $></h3>
+
+					<div className='row'>
+						<TextField
+							label='course id' size='small' style={{marginRight: 10}}
+							onChange={(e) => { set<$= pascal_case(singularize(alias)) $>Id(e.target.value) }}
+						/>
+						<Button 
+              variant='contained' 
+              onClick={add<$= pascal_case(singularize(alias)) $>}
+            >
+              Add <$= title_space_case(singularize(alias)) $>
+            </Button>
+					</div>
+
+					<ul>
+          {<$= f"{camel_case(self.model.name)}.{camel_case(alias)} && {camel_case(self.model.name)}.{camel_case(alias)}.map(({camel_case(singularize(alias))}, i) => (" $>
+						<div className='listItem' key={i}>
+							<li>{<$= camel_case(singularize(alias)) $>._id}</li>
+							<ButtonGroup variant='outlined' size='small'>
+								<Button onClick={() => <$= f"navigate(`/{many_model.plural.lower()}/${{{camel_case(singularize(alias))}}}._id`)" $>}>show</Button>
+                <Button color='error' onClick={() => <$= f"drop{pascal_case(singularize(alias))}({camel_case(singularize(alias))}._id)" $>}>drop</Button>
+							</ButtonGroup>
+						</div>
+					))}
+					</ul>
+				</div>
+
+        <$ end $>
       </div>
     );
   }

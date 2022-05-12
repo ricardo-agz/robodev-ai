@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import authHeader from '../services/auth-header';
-import configData from "./config.json";
+import configData from '../config.json';
 
 export default function useFind$$Name$$() {
   const [$$nameCamel$$, set$$Name$$] = useState(null);

@@ -64,7 +64,7 @@ export default function ValidatedForm(props) {
 
         {/* SUBMIT */}
         <Button variant="contained" onClick={validate}>
-          {isLoading ? "loading..." : submit}
+          {isLoading ? "loading..." : "submit"}
         </Button>
       </Stack>
 

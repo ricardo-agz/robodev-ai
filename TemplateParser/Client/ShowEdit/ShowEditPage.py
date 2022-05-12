@@ -66,7 +66,7 @@ class ShowEditPage(TemplateParser):
         """
         insert = [
           f"{tabs}<ValidatedForm\n",
-          f"{tabs}\tmodel={{{self.model.name.lower()}}}\n",
+          f"{tabs}\tmodel={{{camel_case(self.model.name)}}}\n",
           f"{tabs}\tloading={{editLoading}}\n",
           f"{tabs}\tsubmit={{({sub_str}) =>\n",
           f"{tabs}\t\thandleSubmit({sub_str})\n",

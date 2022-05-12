@@ -54,15 +54,15 @@ class Route:
         out.append(f"{tabs}\telement={{ <PrivateRoute component={{<{model.plural} />}} />}}\n")
         out.append(f"{tabs}/>\n")
       elif self.name == "show":
-        out.append(f"{tabs}\tpath='/{model.name.lower()}/:id'\n")
+        out.append(f"{tabs}\tpath='/{model.plural.lower()}/:id'\n")
         out.append(f"{tabs}\telement={{ <PrivateRoute component={{<{model.name}Show />}} />}}\n")
         out.append(f"{tabs}/>\n")
       elif self.name == "create":
-        out.append(f"{tabs}\tpath='/{model.name.lower()}/new'\n")
+        out.append(f"{tabs}\tpath='/{model.plural.lower()}/new'\n")
         out.append(f"{tabs}\telement={{ <PrivateRoute component={{<{model.name}New />}} />}}\n")
         out.append(f"{tabs}/>\n")
       elif self.name == "update":
-        out.append(f"{tabs}\tpath='/{model.name.lower()}/:id/edit'\n")
+        out.append(f"{tabs}\tpath='/{model.plural.lower()}/:id/edit'\n")
         out.append(f"{tabs}\telement={{ <PrivateRoute component={{<{model.name}Edit />}} />}}\n")
         out.append(f"{tabs}/>\n")
 
@@ -70,10 +70,10 @@ class Route:
       if self.name == "index":
         out.append(f"{tabs}<Route path='/{model.plural.lower()}' element={{<{model.plural} />}} />\n")
       elif self.name == "show":
-        out.append(f"{tabs}<Route path='/{model.name.lower()}/:id' element={{<{model.name}Show />}} />\n")
+        out.append(f"{tabs}<Route path='/{model.plural.lower()}/:id' element={{<{model.name}Show />}} />\n")
       elif self.name == "create":
-        out.append(f"{tabs}<Route path='/{model.name.lower()}/new' element={{<{model.name}New />}} />\n")
+        out.append(f"{tabs}<Route path='/{model.plural.lower()}/new' element={{<{model.name}New />}} />\n")
       elif self.name == "update":
-        out.append(f"{tabs}<Route path='/{model.name.lower()}/:id/edit' element={{<{model.name}Edit />}} />\n")
+        out.append(f"{tabs}<Route path='/{model.plural.lower()}/:id/edit' element={{<{model.name}Edit />}} />\n")
 
     return out

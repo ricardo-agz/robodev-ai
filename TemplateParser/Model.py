@@ -61,8 +61,8 @@ class Model:
     self.name = pascal_case(name.strip())
     self.plural = pluralize(self.name)
     self.schema = schema
-    self.has_many = [tuple(x) for x in has_many]
-    self.belongs_to = [tuple(x) for x in belongs_to]
+    self.has_many = [(camel_case(model), camel_case(alias)) for model, alias in has_many]
+    self.belongs_to = [(camel_case(model), camel_case(alias)) for model, alias in belongs_to]
     self.one_to_many = []
     self.many_to_many = []
     self.self_many = self.set_self_referencing()

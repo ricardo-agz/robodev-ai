@@ -65,7 +65,6 @@ class ShowNewPage(TemplateParser):
         """
         insert = [
           f"{tabs}<ValidatedForm\n",
-          f"{tabs}\tmodel={{{self.model.name.lower()}}}\n",
           f"{tabs}\tloading={{loading}}\n",
           f"{tabs}\tsubmit={{({sub_str}) =>\n",
           f"{tabs}\t\thandleSubmit({sub_str})\n",

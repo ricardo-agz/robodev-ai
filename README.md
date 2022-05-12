@@ -114,7 +114,7 @@ ex. ShowEdit
       ```
 
 ### generator.py
-Overarching function that expecutes everithing and builds out the project
+Overarching function that expecutes everything and builds out the project
 - Takes in `builder_data` : JSON data provided by builder frontend
   - examples in `builder_output_test1.json`
   - `builder_output_test2.json` is slightly off, don't use yet
