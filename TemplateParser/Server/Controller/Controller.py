@@ -39,7 +39,7 @@ class ControllerPage(TemplateParser):
     for many_name, alias in self.model.get_has_many():
       many_model = self.project.model_from_name(many_name)
       many_params = many_model.get_display_params()
-      out.append(f"\t\t\t\t.populate({{ path: '{alias.lower()}', select: '{many_params}' }})\n")
+      out.append(f"\t\t\t\t.populate({{ path: '{camel_case(alias)}', select: '{many_params}' }})\n")
     return out
 
 
@@ -52,6 +52,32 @@ class ControllerPage(TemplateParser):
         if new_l[1].strip() == "ONE" and len(self.model.has_many) > 0:
           insert = self.add_populate()
           self.out_lines = self.out_lines + insert
+
+      elif "$$CREATE_DECLARATIONS$$" in line:
+        """
+        const { name, username, age, } = req.body;
+        const user = new UserModel({ name: name, username: username, age: age, });
+        """
+        line_1 = "\t\tconst { "
+        for param in self.model.schema:
+          line_1 += f"{param['name']}, "
+        line_1 += "} = req.body;\n"
+        self.out_lines.append(line_1)
+
+        line_2 = f"\t\tconst {camel_case(self.model.name)} = new {self.model.name}({{ "
+        for param in self.model.schema:
+          line_2 += f"{param['name']}: {param['name']}, "
+        line_2 += "});\n"
+        self.out_lines.append(line_2)
+
+      elif "$$UPDATE_PARAMS$$" in line:
+        """
+        name: req.body.name,
+        username: req.body.username,
+        """
+        for param in self.model.schema:
+          p_name = param['name']
+          self.out_lines.append(f"\t\t\t{p_name}: req.body.{p_name},\n")
 
       elif "$$MANY_TO_MANY" in line:
         if len(self.model.get_many_to_many()) > 0:
@@ -79,75 +105,7 @@ class ControllerPage(TemplateParser):
 
       else:
         self.out_lines.append(line)
-
-
-  '''
-  def parse_file(self):
-    new_lines = [x for x in self.lines]
-    j = 0
-    for i in range(len(self.lines)):
-      line = self.lines[i]
-
-      #----- MODEL RELATIONSHIPS -----
-      if "$$ONE_TO_MANY" in line:
-        new_l = line.split(":")
-        if new_l[1].strip() == "ONE" and len(self.model.has_many) > 0:
-          insert = self.add_populate()
-          new_lines = append_at_index(new_lines, insert, j)
-          j += len(insert)
-
-      elif "$$MANY_TO_MANY" in line:
-        if len(self.model.get_many_to_many()) > 0:
-          for many_model, alias in self.model.get_many_to_many():
-            sub_in_f = "add_drop_many.txt"
-            insert = self.add_snip_dynamic(sub_in_f, many_model, alias)
-            new_lines = append_at_index(new_lines, insert, j)
-            j += len(insert)
-
-      #----- AUTH -----
-      elif "$$AUTH$$:0" in line:
-        if self.model.auth:
-          insert = [
-            'const jwt = require("jsonwebtoken");\n',
-            'const bcrypt = require("bcrypt");\n',
-            "require('dotenv').config();\n"
-          ]
-          new_lines = append_at_index(new_lines, insert, j)
-          j += len(insert)
-          
-      elif "$$AUTH$$:1" in line:
-        if self.model.auth:
-          auth_f = "server_auth.txt"
-          insert = self.add_snip_dynamic(auth_f)
-          new_lines = append_at_index(new_lines, insert, j)
-          j += len(insert)
-
-      #----- ROUTE LOGIC -----
-      # elif "$$logic$$" in line:
-      #   aroute = line.split(":")[1].strip()
-      
-      #   if aroute in route_dict:
-      #     logic = model["route"][route_dict[aroute]]["logic"]
-      #     logic = str(logic).replace("\\n", "\n").replace("\\t", "\t").split('\n')
-      #     for a in logic:
-      #       if "hide" in a:
-      #         start = a.find("hide")
-      #         substring = a[start:]
-      #         substring = substring.split("=")
-      #         substring = substring[1].split(",")
-      #         for i, sub in enumerate(substring):
-      #           if(i == 0):
-      #             out_f.write("\n")
-      #           out_f.write("\t\t\t"+a[0:start].replace("\n", "\n").replace('\t', "\t") + "data." + sub + " = undefined;\n")
-      #       elif "error" in a:
-      #         start = a.find("error")
-      #         substring = a[start:].split("=")[1]
-      #         # out_f.write("\n\t\t\t" + a[0:start] + "res.status(500).send('" + substring + "')\n")
-      #         out_f.write("\n\t\t\t" + a[0:start] + "return res.status(500).send({ message: '" + substring + "' });\n")
-      #       else:
-      #         out_f.write("\t\t\t" + a)
-      #   out_f.write("\n")  
-  '''
+        
 
   def add_controller_declarations(self):
     """

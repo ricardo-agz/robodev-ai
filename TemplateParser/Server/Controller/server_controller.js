@@ -63,10 +63,10 @@ const $$Name$$Controller = {
   },
 
   create: async (req, res) => {
-    $$dynamic:0
+    $$CREATE_DECLARATIONS$$
     try {
       $$logic$$:create
-      await $$name$$.save();
+      await $$nameCamel$$.save();
       res.status(200).send('data created!');
       console.log('$$Name$$ created!');
     } catch (err) {
@@ -81,7 +81,7 @@ const $$Name$$Controller = {
     $$logic$$:update
     $$Name$$.findByIdAndUpdate(id, 
     {
-      $$dynamic:1
+      $$UPDATE_PARAMS$$
     },
     (err, data) => {
       if (err) {

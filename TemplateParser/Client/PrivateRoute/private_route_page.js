@@ -1,16 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
 import { $$Name$$Context } from '../hooks/$$Name$$Context';
 
 export default function PrivateRoute({ component }) {
   const [loading, setLoading] = useState(true);
-  const { auth$$Name$$ } = useContext($$Name$$Context);
-
-  useEffect(() => {
-    setLoading(false)
-  }, [auth$$Name$$])
+  const { auth$$Name$$, authLoading } = useContext($$Name$$Context);
 
   if (auth$$Name$$) return component
-  else if (loading) return <div>loading ...</div>
+  else if (authLoading) return <CircularProgress />;
   else return <Navigate to="/login" />
 }

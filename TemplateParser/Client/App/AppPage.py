@@ -39,10 +39,10 @@ class AppPage(TemplateParser):
 
       elif "$$USE_FIND$$" in line:
         self.out_lines.append(\
-          f"\tconst {{ {camel_case(name)}, set{name} }} = useFind{name}();\n\n")
+          f"\tconst {{ {camel_case(name)}, set{name}, loading }} = useFind{name}();\n\n")
 
       elif "$$CONTEXT_PROVIDER$$" in line:
-        self.out_lines.append(f"\t\t<{name}Context.Provider value={{{{ auth{name}: {camel_case(name)}, setAuth{name}: set{name} }}}}>\n")
+        self.out_lines.append(f"\t\t<{name}Context.Provider value={{{{ auth{name}: {camel_case(name)}, setAuth{name}: set{name}, authLoading: loading }}}}>\n")
       
       elif "$$NAV$$" in line:
         self.out_lines.append("\t\t\t<Nav/>\n")
@@ -95,6 +95,9 @@ class AppPage(TemplateParser):
       out.append(f"\n\t\t\t\t{{/* {model.name} */}}\n")
       for route in model.get_frontend_routes():
         out = out + route.get_frontend_page_component(model)
+
+      for child_model, alias in model.one_to_many:
+        out += f"<Route path='/{model.plural.lower()}/:id/{alias.lower()}/new' element=<{child_model.name}New /> />"
     return out
 
   

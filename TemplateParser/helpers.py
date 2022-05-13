@@ -20,8 +20,14 @@ def camel_case(s):
     return s[0].lower() + s[1:]
 
 def title_space_case(s):
-  str = sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', s)
-  return str[0].upper() + str[1:]
+  if "_" in s:
+    s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
+    s = sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', s)
+    fst = s[0].upper()
+    return fst + ''.join([s[0].lower(), s[1:]])[1:]
+  else:
+    s = sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', s)
+    return s[0].upper() + s[1:]
 
 def camel_to_snake(name):
   name = sub('(.)([A-Z][a-z]+)', r'\1_\2', name)

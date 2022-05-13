@@ -1,6 +1,6 @@
   add$$SingleAlias$$: async (req, res) => {
     const { id, $$manyname$$Id } = req.params;
-    $$Name$$Model.findByIdAndUpdate(
+    $$Name$$.findByIdAndUpdate(
       id, 
       { $push: { $$alias$$: $$manyname$$Id } },
       (err, data) => {
@@ -17,7 +17,7 @@
 
   drop$$SingleAlias$$: async (req, res) => {
     const { id, $$manyname$$Id } = req.params;
-    $$Name$$Model.findByIdAndUpdate(
+    $$Name$$.findByIdAndUpdate(
       id, 
       { $pull: { $$alias$$: $$manyname$$Id } },
       (err, data) => {

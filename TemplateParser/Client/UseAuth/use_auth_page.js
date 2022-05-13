@@ -13,12 +13,13 @@ export default function useAuth() {
   const set$$Name$$Context = () => {
     const auth = JSON.parse(localStorage.getItem('auth'));
     if (auth) {
-      axios.get(`${configData.SERVER_URL}/$$name$$/${auth.id}`, 
+      axios.get(`${configData.SERVER_URL}/<$= self.model.plural.lower() $>/${auth.id}`, 
         { headers: authHeader() })
         .then(r => {
           setAuth$$Name$$(r.data);
         })
         .catch(err => {
+          setAuth$$Name$$(null);
           setError(err.response.data);
         });
       navigate('../');

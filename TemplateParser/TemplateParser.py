@@ -223,6 +223,9 @@ class TemplateParser:
     if "$$pluralname$$" in line:
       line = line.replace("$$pluralname$$", self.model.plural.lower())
       out = True
+    if "$$names$$" in line:
+      line = line.replace("$$names$$", self.model.plural.lower())
+      out = True
     if "$$PluralName$$" in line:
       line = line.replace("$$PluralName$$", self.model.plural)
       out = True
