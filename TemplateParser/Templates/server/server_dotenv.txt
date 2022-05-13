@@ -1,2 +1,0 @@
-DB_CONNECTION = "$$MONGOSTR$$"
-JWT_SECRET = "pleasechange"

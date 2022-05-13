@@ -1,4 +1,5 @@
 import os
+import shutil
 from TemplateParser.Model import Model
 from TemplateParser.Project import Project
 from TemplateParser.Route import Route
@@ -338,6 +339,13 @@ def generator(builder_data):
       export_index.write_out_file()
       export_index.close_files()
       os.chdir('..')
+
+    os.chdir(ROOT_DIR)
+    shutil.make_archive(project_name, 'zip', project_name)
+    shutil.rmtree(project_name)
+
+    print(f"Neutrino Task: {project_name}")
+    return project_name
 
 
   # except Exception as e:
