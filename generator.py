@@ -341,7 +341,7 @@ def generator(builder_data):
       os.chdir('..')
 
     os.chdir(ROOT_DIR)
-    shutil.make_archive(project_name, 'zip', project_name)
+    shutil.make_archive(f"neutrino_project_{project_name}", 'zip', project_name)
     shutil.rmtree(project_name)
 
     print(f"Neutrino Task: {project_name}")
