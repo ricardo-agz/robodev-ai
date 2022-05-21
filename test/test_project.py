@@ -114,4 +114,92 @@ class TestProject(unittest.TestCase):
     self.assertEqual(expected1, actual1)
     self.assertEqual(expected2, actual2)
 
+  def test_undefined_relation_warning(self):
+    user_schema = [
+      {'name': 'username', 'type': 'String', 'required': True},
+    ]
+    post_schema = [
+      {'name': 'content', 'type': 'Text', 'required': True},
+    ]
+    user = \
+      Model(
+        name='user', 
+        schema=user_schema, 
+        has_many=[('user', 'friends'), ('post', 'posts')]
+      )
+    post = \
+      Model(
+        name='post', 
+        schema=post_schema, 
+      )
+    project = \
+      Project(
+        "test_project",
+        models=[user, post],
+        auth_object='user',
+        email="test@email.co"
+      )
+
+    self.assertEqual(1, len(project.warnings))
+    self.assertEqual("Undefined Relationship", project.warnings[0]['type'])
+
+  def test_repeated_model_name_warning(self):
+    user_schema = [
+      {'name': 'username', 'type': 'String', 'required': True},
+    ]
+    user = \
+      Model(
+        name='user', 
+        schema=user_schema, 
+        has_many=[('user', 'friends')]
+      )
+    user2 = \
+      Model(
+        name='user', 
+        schema=user_schema, 
+      )
+    project = \
+      Project(
+        "test_project",
+        models=[user, user2],
+        auth_object='user',
+        email="test@email.co"
+      )
+      
+    self.assertEqual(1, len(project.warnings))
+    self.assertEqual("Invalid Model", project.warnings[0]['type'])
+
+  def test_multiple_warning(self):
+    user_schema = [
+      {'name': 'username', 'type': 'String', 'required': True},
+    ]
+    post_schema = [
+      {'name': 'content', 'type': 'Text', 'required': True},
+    ]
+    user = \
+      Model(
+        name='user', 
+        schema=user_schema, 
+        has_many=[('user', 'friends'), ('post', 'posts')]
+      )
+    user2 = \
+      Model(
+        name='user', 
+        schema=user_schema,
+      )
+    post = \
+      Model(
+        name='post', 
+        schema=post_schema, 
+      )
+    project = \
+      Project(
+        "test_project",
+        models=[user, user2, post],
+        auth_object='user',
+        email="test@email.co"
+      )
+
+    self.assertEqual(2, len(project.warnings))
+
 

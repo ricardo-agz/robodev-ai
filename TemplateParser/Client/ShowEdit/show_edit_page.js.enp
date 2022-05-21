@@ -9,11 +9,16 @@ import { CircularProgress } from '@mui/material';
 import configData from '../../config.json'
 
 export default function $$Name$$Edit() {
-	const { id } = useParams();
   const navigate = useNavigate();
-  <$= f"const {{ result: {camel_case(self.model.name)}, loading: {camel_case(self.model.name)}Loading, error: fetchError, refresh }} = useApi(`${{configData.SERVER_URL}}/{self.model.plural.lower()}/${{id}}`);" $>
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
+  const { id } = useParams();
+  const {
+    result: $$nameCamel$$,
+    loading: $$nameCamel$$Loading,
+    error: fetchError,
+    refresh
+  } = useApi(`${configData.SERVER_URL}/$$pluralname$$/${id}`);
 
   <!-- // const handleSubmit = (name, username, age) => { -->
 	$$HANDLE_SUBMIT$$

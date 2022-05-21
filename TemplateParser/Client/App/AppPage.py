@@ -27,27 +27,36 @@ class AppPage(TemplateParser):
 
   def parse_file(self):
     for line in self.lines:
-      name = self.project.auth_object.name
+      name = self.project.auth_object.name if self.project.auth_object else None
 
       if "$$DYNAMIC_IMPORTS$$" in line:
         insert = self.add_dynamic_imports()
         self.out_lines = self.out_lines + insert
 
-      elif "$$AUTH_IMPORTS$$" in line:
+      elif "$$AUTH_IMPORTS$$" in line and self.project.auth_object:
         insert = self.add_auth_imports()
         self.out_lines = self.out_lines + insert
 
-      elif "$$USE_FIND$$" in line:
+      elif "$$USE_FIND$$" in line and self.project.auth_object:
         self.out_lines.append(\
           f"\tconst {{ {camel_case(name)}, set{name}, loading }} = useFind{name}();\n\n")
 
-      elif "$$CONTEXT_PROVIDER$$" in line:
-        self.out_lines.append(f"\t\t<{name}Context.Provider value={{{{ auth{name}: {camel_case(name)}, setAuth{name}: set{name}, authLoading: loading }}}}>\n")
+      elif "$$CONTEXT_PROVIDER$$" in line and self.project.auth_object:
+        new_lines = [
+          f"\t\t<{name}Context.Provider\n",
+          "\t\t\tvalue={{\n",
+          f"\t\t\t\tauth{name}: {camel_case(name)},\n",
+          f"\t\t\t\tsetAuth{name}: set{name},\n",
+          f"\t\t\t\tauthLoading: loading\n",
+          "\t\t\t}}>\n"
+        ]
+        self.out_lines += new_lines
+        # self.out_lines.append(f"\t\t<{name}Context.Provider value={{{{ auth{name}: {camel_case(name)}, setAuth{name}: set{name}, authLoading: loading }}}}>\n")
       
       elif "$$NAV$$" in line:
         self.out_lines.append("\t\t\t<Nav/>\n")
 
-      elif "$$AUTH_ROUTES$$" in line:
+      elif "$$AUTH_ROUTES$$" in line and self.project.auth_object:
         self.out_lines.append("\n\t\t\t\t{/* AUTH */}\n")
         self.out_lines.append("\t\t\t\t<Route path='/login' element={<Login />} />\n")
         self.out_lines.append(f"\t\t\t\t<Route path='/register' element={{<{name}New />}} />\n")
@@ -56,7 +65,7 @@ class AppPage(TemplateParser):
         insert = self.add_dynamic_routes()
         self.out_lines = self.out_lines + insert
 
-      elif "$$CLOSE_CONTEXT_PROVIDER$$" in line:
+      elif "$$CLOSE_CONTEXT_PROVIDER$$" in line and self.project.auth_object:
         self.out_lines.append(f"\t\t</{self.project.auth_object.name}Context.Provider>\n")
 
       else:
@@ -97,7 +106,7 @@ class AppPage(TemplateParser):
         out = out + route.get_frontend_page_component(model)
 
       for child_model, alias in model.one_to_many:
-        out += f"<Route path='/{model.plural.lower()}/:id/{alias.lower()}/new' element=<{child_model.name}New /> />"
+        out += f"\t\t\t\t<Route path='/{model.plural.lower()}/:id/{alias.lower()}/new' element={{<{child_model.name}New />}} />"
     return out
 
   

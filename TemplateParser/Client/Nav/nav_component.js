@@ -13,7 +13,7 @@ export default function Nav() {
       {auth$$Name$$ ?
         <div className='row'>
           <div 
-            onClick={() => navigate(`/users/${auth$$Name$$._id}`)}
+            onClick={() => navigate(`/$$pluralname$$/${auth$$Name$$._id}`)}
             className='clickable'>hi {auth$$Name$$.username}</div>
           <div 
             onClick={logout}

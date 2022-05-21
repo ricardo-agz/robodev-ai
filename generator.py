@@ -35,7 +35,7 @@ from TemplateParser.Server.Middlewares.MiddlewaresPage import MiddlewaresPage
 from TemplateParser.Server.PackageJSON.PackageJSONPage import PackageJSONPage
 from TemplateParser.Server.Readme.ReadmePage import ReadmePage
 from TemplateParser.Server.Routes.RoutesPage import RoutesPage
-from TemplateParser.helpers import camel_case, camel_to_snake
+from TemplateParser.helpers import camel_case, camel_to_snake, pascal_case
 
 def get_method_from_route(route : str) -> str:
   """
@@ -109,6 +109,56 @@ def create_directories(
   os.mkdir("./models")          # Create models folder
   os.mkdir("./config")          # Create config folder
   os.mkdir("./routes")          # Create routes folder
+
+
+def project_from_builder_data(builder_data):
+  project_name = camel_to_snake(builder_data['project_name'])
+  db_params = builder_data['db_params']
+  auth_model_name = pascal_case(builder_data['auth_object'])
+  mongostr = builder_data['mongostr']
+  server_port = builder_data['server_port']
+  email = builder_data['email']
+
+  # PARSING MODELS
+  models = []
+  for model in db_params:
+    model_obj = Model(
+      name = model['model_name'],
+      schema = model['schema'],
+      has_many = model['has_many'],
+      belongs_to = model['belongs_to'],
+      auth = model['auth'] if 'auth' in model else False
+    )
+
+    # PARSING ROUTES
+    routes = []
+    for route in model['routes']:
+      route_obj = Route(
+        name = route['route'], 
+        method = route['method'] if 'method' in route else get_method_from_route(route['route']), 
+        path = route['path'] if 'path' in route else get_path_from_route(route['route'], model_obj), 
+        model = model_obj, 
+        middleware = route['middleware'],
+        protected = True if route['middleware'].strip() == "verifyJWT" else False
+      )
+      routes.append(route_obj)
+
+    model_obj.set_routes(routes)
+    models.append(model_obj)
+
+  # CREATE PROJECT
+  project = Project(
+    project_name = project_name,
+    models = models,
+    auth_object = auth_model_name,
+    email = email,
+    server_port = server_port,
+    mongostr = mongostr,
+    styled = False,
+    avoid_exceptions = True
+  )
+
+  return project
 
 
 def generator(builder_data):
@@ -345,9 +395,7 @@ def generator(builder_data):
     shutil.rmtree(project_name)
 
     print(f"Neutrino Task: {project_name}")
-    return project_name
-
+    return { "succeeded": True, "project": project_name }
 
   # except Exception as e:
-  #   print("Something went wrong:/")
-  #   print(e)
+  #   return { "succeeded": False, "error": e }

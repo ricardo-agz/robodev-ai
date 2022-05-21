@@ -296,3 +296,10 @@ class TemplateParser:
     for line in self.out_lines:
       if "$$" not in line:
         self.out_f.write(line)
+
+  def to_string(self):
+    out_str = ""
+    for line in self.out_lines:
+      if "$$" not in line:
+        out_str += line.replace("\t", "  ")
+    return out_str
