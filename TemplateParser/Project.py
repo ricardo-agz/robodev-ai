@@ -72,27 +72,35 @@ class Project:
 
   def parse_warnings(self) -> None:
     model_names = []
+
     for model in self.models:
-      model_names.append(model.name)
       """
-      Warning: Model has no params
+      Error: Model has no params
       """
       if len(model.schema) == 0:
+        severity = "Error"
         warning_type = "Invalid Model"
         warning_mssg = f"{model.name} has no params"
 
-        self.warnings.append({"type": warning_type, "message": warning_mssg})
+        self.warnings.append({"type": warning_type, "message": warning_mssg, "severity": severity})
 
       """
-      Warning: Multiple models with the same name
+      Error: Multiple models with the same name
       """
-      if model.name in model_names:
+      if model.name.lower() in model_names:
         severity = "Error"
         warning_type = "Invalid Model"
         warning_mssg = f"Model names must be unique. Multiple models with the name {model.name}"
 
         self.warnings.append({"type": warning_type, "message": warning_mssg, "severity": severity})
 
+      for param in model.schema:
+        if param['name'].lower() == "id" or param['name'].lower() == "_id":
+          warning_type = "Unneccessary param"
+          warning_mssg = f"Mongoose automatically adds an _id parameter, {param['name']} may cause bugs"
+
+          self.warnings.append({"type": warning_type, "message": warning_mssg})
+      
       model_names.append(model.name.lower())
 
     """
@@ -118,9 +126,13 @@ class Project:
     Returns true if the project contains at least 1 warning with 'error' severity
     This prevents a failed build from executing
     """
+    errors = []
     for warning in self.warnings:
       if "severity" in warning and warning['severity'] == "Error":
-        return True
+        errors.append(warning)
+    if len(errors) > 0:
+      return errors
+
     return False
 
 

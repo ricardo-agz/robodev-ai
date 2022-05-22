@@ -24,6 +24,9 @@ class Route:
       self.pagination = pagination
       self.alias = alias
 
+      if self.logic != "":
+        print(f"THIS ROUTE HAS LOGIC: {self.logic}")
+
   def get_logic(self):
     return self.logic
 

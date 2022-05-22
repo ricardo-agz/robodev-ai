@@ -188,7 +188,10 @@ def add_task():
       # DON'T CREATE PROJECT FOLDER IF BUILD WILL FAIL (only catches known errors)
       project = generator.project_from_builder_data(data)
       if project.contains_fatal_errors():
-        return jsonify({"message": "Project contains errors, build will fail"}), 400
+        return jsonify({
+          "message": "Project contains errors, build will fail",
+          "errors": project.contains_fatal_errors()
+        }), 400
 
       build = generator.generator(data)
     
@@ -197,7 +200,7 @@ def add_task():
       return jsonify({"message": "Project build failed unexpectedly"}), 400
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    attachment = send_from_directory(dir_path,"neutrino_project_"+data["project_name"] + ".zip", as_attachment=True)
+    attachment = send_from_directory(dir_path,"neutrino_project_" + data["project_name"] + ".zip", as_attachment=True)
 
     return attachment, 200
       

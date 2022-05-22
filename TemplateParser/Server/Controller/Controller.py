@@ -42,6 +42,11 @@ class ControllerPage(TemplateParser):
       out.append(f"\t\t\t\t.populate({{ path: '{camel_case(alias)}', select: '{many_params}' }})\n")
     return out
 
+  def get_route(self, name: str):
+    for route in self.model.routes:
+      if route.name.lower() == name.lower():
+        return route
+    return None
 
   def parse_file(self):
     for line in self.lines:
@@ -102,6 +107,45 @@ class ControllerPage(TemplateParser):
           auth_f = "server_auth.txt"
           insert = self.add_snip_dynamic(auth_f)
           self.out_lines = self.out_lines + insert
+
+      elif "_logic$$" in line:
+        out_logic = []
+        temp = line.strip().split("_")
+        route_name = temp[0].replace("$$", "")
+        route = self.get_route(route_name)
+
+        if route:
+          logic = route.logic
+          logic = logic.replace("\\n", "\n").replace("\\t", "\t").split('\n')
+          print(f"{line}: route_logic: {route.logic}, logic: {str(logic)}")
+
+          for a in logic:
+
+
+
+            if "hide" in a:
+              start = a.find("hide")
+              substring = a[start:]
+              substring = substring.split("=")
+              substring = substring[1].split(",")
+              for i, sub in enumerate(substring):
+                if i == 0:
+                  out_logic.append("\n")
+                out_logic.append("\t\t\t"+a[0:start].replace("\n", "\n").replace('\t', "\t") + "data." + sub + " = undefined;\n")
+            elif "error" in a:
+              start = a.find("error")
+              substring = a[start:].split("=")[1]
+              out_logic.append("\n\t\t\t" + a[0:start] + "return res.status(500).send({ message: '" + substring + "' });\n")
+            else:
+              out_logic.append("\t\t\t" + a)
+          
+          print(f"out_logic: {str(out_logic)}")
+          print("------")
+
+          out_logic += "\n"
+
+          if (route.logic.strip() != ""):
+            self.out_lines += out_logic
 
       else:
         self.out_lines.append(line)

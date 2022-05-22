@@ -9,7 +9,7 @@ const $$Name$$Controller = {
     try {
       const data = await $$Name$$.find()
         $$ONE_TO_MANY:ONE
-        $$logic$$:all
+        $$index_logic$$
       res.status(200).send(data);
     } catch (err) {
       res.status(400).send(err.message);
@@ -19,7 +19,7 @@ const $$Name$$Controller = {
 
   // UNCOMMENT AND FOLLOW INSTRUCTIONS TO ENABLE PAGINATION
   /*
-  all: async (req, res, next) => {
+  index: async (req, res, next) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
     const skipIndex = (page - 1) * limit;
@@ -40,11 +40,11 @@ const $$Name$$Controller = {
   */
 
   /* INSTRUCTIONS
-  in index.js, replace:
-    app.get('/$$name$$s', $$Name$$Controller.all);
+  in server.js, replace:
+    app.get('/$$pluralname$$', $$Name$$Controller.index);
 
   with:
-    app.get('/$$name$$s', $$Name$$Controller.all, (req, res) => {
+    app.get('/$$pluralname$$', $$Name$$Controller.index, (req, res) => {
       res.json(res.paginatedResults.results);
     });
   */
@@ -54,7 +54,7 @@ const $$Name$$Controller = {
     try {
       const data = await $$Name$$.findById(id)
         $$ONE_TO_MANY:ONE
-        $$logic$$:find
+        $$show_logic$$
       res.status(200).send(data);
     } catch (err) {
       res.status(400).send(err.message);
@@ -65,7 +65,7 @@ const $$Name$$Controller = {
   create: async (req, res) => {
     $$CREATE_DECLARATIONS$$
     try {
-      $$logic$$:create
+      $$create_logic$$
       await $$nameCamel$$.save();
       res.status(200).send('data created!');
       console.log('$$Name$$ created!');
@@ -78,7 +78,7 @@ const $$Name$$Controller = {
   update: async (req, res) => {
     const { id } = req.params;
     const data = await $$Name$$.findById(id);
-    $$logic$$:update
+    $$update_logic$$
     $$Name$$.findByIdAndUpdate(id, 
     {
       $$UPDATE_PARAMS$$
@@ -97,7 +97,7 @@ const $$Name$$Controller = {
   delete: async (req, res) => {
     const { id } = req.params;
     const data = await $$Name$$.findById(id);
-    $$logic$$:delete
+    $$destroy_logic$$
     try {
       $$Name$$.findByIdAndDelete(id).exec();
       res.status(200).send('$$Name$$ deleted');

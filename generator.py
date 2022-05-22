@@ -139,6 +139,7 @@ def project_from_builder_data(builder_data):
         path = route['path'] if 'path' in route else get_path_from_route(route['route'], model_obj), 
         model = model_obj, 
         middleware = route['middleware'],
+        logic = route['logic'],
         protected = True if route['middleware'].strip() == "verifyJWT" else False
       )
       routes.append(route_obj)
@@ -190,6 +191,7 @@ def generator(builder_data):
           path = route['path'] if 'path' in route else get_path_from_route(route['route'], model_obj), 
           model = model_obj, 
           middleware = route['middleware'],
+          logic = route['logic'],
           protected = True if route['middleware'].strip() == "verifyJWT" else False
         )
         routes.append(route_obj)
