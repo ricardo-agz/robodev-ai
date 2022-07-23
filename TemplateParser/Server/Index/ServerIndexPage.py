@@ -64,8 +64,8 @@ class ServerIndexPage(TemplateParser):
     const CourseController = require('./controllers/CourseController');
     """
     out = []
-    for model in self.project.models:
-      out.append(f"const {model.name}Controller = require('./controllers/{model.name}Controller');\n")
+    for controller in self.project.controllers:
+      out.append(f"const {controller.name}Controller = require('./controllers/{controller.name}Controller');\n")
     return out
 
 
@@ -78,8 +78,8 @@ class ServerIndexPage(TemplateParser):
     app.delete('/users/:id', UserController.delete)
     """
     out = []
-    for model in self.project.models:
-      for route in model.get_routes():
+    for controller in self.project.controllers:
+      for route in controller.routes:
         out.append(route.get_route_call())
       out.append("\n")
     return out

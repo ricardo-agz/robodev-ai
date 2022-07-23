@@ -1,5 +1,6 @@
 from TemplateParser.Model import Model
 from TemplateParser.Route import Route
+from TemplateParser.Controller import Controller
 from TemplateParser.helpers import camel_case, camel_to_dash, pascal_case, singularize, camel_to_snake
 
 def val_in_tuple_arr(val, tup_arr):
@@ -41,6 +42,7 @@ class Project:
       self,
       project_name : str,
       models : list[Model],
+      controllers: list[Controller],
       auth_object : str,
       email : str,
       server_port : int = 8080,
@@ -51,6 +53,7 @@ class Project:
 
     self.project_name = project_name if project_name != "" else "untitled_project"
     self.models = models
+    self.controllers = controllers
     self.auth_object = self.model_from_name(auth_object) if auth_object else None
     self.server_port = server_port
     self.link = f"http://localhost:{server_port}"
@@ -68,7 +71,6 @@ class Project:
 
   def build_directory(self) -> dict:
     return init_project_structure(self.project_name, self.models, self.auth_object)
-
 
   def parse_warnings(self) -> None:
     model_names = []
@@ -242,19 +244,24 @@ class Project:
         drop_route_name = f"drop{singularize(pascal_case(alias))}" if alias else f"add{many_model.name}"
         many_id = f"{camel_case(many_model.name)}Id"
         add_route = Route(
-          name=add_route_name, 
-          method="post",
-          path=f"/{model.plural.lower()}/:id/{camel_to_dash(add_route_name)}/:{many_id}",
-          model=model
+          handler=add_route_name, 
+          verb="post",
+          url=f"/{model.plural.lower()}/:id/{camel_to_dash(add_route_name)}/:{many_id}",
         )
         drop_route = Route(
-          name=drop_route_name, 
-          method="post", 
-          path=f"/{model.plural.lower()}/:id/{camel_to_dash(drop_route_name)}/:{many_id}",
-          model=model
+          handler=drop_route_name, 
+          verb="post", 
+          url=f"/{model.plural.lower()}/:id/{camel_to_dash(drop_route_name)}/:{many_id}"
         )
-        model.add_route(add_route)
-        model.add_route(drop_route)
+        
+        for controller in self.controllers:
+          if (controller.model_affiliation == model.id):
+            add_route.controller_id = controller.id
+            add_route.controller_name = controller.name
+            drop_route.controller_id = controller.id
+            drop_route.controller_name = controller.name
+            controller.addRoutes(add_route)
+            controller.addRoutes(drop_route)
 
 
 
@@ -269,61 +276,61 @@ def init_project_structure(project_name, models, auth_object=None):
     "name": camel_to_snake(project_name),
     "type": "folder",
     "children": [
-      # CLIENT
-      {
-        "id": "client",
-        "name": "client",
-        "type": "folder",
-        "children": [
-          # SRC
-          {
-            "id": "src",
-            "name": "src",
-            "type": "folder",
-            "children": [
-              # COMPONENTS
-              {
-                "id": "components",
-                "name": "components",
-                "type": "folder",
-                "children": []
-              },
-              # HOOKS
-              {
-                "id": "hooks",
-                "name": "hooks",
-                "type": "folder",
-                "children": [
-                  {
-                    "id": "use_api",
-                    "name": "useApi.js",
-                    "type": "file",
-                  }
-                ]
-              },
-              # PAGES
-              {
-                "id": "pages",
-                "name": "pages",
-                "type": "folder",
-                "children": [
+      # # CLIENT
+      # {
+      #   "id": "client",
+      #   "name": "client",
+      #   "type": "folder",
+      #   "children": [
+      #     # SRC
+      #     {
+      #       "id": "src",
+      #       "name": "src",
+      #       "type": "folder",
+      #       "children": [
+      #         # COMPONENTS
+      #         {
+      #           "id": "components",
+      #           "name": "components",
+      #           "type": "folder",
+      #           "children": []
+      #         },
+      #         # HOOKS
+      #         {
+      #           "id": "hooks",
+      #           "name": "hooks",
+      #           "type": "folder",
+      #           "children": [
+      #             {
+      #               "id": "use_api",
+      #               "name": "useApi.js",
+      #               "type": "file",
+      #             }
+      #           ]
+      #         },
+      #         # PAGES
+      #         {
+      #           "id": "pages",
+      #           "name": "pages",
+      #           "type": "folder",
+      #           "children": [
 
-                ]
-              },
-              {
-                "id": "client_app",
-                "name": "App.js",
-                "type": "file",
-              },
-              {
-                "id": "client_home",
-                "name": "Home.js",
-                "type": "file",
-              },
-            ]
-          }
-        ]
-      },
+      #           ]
+      #         },
+      #         {
+      #           "id": "client_app",
+      #           "name": "App.js",
+      #           "type": "file",
+      #         },
+      #         {
+      #           "id": "client_home",
+      #           "name": "Home.js",
+      #           "type": "file",
+      #         },
+      #       ]
+      #     }
+      #   ]
+      # },
       # SERVER
       {
         "id": "server",
@@ -400,31 +407,31 @@ def init_project_structure(project_name, models, auth_object=None):
     })
 
     show_pages = []
-    for route in model.get_frontend_routes():
-      if route.name == "index":
-        show_pages.append({
-          "id": f"{model.name}_indexpage",
-          "name": f"{pascal_case(model.plural)}.js",
-          "type": "file"  
-        })
-      elif route.name == "show":
-        show_pages.append({
-          "id": f"{model.name}_showpage",
-          "name": f"{pascal_case(model.name)}Show.js",
-          "type": "file"  
-        })
-      elif route.name == "create":
-        show_pages.append({
-          "id": f"{model.name}_createpage",
-          "name": f"{pascal_case(model.name)}New.js",
-          "type": "file"  
-        })
-      elif route.name == "update":
-        show_pages.append({
-          "id": f"{model.name}_updatepage",
-          "name": f"{pascal_case(model.name)}Edit.js",
-          "type": "file"  
-        })
+    # for route in model.get_frontend_routes():
+    #   if route.name == "index":
+    #     show_pages.append({
+    #       "id": f"{model.name}_indexpage",
+    #       "name": f"{pascal_case(model.plural)}.js",
+    #       "type": "file"  
+    #     })
+    #   elif route.name == "show":
+    #     show_pages.append({
+    #       "id": f"{model.name}_showpage",
+    #       "name": f"{pascal_case(model.name)}Show.js",
+    #       "type": "file"  
+    #     })
+    #   elif route.name == "create":
+    #     show_pages.append({
+    #       "id": f"{model.name}_createpage",
+    #       "name": f"{pascal_case(model.name)}New.js",
+    #       "type": "file"  
+    #     })
+    #   elif route.name == "update":
+    #     show_pages.append({
+    #       "id": f"{model.name}_updatepage",
+    #       "name": f"{pascal_case(model.name)}Edit.js",
+    #       "type": "file"  
+    #     })
     project_structure['children'][0]['children'][0]['children'][2]['children'].append({
       "id": f"{model.name}_folder",
       "name": f"{camel_case(model.name)}",

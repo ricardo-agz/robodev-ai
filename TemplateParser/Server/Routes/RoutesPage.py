@@ -51,15 +51,17 @@ class RoutesPage(TemplateParser):
         self.out_lines.append(line)
         
 
+
+
   def add_controller_declarations(self):
-    """
-    const UserController = require('./controllers/UserController');
-    const CourseController = require('./controllers/CourseController');
-    """
-    out = []
-    for model in self.project.models:
-      out.append(f"const {model.name}Controller = require('../controllers/{camel_case(model.name)}Controller');\n")
-    return out
+      """
+      const UserController = require('./controllers/UserController');
+      const CourseController = require('./controllers/CourseController');
+      """
+      out = []
+      for controller in self.project.controllers:
+        out.append(f"const {controller.name}Controller = require('./controllers/{controller.name}Controller');\n")
+      return out
 
 
   def write_routes(self):
@@ -71,11 +73,11 @@ class RoutesPage(TemplateParser):
     app.delete('/users/:id', UserController.delete)
     """
     out = []
-    for model in self.project.models:
-      out.append(f"// {model.name}\n")
-      for route in model.get_routes():
+    for controller in self.project.controllers:
+      for route in controller.routes:
         out.append(route.get_route_call())
       out.append("\n")
     return out
+
 
   

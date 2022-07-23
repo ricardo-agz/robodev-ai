@@ -8,6 +8,8 @@ import json
 from flask_cors import CORS
 import glob
 
+from Logic.interact import json_to_formatted_code
+
 from page_builder import build_client_app_page, build_client_auth_context, build_client_home_page, build_client_login, build_client_navbar, build_client_private_route, build_client_show_all, build_client_show_edit, build_client_show_new, build_client_show_one, build_client_use_api, build_client_use_auth, build_client_use_find, build_controller_page, build_db_page, build_middlewares_page, build_model_page, build_routes_page, build_server_page
 
 app = Flask(__name__)
@@ -126,6 +128,20 @@ def get_warnings():
 
 
 """
+Gets formatted code returned given json
+"""
+@app.route("/logiccodepreview", methods=["POST"])
+def get_logic_code_preview():
+  if request.get_json():
+    data = request.get_json()
+    print(data);
+    code_generated = json_to_formatted_code(data["logic"])
+    return jsonify({"code": code_generated})
+      
+  return jsonify({"message": "Please pass a valid input"}), 400
+
+
+"""
 Returns a json representation of the project directory structure
 """
 @app.route("/builddirectory", methods=["PUT"])
@@ -183,6 +199,7 @@ def add_task():
   # CONTAINS JSON INPUT FOR PROJECT STRUCTURE
   if request.get_json():
     data = request.get_json()
+    print(data);
 
     try:
       # DON'T CREATE PROJECT FOLDER IF BUILD WILL FAIL (only catches known errors)
@@ -205,6 +222,9 @@ def add_task():
     return attachment, 200
       
   return jsonify({"message": "Please pass a valid input"}), 400
+
+
+
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', threaded=True)
