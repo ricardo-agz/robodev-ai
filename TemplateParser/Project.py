@@ -276,7 +276,8 @@ def init_project_structure(project_name, models, auth_object=None):
     "name": camel_to_snake(project_name),
     "type": "folder",
     "children": [
-      # # CLIENT
+      # CLIENT
+      
       # {
       #   "id": "client",
       #   "name": "client",
@@ -331,6 +332,7 @@ def init_project_structure(project_name, models, auth_object=None):
       #     }
       #   ]
       # },
+      
       # SERVER
       {
         "id": "server",
@@ -407,37 +409,41 @@ def init_project_structure(project_name, models, auth_object=None):
     })
 
     show_pages = []
-    # for route in model.get_frontend_routes():
-    #   if route.name == "index":
-    #     show_pages.append({
-    #       "id": f"{model.name}_indexpage",
-    #       "name": f"{pascal_case(model.plural)}.js",
-    #       "type": "file"  
-    #     })
-    #   elif route.name == "show":
-    #     show_pages.append({
-    #       "id": f"{model.name}_showpage",
-    #       "name": f"{pascal_case(model.name)}Show.js",
-    #       "type": "file"  
-    #     })
-    #   elif route.name == "create":
-    #     show_pages.append({
-    #       "id": f"{model.name}_createpage",
-    #       "name": f"{pascal_case(model.name)}New.js",
-    #       "type": "file"  
-    #     })
-    #   elif route.name == "update":
-    #     show_pages.append({
-    #       "id": f"{model.name}_updatepage",
-    #       "name": f"{pascal_case(model.name)}Edit.js",
-    #       "type": "file"  
-    #     })
-    project_structure['children'][0]['children'][0]['children'][2]['children'].append({
-      "id": f"{model.name}_folder",
-      "name": f"{camel_case(model.name)}",
-      "type": "folder",
-      "children": show_pages
-    })
+    """
+    for route in model.get_frontend_routes():
+      if route.name == "index":
+        show_pages.append({
+          "id": f"{model.name}_indexpage",
+          "name": f"{pascal_case(model.plural)}.js",
+          "type": "file"  
+        })
+      elif route.name == "show":
+        show_pages.append({
+          "id": f"{model.name}_showpage",
+          "name": f"{pascal_case(model.name)}Show.js",
+          "type": "file"  
+        })
+      elif route.name == "create":
+        show_pages.append({
+          "id": f"{model.name}_createpage",
+          "name": f"{pascal_case(model.name)}New.js",
+          "type": "file"  
+        })
+      elif route.name == "update":
+        show_pages.append({
+          "id": f"{model.name}_updatepage",
+          "name": f"{pascal_case(model.name)}Edit.js",
+          "type": "file"  
+        })
+    """
+
+    """Frontend"""
+    # project_structure['children'][0]['children'][0]['children'][2]['children'].append({
+    #   "id": f"{model.name}_folder",
+    #   "name": f"{camel_case(model.name)}",
+    #   "type": "folder",
+    #   "children": show_pages
+    # })
 
   if auth_object:
     """ SERVER """
@@ -448,7 +454,8 @@ def init_project_structure(project_name, models, auth_object=None):
       "type": "file"    
     })
     # add middlewares page to routes folder
-    project_structure['children'][1]['children'][3]['children'].append({
+    ## changed first ['children'][1] to ['children'][0] because we sommented out client part
+    project_structure['children'][0]['children'][3]['children'].append({
       "id": "middlewares",
       "name": "middlewares.js",
       "type": "file"
@@ -456,6 +463,7 @@ def init_project_structure(project_name, models, auth_object=None):
 
     """ CLIENT """
     # add Auth folder
+    """
     project_structure['children'][0]['children'][0]['children'].insert(0, {
       "id": "auth_folder",
       "name": "auth",
@@ -497,11 +505,13 @@ def init_project_structure(project_name, models, auth_object=None):
         "type": "file"
       },
     ]
-    #                            client         src            hooks
+                               client         src            hooks
     project_structure['children'][0]['children'][0]['children'][2]['children'] += auth_hooks
+    """
   
-  project_structure['children'][1]['children'][1]['children'] = controller_files  # controllers
-  project_structure['children'][1]['children'][2]['children'] = model_files       # models
+  # also changed ['children'][0] to ['children'][1]
+  project_structure['children'][0]['children'][1]['children'] = controller_files  # controllers
+  project_structure['children'][0]['children'][2]['children'] = model_files       # models
 
   return project_structure
   

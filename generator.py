@@ -3,7 +3,7 @@ from msilib.schema import Control
 import os
 import shutil
 
-from itsdangerous import json
+import json
 from TemplateParser.Model import Model
 from TemplateParser.Project import Project
 from TemplateParser.Route import Route

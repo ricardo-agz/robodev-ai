@@ -5,6 +5,7 @@ class IfBlock(LogicBlock):
     self,
     condition = "true",
     success = [],
+    error = [],
     tabs = 1
   ) -> None:
     self.condition = condition
