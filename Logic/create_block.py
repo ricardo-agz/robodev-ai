@@ -6,7 +6,7 @@ class CreateBlock(MongooseBlock):
   def __init__(
     self,
     model,
-    create_fields = [],
+    create_fields = None,
     var_name = None,
     success = [],
     error = None,
@@ -16,8 +16,8 @@ class CreateBlock(MongooseBlock):
     super().__init__(
       block_type="create",
       model=model,
-      create_fields=create_fields,
-      var_name=var_name,
+      create_fields= "{ }" if not create_fields else create_fields,
+      var_name= f"new{model}" if not var_name else var_name,
       success=success,
       error=error,
       tabs=tabs,

@@ -4,15 +4,15 @@ class QueryBlock(LogicBlock):
   def __init__(
     self,
     model,
-    params = "{}",
-    var_name = "data",
-    variant = "one",
+    params=None,
+    var_name=None,
+    variant="one",
     tabs = 1
   ) -> None:
     self.model = model
     self.variant = variant
-    self.params = params
-    self.var_name = var_name
+    self.params = "{ }" if not params else params
+    self.var_name = "data" if not var_name else var_name
     self.tabs = tabs
 
     super().__init__(

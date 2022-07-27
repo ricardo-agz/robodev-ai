@@ -104,7 +104,7 @@ class ModelPage(TemplateParser):
             }
           ]
           """
-          self.out_lines.append(f"\t{alias}: [\n")
+          self.out_lines.append(f"\t{camel_case(alias)}: [\n")
           self.out_lines.append(f"\t\t{{\n")
           self.out_lines.append(f"\t\t\ttype: mongoose.Schema.Types.ObjectId,\n")
           self.out_lines.append(f"\t\t\tref: '{many_model.name}'\n")

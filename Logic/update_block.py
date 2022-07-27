@@ -7,19 +7,19 @@ class UpdateBlock(MongooseBlock):
     self,
     model,
     params,
-    update_fields = [],
+    update_fields = "",
     var_name = None,
     variant = "one",
     success = [],
-    error = None,
+    error = [],
     tabs = 1
   ) -> None:
 
     super().__init__(
       block_type="update",
       model=model,
-      params=params,
-      update_fields=update_fields,
+      params= "{ }" if not params else params,
+      update_fields= "{ }" if not update_fields else update_fields,
       var_name=var_name,
       variant=variant,
       success=success,

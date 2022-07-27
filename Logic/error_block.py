@@ -3,12 +3,12 @@ from Logic.logic_block import LogicBlock
 class ErrorBlock(LogicBlock):
   def __init__(
     self,
-    status=500,
-    message="Server error...",
-    tabs = 0
+    status=None,
+    message=None,
+    tabs = 1
   ) -> None:
-    self.status = status
-    self.message = message
+    self.status = 500 if not status else status
+    self.message = "Server error..." if not message else message
     self.tabs = tabs
 
     super().__init__(

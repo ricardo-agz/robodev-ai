@@ -10,6 +10,7 @@ class ControllerPage(TemplateParser):
       self,
       project : Project,
       controller : Controller,
+      model : Model,
       is_auth : bool = False
     ) -> None:
     self.controller = controller
@@ -81,11 +82,11 @@ class ControllerPage(TemplateParser):
         #const $$Name$$ = require('../models/$$nameCamel$$');
         
         for model in list(self.controller.models.keys()):
-          self.out_lines += f"const {pascal_case(model)} = require('../models/{camel_case(model)}')\n"
+          self.out_lines += f"const {pascal_case(model)} = require('../models/{camel_case(model)}');\n"
 
       elif "$$handler$$" in line:
         for route in self.controller.routes:
-          self.out_lines += route.get_handler_function()
+          self.out_lines += route.get_handler_function() + "\n"
 
       elif "$$UPDATE_PARAMS$$" in line:
         """
@@ -135,9 +136,6 @@ class ControllerPage(TemplateParser):
           print(f"{line}: route_logic: {route.logic}, logic: {str(logic)}")
 
           for a in logic:
-
-
-
             if "hide" in a:
               start = a.find("hide")
               substring = a[start:]
@@ -153,9 +151,6 @@ class ControllerPage(TemplateParser):
               out_logic.append("\n\t\t\t" + a[0:start] + "return res.status(500).send({ message: '" + substring + "' });\n")
             else:
               out_logic.append("\t\t\t" + a)
-          
-          print(f"out_logic: {str(out_logic)}")
-          print("------")
 
           out_logic += "\n"
 

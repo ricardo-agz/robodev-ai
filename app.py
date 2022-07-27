@@ -36,7 +36,6 @@ def preview_page():
     except Exception as e:
       return jsonify({"message": f"Error building project: {e}"}), 400
 
-
     model = project.model_from_name(model_name)
     page_output = ""
 
@@ -81,10 +80,19 @@ def preview_page():
       if model:
         # SERVER
         if "controller" in page:
+
           if "_auth" in page:
-            page_output = build_controller_page(project, model, True)
+
+            page_output = build_controller_page(project, project.auth_object, model, True) 
+
           else:
-            page_output = build_controller_page(project, model)
+            temp_controller = None
+            check_string= page.replace("_controller", "")
+            for controller in project.controllers:
+              if  check_string == controller.name:
+                temp_controller = controller
+            page_output = build_controller_page(project, temp_controller)
+
         elif "model" in page:
           page_output = build_model_page(project, model)
 
@@ -101,12 +109,6 @@ def preview_page():
           return jsonify({"message": "Invalid page"}), 400
       else:
         return jsonify({"message": "Invalid model"}), 400
-
-    # elif "controller" in page:
-
-
-
-        # return jsonify({"message": "Invalid page"}), 400
 
     return jsonify({"content": page_output})
       

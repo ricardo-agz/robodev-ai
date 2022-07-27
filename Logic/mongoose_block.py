@@ -47,11 +47,19 @@ class MongooseBlock(LogicBlock):
   
   def get_create_block(self, tabs, callback_str):
     callback_func_str = self.get_callback_str(tabs)
-    out_str = f"{self.TAB_CHAR*tabs}const {self.var_name} = await new {self.model}(\n"
-    out_str += f"{self.TAB_CHAR*tabs}{{\n"
+    out_str = f"{self.TAB_CHAR*tabs}const {self.var_name} = await new {self.model}({{\n"
+    # out_str += f"{self.TAB_CHAR*tabs}{{\n"
 
-    update_fields = "\n".join([f"{self.TAB_CHAR*(tabs+1)}{f}: {self.format_str(v)}," for f, v in self.create_fields]) + "\n"
-    out_str += update_fields
+    # update_fields = "\n".join([f"{self.TAB_CHAR*(tabs+1)}{f}: {self.format_str(v)}," for f, v in self.create_fields]) + "\n"
+
+    split_fields = self.create_fields.replace("{", "").replace("}", "").strip().split(",")
+    if split_fields == ['']:
+      split_fields = []
+    else:
+      split_fields = [f"{self.TAB_CHAR*(tabs+1)}" + x.strip() + ","for x in split_fields]
+    new_fields = "\n".join(split_fields)
+
+    out_str += new_fields + "\n"
     out_str += f"{self.TAB_CHAR*tabs}}})"
     out_str += f".save({callback_str.strip()});\n"
 
@@ -64,14 +72,21 @@ class MongooseBlock(LogicBlock):
     if self.block_type == "create":
       return self.get_create_block(tabs, callback_func_str)
 
-    query = f"{self.block_type}Many" if self.variant == "many" else "updateOne"
+    query = f"{self.block_type}Many" if self.variant == "many" else f"{self.block_type}One"
     if "_id" in self.params:
       query = f"findByIdAnd{self.block_type.capitalize()}" 
       self.params = "id"
 
     if self.block_type == 'update':
-      update_fields = "\n".join([f"{self.TAB_CHAR*(tabs+1)}{f}: {v}," for f, v in self.update_fields])
-      update_fields_str = f"{self.TAB_CHAR*(tabs)}{{\n" + update_fields + f"\n{self.TAB_CHAR*(tabs)}}},\n"
+      split_fields = self.update_fields.replace("{", "").replace("}", "").strip().split(",")
+      if split_fields == ['']:
+        split_fields = []
+      else:
+        split_fields = [f"{self.TAB_CHAR*(tabs+1)}" + x.strip() + ","for x in split_fields]
+      new_fields = "\n".join(split_fields)
+
+      # update_fields = "\n".join([f"{self.TAB_CHAR*(tabs+1)}{f}: {v}," for f, v in self.update_fields])
+      update_fields_str = f"{self.TAB_CHAR*(tabs)}{{\n" + new_fields + f"\n{self.TAB_CHAR*(tabs)}}},\n"
     else:
       update_fields_str = ''
       
@@ -83,5 +98,3 @@ class MongooseBlock(LogicBlock):
           ");\n"
 
     return out
-
-    

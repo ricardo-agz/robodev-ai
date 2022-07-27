@@ -1,4 +1,5 @@
 from Logic.conditional_block import ConditionalBlock
+from Logic.custom_block import CustomBlock
 from Logic.query_block import QueryBlock
 from Logic.error_block import ErrorBlock
 from Logic.return_block import ReturnBlock
@@ -20,9 +21,7 @@ def recurse_block(block):
     parsed = parse_block(block, success=success_list, error=error_list)
     return parsed
   else:
-    return parse_block(block)  
-  
-
+    return parse_block(block)
 
 def parse_block(block, success=[], error=[]):
   block_type = block['blockVariant']
@@ -35,10 +34,10 @@ def parse_block(block, success=[], error=[]):
   message = block['message'] if 'message' in block else None
   data = block['data'] if 'data' in block else None
   create_fields = block['fields'] if 'fields' in block else None
-  update_fields = block['updateFields'] if 'updateFields' in block else None
+  update_fields = block['updateParams'] if 'updateParams' in block else None
   multiple = block["multiple"] if 'multiple' in block else None
-
-
+  return_content = block['returnContent'] if 'returnContent' in block else None
+  code = block['code'] if 'code' in block else None
 
   if block_type == 'query':
     if (multiple):
@@ -48,14 +47,22 @@ def parse_block(block, success=[], error=[]):
     
     return QueryBlock(model=model, params=params, var_name=var_name, variant=variant)
 
+  elif block_type == 'custom':
+    return CustomBlock(code=code)
+
   elif block_type == 'error':
-    return ErrorBlock(status=status, message=message)
+    return ErrorBlock(status=status, message=return_content)
 
   elif block_type == 'return':
-    if message: variant = "message"
-    return ReturnBlock(status=status, variant=variant, message=message, data=data)
+    return ReturnBlock(status=status, data=data, return_content=return_content)
 
   elif block_type == 'conditional':
+    return ConditionalBlock(condition=condition, success=success, error=error)
+
+  elif block_type == 'if':
+    return ConditionalBlock(condition=condition, success=success, error=[])
+
+  elif block_type == 'ifelse':
     return ConditionalBlock(condition=condition, success=success, error=error)
 
   elif block_type == 'create':
@@ -68,6 +75,11 @@ def parse_block(block, success=[], error=[]):
     )
 
   elif block_type == 'update':
+    if (multiple):
+      variant = "many"
+    else:
+      variant = "one"
+
     return UpdateBlock(
       model=model,
       params=params,
@@ -79,6 +91,11 @@ def parse_block(block, success=[], error=[]):
     )
 
   elif block_type == 'delete':
+    if (multiple):
+      variant = "many"
+    else:
+      variant = "one"
+
     return DeleteBlock(
       model=model, 
       params=params, 

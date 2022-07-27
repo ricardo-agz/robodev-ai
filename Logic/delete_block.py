@@ -11,13 +11,13 @@ class DeleteBlock(MongooseBlock):
     variant = "one",
     success = [],
     error = None,
-    tabs = 0
+    tabs = 1
   ) -> None:
 
     super().__init__(
       block_type="delete",
       model=model,
-      params=params,
+      params="{ }" if not params else params,
       var_name=var_name,
       variant=variant,
       success=success,

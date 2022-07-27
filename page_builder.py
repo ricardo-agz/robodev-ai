@@ -29,8 +29,8 @@ from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
 
 ########## SERVER ##########
 
-def build_controller_page(project, model, is_auth=False):
-  page = ControllerPage(project, model, is_auth)
+def build_controller_page(project, controller, model=None, is_auth=False):
+  page = ControllerPage(project, controller, model, is_auth)
   output = page.to_string()
   page.close_files()
   return output
