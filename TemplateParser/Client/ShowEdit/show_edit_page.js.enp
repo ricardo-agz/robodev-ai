@@ -1,0 +1,65 @@
+import React, { useState, useEffect } from 'react';
+import '../../App.css';
+import { useParams, useNavigate } from 'react-router-dom';
+import ValidatedForm from './ValidatedForm';
+import axios from 'axios';
+import useApi from '../../hooks/useApi';
+<$= "import authHeader from '../../services/auth-header';" if self.project.auth_object else "" $>
+import { CircularProgress } from '@mui/material';
+import configData from '../../config.json'
+
+export default function $$Name$$Edit() {
+  const navigate = useNavigate();
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState(null);
+  const { id } = useParams();
+  const {
+    result: $$nameCamel$$,
+    loading: $$nameCamel$$Loading,
+    error: fetchError,
+    refresh
+  } = useApi(`${configData.SERVER_URL}/$$pluralname$$/${id}`);
+
+  <!-- // const handleSubmit = (name, username, age) => { -->
+	$$HANDLE_SUBMIT$$
+    setEditLoading(true);
+    setEditError(null);
+    axios.put(`${configData.SERVER_URL}/<$= self.model.plural.lower() $>/${id}/edit`, 
+    {
+    <$ for param in self.model.schema $>
+      <!-- username: username, (comma on all except last) -->
+      <$= f"{param['name']}: {param['name']}{',' if _index_ < _len_ - 1 else ''}" $>
+    <$ end $>
+    }$$header$$)
+    .then(_res => {
+      navigate(`/<$= self.model.plural.lower() $>/${id}`)
+    })
+    .catch(err => {
+      setEditError(err.response.data.message);
+    })
+    .then(_res => {
+      setEditLoading(false);
+    })
+	};
+
+	if (fetchError) {
+		return <p style={{color: "red"}}>Error: {fetchError}</p>;
+  } else if (<$= f"{camel_case(self.model.name)}Loading || !{camel_case(self.model.name)}" $>) {
+		return <CircularProgress />;
+	} else {
+		return (
+			<div className='container'>
+				<h1>Edit <$= title_space_case(self.model.name) $></h1>
+
+        {/* ERROR DISPLAY */}
+        { editError &&
+          <p style={{color: "red"}}>{editError}</p>
+        }
+
+        <!-- <ValidatedForm submit={(name, username) => handleSubmit(name, username)} model={user}/> -->
+        {/* FORM DISPLAY */}
+				$$VALIDATED_FORM$$
+			</div>
+		)
+	}
+}
