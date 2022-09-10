@@ -1,11 +1,10 @@
-const express       = require('express');
-const router        = express.Router();
-module.exports      = router;
+const express = require('express');
+const router = express.Router();
+module.exports = router;
 
 $$CONTROLLERS$$
 $$AUTH_CONTROLLER$$
 $$MIDDLEWARE_IMPORT$$
-
 
 // Home
 router.get('/', (_req, res) => {

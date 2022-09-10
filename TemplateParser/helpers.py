@@ -98,3 +98,24 @@ def import_generator(logic):
   if(bcrypt):
     import_list+= 'const bcrypt = require("bcrypt");\n'
   return import_list
+
+def extra_libraries_exist(logic):
+  
+  jwt = False
+  bcrypt = False
+
+  queue = logic
+
+  while len(queue) != 0:
+    block = queue.pop()
+    if "success" in block:
+      queue = queue + block["success"]
+    if "error" in block:
+      queue = queue + block["error"]
+    
+    if (block["blockVariant"] == "BCrypt"):
+      bcrypt = True
+    if (block["blockVariant"] == "JWT"):
+      jwt = True
+
+  return {"jwt": jwt, "bcrypt": bcrypt}

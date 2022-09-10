@@ -1,4 +1,5 @@
 import os
+from TemplateParser.Middleware import Middleware
 from TemplateParser.TemplateParser import TemplateParser
 from TemplateParser.Project import Project
 from TemplateParser.helpers import append_at_index, camel_case
@@ -41,11 +42,15 @@ class RoutesPage(TemplateParser):
         insert = self.write_routes()
         self.out_lines = self.out_lines + insert
 
-      elif "$$MIDDLEWARE_IMPORT$$" in line and self.project.auth_object:
-        #self.out_lines.append("const { verifyJWT } = require('./middlewares');\n")
-        pass 
-        for middleware in self.project.middlewares:
-          self.out_lines.append("const { " + middleware.handler + " } = require('./middlewares');\n")
+      elif "$$MIDDLEWARE_IMPORT$$" in line:
+        import_str = ""
+        for i,middleware in enumerate(self.project.middlewares):
+          if i != len(self.project.middlewares) - 1:
+            import_str += middleware.handler + ", "
+          else:
+            import_str += middleware.handler
+
+        self.out_lines.append("const { " + import_str + " } = require('./middlewares');\n")
 
       elif "$$AUTH_ROUTES$$" in line and self.project.auth_object:
         self.out_lines.append("// Auth\n")
@@ -65,7 +70,7 @@ class RoutesPage(TemplateParser):
       """
       out = []
       for controller in self.project.controllers:
-        out.append(f"const {controller.name}Controller = require('./controllers/{controller.name}Controller');\n")
+        out.append(f"const {controller.name}Controller = require('../controllers/{controller.name}Controller');\n")
       return out
 
 
