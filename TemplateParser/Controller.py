@@ -5,7 +5,8 @@ class Controller:
       name,
       id,
       model_affiliation,
-      routes = []
+      routes = [],
+     
     ) -> None:
       self.name = name
       self.id = id

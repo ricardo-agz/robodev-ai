@@ -10,7 +10,7 @@ class ControllerPage(TemplateParser):
       self,
       project : Project,
       controller : Controller,
-      
+      is_preview = False,
       is_auth : bool = False
     ) -> None:
     self.controller = controller
@@ -31,7 +31,8 @@ class ControllerPage(TemplateParser):
       out_file,
       __location__,
       project,
-      model=controller
+      model=controller,
+      is_preview=is_preview
     )
 
     self.is_auth = is_auth

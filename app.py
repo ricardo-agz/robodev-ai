@@ -216,7 +216,7 @@ def add_task():
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     attachment = send_from_directory(dir_path,"neutrino_project_" + data["project_name"] + ".zip", as_attachment=True)
-
+    
     return attachment, 200
       
   return jsonify({"message": "Please pass a valid input"}), 400

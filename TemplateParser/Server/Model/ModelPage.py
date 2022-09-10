@@ -9,7 +9,8 @@ class ModelPage(TemplateParser):
   def __init__(
       self,
       project : Project,
-      model : Model
+      model : Model,
+      is_preview = False
     ) -> None:
 
     __location__ = os.path.realpath(
@@ -24,7 +25,8 @@ class ModelPage(TemplateParser):
       out_file,
       __location__,
       project,
-      model
+      model,
+      is_preview = is_preview
     )
 
     self.parse_file()

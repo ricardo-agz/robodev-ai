@@ -9,7 +9,8 @@ class MiddlewaresPage(TemplateParser):
 
   def __init__(
       self,
-      project : Project
+      project : Project,
+      is_preview = False
     ) -> None:
 
     __location__ = os.path.realpath(
@@ -24,6 +25,7 @@ class MiddlewaresPage(TemplateParser):
       out_file,
       __location__,
       project,
+      is_preview=is_preview
     )
     self.parses_file()
 
