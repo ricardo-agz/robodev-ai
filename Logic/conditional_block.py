@@ -29,7 +29,7 @@ class ConditionalBlock(LogicBlock):
     if len(self.error) > 0:
       out_str +=  " else {\n" + error_str + f"{self.TAB_CHAR*tabs}}};\n"
     else:
-      out_str += ";\n"
+      out_str += "\n"
 
     return out_str
 

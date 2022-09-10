@@ -131,6 +131,9 @@ def project_from_builder_data(builder_data):
   middlewares = builder_data["middlewares"]
   # PARSING MODELS
   models = []
+
+  print(builder_data)
+
   for model in db_params:
     model_obj = Model(
       id = model["id"],
@@ -158,8 +161,6 @@ def project_from_builder_data(builder_data):
     middleware_map[middleware["id"]] = middleware["handler"]
     middlewares_array.append(Middleware(middleware["id"], middleware["handler"], middleware["logic"]))
 
-
-  
 
   for route in routes:
     name_array = []
@@ -196,6 +197,7 @@ def project_from_builder_data(builder_data):
 
     controllers_objects.append(controller_obj)
   
+  print(controllers_objects)
   # CREATE PROJECT
   project = Project(
     project_name = project_name,
@@ -225,7 +227,8 @@ def generator(builder_data):
     controllers = builder_data["controllers"]
     routes = builder_data["routes"]
     middlewares = builder_data["middlewares"]
-
+    
+    print("SINDI")
     # PARSING MODELS
     models = []
     for model in db_params:
@@ -239,8 +242,8 @@ def generator(builder_data):
       )
 
       #model_obj.set_routes(routes)
-    models.append(model_obj)
-
+      models.append(model_obj)
+    print("SINDI2")
     middlewares_array = []
     routes_table = {}
 
@@ -251,12 +254,14 @@ def generator(builder_data):
     for controller in controllers:
       controller_map[controller["id"]] = controller["name"]
 
+    print("SINDI4")
+
     for middleware in middlewares:
       middleware_map[middleware["id"]] = middleware["handler"]
-      middlewares_array.append(Middleware(middleware["id"], middleware["name"], middleware["handler"], middleware["logic"]))
+      middlewares_array.append(Middleware(middleware["id"], middleware["handler"], middleware["logic"]))
 
 
-    
+    print("SINDI3")
 
     for route in routes:
       name_array = []
@@ -292,6 +297,8 @@ def generator(builder_data):
         controller_obj.addRoutes(temp_route)
 
       controllers_objects.append(controller_obj)
+
+    
     # CREATE PROJECT
     project = Project(
       project_name = project_name,
@@ -304,6 +311,8 @@ def generator(builder_data):
       mongostr = mongostr,
       styled = False
     )
+    
+    
 
     # CREATING DIRECTORIES
     ROOT_DIR = os.path.abspath(os.curdir)
@@ -322,6 +331,8 @@ def generator(builder_data):
     server_index.write_out_file()
     server_index.close_files()
 
+
+    print("AFTER")
     package = PackageJSONPage(project)
     package.write_out_file()
     package.close_files()
@@ -340,19 +351,18 @@ def generator(builder_data):
     db_page.write_out_file()
     db_page.close_files()
     os.chdir(SERVER_PATH)
-
+    
     # BUILD CONTROLLER FILES
     os.chdir('./controllers')
     for controller in project.controllers:
       model_controler = ControllerPage(project, controller)
       model_controler.write_out_file()
       model_controler.close_files()
-    if project.auth_object:
-      auth_controler = ControllerPage(project, project.auth_object, is_auth=True)
-      auth_controler.write_out_file()
-      auth_controler.close_files()
+    
     os.chdir(SERVER_PATH)
 
+
+    
     # BUILD MODEL FILES
     os.chdir('./models')
     for model in project.models:
@@ -368,11 +378,12 @@ def generator(builder_data):
     routes.close_files()
     
     #BUILD MIDDLEWARE FILES
-    middlewares = MiddlewaresPage(project)
-    middlewares.parses_file()
-
-    middlewares.write_out_file()
-    middlewares.close_files()
+    if len(middlewares_array) != 0:
+      
+      middlewares = MiddlewaresPage(project)
+      
+      middlewares.write_out_file()
+      middlewares.close_files()
     os.chdir(SERVER_PATH)
 
     # """ 

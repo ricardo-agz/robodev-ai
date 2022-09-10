@@ -75,40 +75,34 @@ def preview_page():
     elif "_" in page:
       temp = page.split("_")
       model_name = temp[0]
-      model = project.model_from_name(model_name)
+      #model = project.model_from_name(model_name)
 
-      if model:
+      
         # SERVER
-        if "controller" in page:
+      if "controller" in page:
 
-          if "_auth" in page:
+        temp_controller = None
+        check_string= page.replace("_controller", "")
+        for controller in project.controllers:
+          if  check_string == controller.name:
+            temp_controller = controller
+        page_output = build_controller_page(project, temp_controller)
 
-            page_output = build_controller_page(project, project.auth_object, model, True) 
+      elif "model" in page:
+        page_output = build_model_page(project, model)
 
-          else:
-            temp_controller = None
-            check_string= page.replace("_controller", "")
-            for controller in project.controllers:
-              if  check_string == controller.name:
-                temp_controller = controller
-            page_output = build_controller_page(project, temp_controller)
-
-        elif "model" in page:
-          page_output = build_model_page(project, model)
-
-        # CLIENT
-        elif "indexpage" in page:
-          page_output = build_client_show_all(project, model)
-        elif "showpage" in page:
-          page_output = build_client_show_one(project, model)
-        elif "updatepage" in page:
-          page_output = build_client_show_edit(project, model)
-        elif "createpage" in page:
-          page_output = build_client_show_new(project, model)
-        else:
-          return jsonify({"message": "Invalid page"}), 400
+      # CLIENT
+      elif "indexpage" in page:
+        page_output = build_client_show_all(project, model)
+      elif "showpage" in page:
+        page_output = build_client_show_one(project, model)
+      elif "updatepage" in page:
+        page_output = build_client_show_edit(project, model)
+      elif "createpage" in page:
+        page_output = build_client_show_new(project, model)
       else:
-        return jsonify({"message": "Invalid model"}), 400
+        return jsonify({"message": "Invalid page"}), 400
+      
 
     return jsonify({"content": page_output})
       
@@ -201,12 +195,11 @@ def add_task():
   # CONTAINS JSON INPUT FOR PROJECT STRUCTURE
   if request.get_json():
     data = request.get_json()
-    print(data);
-
     try:
       # DON'T CREATE PROJECT FOLDER IF BUILD WILL FAIL (only catches known errors)
       project = generator.project_from_builder_data(data)
       if project.contains_fatal_errors():
+        print(project.contains_fatal_errors())
         return jsonify({
           "message": "Project contains errors, build will fail",
           "errors": project.contains_fatal_errors()
@@ -216,7 +209,8 @@ def add_task():
     
     # PROTECTION AGAINST UNEXPECTED ERRORS
     except Exception as error:
-      return jsonify({"message": "Project build failed unexpectedly"}), 400
+     print(error)
+     return jsonify({"message": "Project build failed unexpectedly"}), 400
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     attachment = send_from_directory(dir_path,"neutrino_project_" + data["project_name"] + ".zip", as_attachment=True)

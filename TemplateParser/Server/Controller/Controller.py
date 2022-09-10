@@ -3,14 +3,14 @@ from TemplateParser.Controller import Controller
 from TemplateParser.TemplateParser import TemplateParser
 from TemplateParser.Project import Project
 from TemplateParser.Model import Model
-from TemplateParser.helpers import append_at_index, camel_case, pascal_case
+from TemplateParser.helpers import append_at_index, camel_case, pascal_case, import_generator
 
 class ControllerPage(TemplateParser):
   def __init__(
       self,
       project : Project,
       controller : Controller,
-      model : Model,
+      
       is_auth : bool = False
     ) -> None:
     self.controller = controller
@@ -80,9 +80,10 @@ class ControllerPage(TemplateParser):
       
       elif "$$imports$$" in line:
         #const $$Name$$ = require('../models/$$nameCamel$$');
-        
-        for model in list(self.controller.models.keys()):
-          self.out_lines += f"const {pascal_case(model)} = require('../models/{camel_case(model)}');\n"
+        logic_lines = []
+        for route in self.controller.routes:
+          logic_lines += route.logic
+        self.out_lines.append(import_generator(logic_lines))
 
       elif "$$handler$$" in line:
         for route in self.controller.routes:

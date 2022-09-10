@@ -1,7 +1,7 @@
 import os
 from TemplateParser.TemplateParser import TemplateParser
 from TemplateParser.Project import Project
-from TemplateParser.helpers import append_at_index
+from TemplateParser.helpers import append_at_index, import_generator
 
 class MiddlewaresPage(TemplateParser):
 
@@ -32,6 +32,16 @@ class MiddlewaresPage(TemplateParser):
   def parses_file(self):
    
     for line in self.lines:
+      if "$$imports$$" in line:
+        #const jwt = require("jsonwebtoken");
+        #const User = require('../models/user');
+        logic = []
+        for middleware in self.project.middlewares:
+          logic= logic + middleware.logic
+        import_statements = import_generator(logic)
+        self.out_lines.append(import_statements)
+        
+
       if "$$handler$$" in line:
         
         for middleware in self.project.middlewares:

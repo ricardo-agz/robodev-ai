@@ -59,3 +59,31 @@ def singularize(s):
   if inflectEngine.singular_noun(s):
     return inflectEngine.singular_noun(s)
   return s
+
+def import_generator(logic):
+  
+  models = []
+  jwt = False
+  bcrypt = False
+
+  import_list = ""
+
+  print(logic)
+
+  for block in logic:
+    if "model" in block:
+      if (block["model"] not in models):
+        models.append(block["model"])
+      if (block["blockVariant"] == "BCrypt"):
+        bcrypt = True
+      if (block["blockVariant"] == "JWT"):
+        jwt = True
+
+  for model in models:
+    import_list += f"const {model.lower()[0].upper() +model.lower()[1::]} = require('../models/{model.lower()}');\n"
+
+  if(jwt):
+    import_list+= 'const jwt = require("jsonwebtoken");\n'
+  if(bcrypt):
+    import_list+= 'const bcrypt = require("bcrypt");\n'
+  return import_list

@@ -30,7 +30,7 @@ from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
 ########## SERVER ##########
 
 def build_controller_page(project, controller, model=None, is_auth=False):
-  page = ControllerPage(project, controller, model, is_auth)
+  page = ControllerPage(project, controller, is_auth)
   output = page.to_string()
   page.close_files()
   return output
@@ -60,10 +60,17 @@ def build_routes_page(project):
   return output
 
 def build_middlewares_page(project):
-  page = MiddlewaresPage(project)
-  output = page.to_string()
-  page.close_files()
+  middlewares = MiddlewaresPage(project)
+  
+  output = middlewares.to_string()
+  
+  middlewares.close_files()
   return output
+
+
+
+
+
 
 
 ########## CLIENT ##########

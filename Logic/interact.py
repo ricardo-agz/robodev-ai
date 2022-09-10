@@ -6,6 +6,8 @@ def json_to_formatted_code(data):
         try:
             parsed_block = recurse_block(block)
             if (parsed_block):
+                print(parsed_block)
+                print(parsed_block.print_block())
                 code += parsed_block.print_block()
         except Exception as e:
             print(e);

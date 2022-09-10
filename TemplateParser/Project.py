@@ -73,7 +73,7 @@ class Project:
 
 
   def build_directory(self) -> dict:
-    return init_project_structure(self.project_name, self.models, self.auth_object)
+    return init_project_structure(self.project_name, self.models, self.controllers, self.middlewares, self.auth_object)
 
   def parse_warnings(self) -> None:
     model_names = []
@@ -269,7 +269,7 @@ class Project:
 
 
 ########## PROJECT STRUCTURE ##########
-def init_project_structure(project_name, models, auth_object=None):
+def init_project_structure(project_name, models,controllers, middlewares, auth_object=None):
   """
   Function used to create tree of directories to preview files in builder
   """
@@ -405,11 +405,8 @@ def init_project_structure(project_name, models, auth_object=None):
       "name": f"{camel_case(model.name)}.js",
       "type": "file"    
     })
-    controller_files.append({
-      "id": f"{model.name}_controller",
-      "name": f"{camel_case(model.name)}Controller.js",
-      "type": "file"    
-    })
+  
+ 
 
     show_pages = []
     """
@@ -447,22 +444,23 @@ def init_project_structure(project_name, models, auth_object=None):
     #   "type": "folder",
     #   "children": show_pages
     # })
-
-  if auth_object:
-    """ SERVER """
-    # add auth controler to controllers folder
-    controller_files.append({
-      "id": f"{auth_object.name}_controller_auth",
-      "name": f"authController.js",
+  for controller in controllers:
+   controller_files.append({
+      "id": f"{controller.name}_controller",
+      "name": f"{camel_case(controller.name)}Controller.js",
       "type": "file"    
     })
+
+  if len(middlewares) != 0:
+    project_structure['children'][0]['children'][3]['children'].append({  
+        "id": "middlewares",
+        "name": "middlewares.js",
+        "type": "file"
+      })
+  
     # add middlewares page to routes folder
     ## changed first ['children'][1] to ['children'][0] because we sommented out client part
-    project_structure['children'][0]['children'][3]['children'].append({
-      "id": "middlewares",
-      "name": "middlewares.js",
-      "type": "file"
-    })
+    
 
     """ CLIENT """
     # add Auth folder
