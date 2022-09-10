@@ -1,5 +1,6 @@
 from Logic.conditional_block import ConditionalBlock
 from Logic.custom_block import CustomBlock
+from Logic.next_block import NextBlock
 from Logic.query_block import QueryBlock
 from Logic.error_block import ErrorBlock
 from Logic.return_block import ReturnBlock
@@ -124,6 +125,9 @@ def parse_block(block, success=[], error=[]):
   elif block_type == "JWT":
     
     return JWTBlock(model, jwt_variant, payload, secret, token, expiration, success, error)
+
+  elif block_type == "next":
+    return NextBlock();
 
 
 
