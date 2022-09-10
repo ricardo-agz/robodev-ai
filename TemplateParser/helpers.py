@@ -70,14 +70,25 @@ def import_generator(logic):
 
   print(logic)
 
-  for block in logic:
+  queue = logic
+
+  while len(queue) != 0:
+    block = queue.pop()
+    if "success" in block:
+      queue = queue + block["success"]
+    if "error" in block:
+      queue = queue + block["error"]
+
     if "model" in block:
       if (block["model"] not in models):
         models.append(block["model"])
-      if (block["blockVariant"] == "BCrypt"):
-        bcrypt = True
-      if (block["blockVariant"] == "JWT"):
-        jwt = True
+    
+    if (block["blockVariant"] == "BCrypt"):
+      bcrypt = True
+    if (block["blockVariant"] == "JWT"):
+      jwt = True
+  
+    
 
   for model in models:
     import_list += f"const {model.lower()[0].upper() +model.lower()[1::]} = require('../models/{model.lower()}');\n"

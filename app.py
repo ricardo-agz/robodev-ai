@@ -75,7 +75,7 @@ def preview_page():
     elif "_" in page:
       temp = page.split("_")
       model_name = temp[0]
-      #model = project.model_from_name(model_name)
+      model = project.model_from_name(model_name)
 
       
         # SERVER
@@ -89,6 +89,11 @@ def preview_page():
         page_output = build_controller_page(project, temp_controller)
 
       elif "model" in page:
+        print("+++++++++++++++++++++")
+        print(model)
+        print(project)
+        print("+++++++++++++++++++++")
+
         page_output = build_model_page(project, model)
 
       # CLIENT

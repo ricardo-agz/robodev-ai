@@ -17,7 +17,7 @@ class NextBlock(LogicBlock):
     
     
     
-    out = f"{self.TAB_CHAR*tabs}" + "next()";
+    out = f"{self.TAB_CHAR*tabs}" + "next();";
 
     
     return out + "\n"

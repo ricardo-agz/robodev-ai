@@ -39,6 +39,7 @@ class MiddlewaresPage(TemplateParser):
         for middleware in self.project.middlewares:
           logic= logic + middleware.logic
         import_statements = import_generator(logic)
+        print(import_statements)
         self.out_lines.append(import_statements)
         
 

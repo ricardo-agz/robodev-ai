@@ -18,7 +18,7 @@ class Middleware:
     out_str = 'const ' +  self.handler + " = (req, res, next) => {\n"
     code = json_to_formatted_code(self.logic)
     for line in code.split("\n"):
-        out_str += "\t" + line
+        out_str += "\t" + line + "\n"
     out_str += "\n}"
     return out_str
 
