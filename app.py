@@ -89,10 +89,7 @@ def preview_page():
         page_output = build_controller_page(project, temp_controller)
 
       elif "model" in page:
-        print("+++++++++++++++++++++")
-        print(model)
-        print(project)
-        print("+++++++++++++++++++++")
+        
 
         page_output = build_model_page(project, model)
 
