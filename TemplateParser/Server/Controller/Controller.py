@@ -10,8 +10,9 @@ class ControllerPage(TemplateParser):
       self,
       project : Project,
       controller : Controller,
+     
+      is_auth : bool = False,
       is_preview = False,
-      is_auth : bool = False
     ) -> None:
     self.controller = controller
 
