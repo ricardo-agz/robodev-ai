@@ -6,10 +6,8 @@ class ConditionalBlock(LogicBlock):
     condition=None,
     success = [],
     error = [],
-    tabs = 1
   ) -> None:
     self.condition = "true" if not condition else condition
-    self.tabs = tabs
     self.success = success
     self.error = error
 

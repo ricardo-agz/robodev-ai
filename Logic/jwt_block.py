@@ -11,7 +11,6 @@ class JWTBlock(LogicBlock):
     expiration,
     success = [],
     error = [],
-    tabs = 1
   ) -> None:
     self.model = model
     self.jwt_variant = jwt_variant
@@ -19,7 +18,6 @@ class JWTBlock(LogicBlock):
     self.secret = secret
     self.token = token
     self.expiration = expiration
-    self.tabs = tabs
     self.success = success
     self.error = error
 

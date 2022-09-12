@@ -9,7 +9,6 @@ class BcryptBlock(LogicBlock):
     plain_text,
     hash,
     salt_rounds,
-    tabs = 1
   ) -> None:
     self.model = model
     self.var_name = var_name
@@ -17,7 +16,6 @@ class BcryptBlock(LogicBlock):
     self.plain_text = plain_text
     self.hash = hash
     self.salt_rounds = salt_rounds
-    self.tabs = tabs
 
     super().__init__(
       block_type="bcrypt",

@@ -11,7 +11,6 @@ class DeleteBlock(MongooseBlock):
     variant = "one",
     success = [],
     error = None,
-    tabs = 1
   ) -> None:
 
     super().__init__(
@@ -22,7 +21,6 @@ class DeleteBlock(MongooseBlock):
       variant=variant,
       success=success,
       error=error,
-      tabs=tabs,
       recursive=True
     )
 

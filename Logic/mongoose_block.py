@@ -17,7 +17,6 @@ class MongooseBlock(LogicBlock):
     variant = "one",
     success = [],
     error = None,
-    tabs = 1,
     recursive = False
   ) -> None:
     self.block_type = block_type
@@ -27,7 +26,6 @@ class MongooseBlock(LogicBlock):
     self.update_fields = update_fields
     self.create_fields = create_fields
     self.var_name = var_name
-    self.tabs = tabs
     self.recursive = recursive
     self.adverb = self.block_type[:-1] + "ing"
 

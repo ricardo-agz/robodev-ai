@@ -4,10 +4,8 @@ class CustomBlock(LogicBlock):
   def __init__(
     self,
     code=None,
-    tabs = 1
   ) -> None:
     self.code = "console.log('custom block');" if not code else code
-    self.tabs = tabs
 
     super().__init__(
       block_type="conditional",

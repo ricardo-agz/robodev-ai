@@ -7,13 +7,11 @@ class QueryBlock(LogicBlock):
     params=None,
     var_name=None,
     variant="one",
-    tabs = 1
   ) -> None:
     self.model = model
     self.variant = variant
     self.params = "{ }" if not params else params
     self.var_name = "data" if not var_name else var_name
-    self.tabs = tabs
 
     super().__init__(
       block_type="query",
