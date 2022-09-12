@@ -1,5 +1,5 @@
 from distutils.command.build import build
-from msilib.schema import Control
+# from msilib.schema import Control
 import os
 from re import M
 import shutil
