@@ -5,7 +5,7 @@ from flask import Flask, request, send_from_directory, after_this_request, jsoni
 import generator
 import os
 import json
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import glob
 
 from Logic.interact import json_to_formatted_code
@@ -14,8 +14,10 @@ from page_builder import build_client_app_page, build_client_auth_context, build
 
 app = Flask(__name__)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/")
+@cross_origin()
 def home_view():
         return json.dumps({'message': 'Welcome to Neutrino!'})
 
@@ -24,6 +26,7 @@ def home_view():
 Returns a string of the specified page
 """
 @app.route("/previewpage", methods=["PUT"])
+@cross_origin()
 def preview_page():
   if request.get_json():
     # here we want to get the page and model from quey string (i.e. ?page=server_index)
@@ -116,6 +119,7 @@ def preview_page():
 Gets a list of warnings and errors that may or may not cause build to fail
 """
 @app.route("/getwarnings", methods=["PUT"])
+@cross_origin()
 def get_warnings():
   if request.get_json():
     data = request.get_json()
@@ -129,6 +133,7 @@ def get_warnings():
 Gets formatted code returned given json
 """
 @app.route("/logiccodepreview", methods=["POST"])
+@cross_origin()
 def get_logic_code_preview():
   if request.get_json():
     data = request.get_json()
@@ -143,6 +148,7 @@ def get_logic_code_preview():
 Returns a json representation of the project directory structure
 """
 @app.route("/builddirectory", methods=["PUT"])
+@cross_origin()
 def build_directory():
   if request.get_json():
     data = request.get_json()
@@ -159,6 +165,7 @@ def build_directory():
 Gets a list of the one-to-many and many-to-many relationships for each model
 """
 @app.route("/getrelations", methods=["PUT"])
+@cross_origin()
 def parse_relations():
   if request.get_json():
     data = request.get_json()
@@ -183,6 +190,7 @@ def parse_relations():
 Main Generator function, creates project and returns zip file
 """
 @app.route("/generator", methods=["POST"])
+@cross_origin()
 def add_task():
   # Clean up previous project zip files
   try:
