@@ -73,7 +73,12 @@ class MongooseBlock(LogicBlock):
       return self.get_create_block(tabs, callback_func_str)
 
     query = f"{self.block_type}Many" if self.variant == "many" else f"{self.block_type}One"
+    print("===========================")
+    print(f"{self.params}")
     if "_id" in self.params:
+      print("+++++++++++++++++++++++++++")
+      print(f"{self.block_type.capitalize()}")
+      print("+++++++++++++++++++++++++++")
       query = f"findByIdAnd{self.block_type.capitalize()}" 
       self.params = "id"
 

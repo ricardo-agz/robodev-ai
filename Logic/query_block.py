@@ -26,12 +26,12 @@ class QueryBlock(LogicBlock):
     tabs = self.tabs if not tabs else tabs
     if "_id" in self.params:
       query = "findById"
-      return f"{self.TAB_CHAR*tabs}" + f"const {self.var_name.lower()} = await {self.model}.{query}(id);\n"
+      return f"{self.TAB_CHAR*tabs}" + f"const {self.var_name} = await {self.model}.{query}(id);\n"
     elif self.variant == "many":
       query = "find"
-      return f"{self.TAB_CHAR*tabs}" + f"const {self.var_name.lower()} = await {self.model}.{query}({self.params});\n"
+      return f"{self.TAB_CHAR*tabs}" + f"const {self.var_name} = await {self.model}.{query}({self.params});\n"
     else:
       query = "findOne"
-      return f"{self.TAB_CHAR*tabs}" + f"const {self.var_name.lower()} = await {self.model}.{query}({self.params});\n"
+      return f"{self.TAB_CHAR*tabs}" + f"const {self.var_name} = await {self.model}.{query}({self.params});\n"
 
     

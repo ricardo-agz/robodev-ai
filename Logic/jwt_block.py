@@ -34,7 +34,7 @@ class JWTBlock(LogicBlock):
     
     tabs = self.tabs if not tabs else tabs
     out_str = f"jwt.sign( {self.payload}, {self.secret}, " + "{expiresIn: " + f"{self.expiration}" + "},\n" if self.jwt_variant== "sign" else f"jwt.verify( {self.token}, {self.secret},\n"
-    out_str += f"{self.TAB_CHAR*tabs}"+"(err, token)" + "=>" + "{\n" if self.jwt_variant == "sign" else f"{self.TAB_CHAR*tabs}" + "(err, decoded)" + "=>" + "{\n"
+    out_str += f"{self.TAB_CHAR*tabs}"+"(err, token) => " + "{\n" if self.jwt_variant == "sign" else f"{self.TAB_CHAR*tabs}" + "(err, decoded)" + "=>" + "{\n"
     
     success_str = self.recurse_success(tabs)
     error_str = self.recurse_error(tabs)

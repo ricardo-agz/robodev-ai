@@ -30,12 +30,11 @@ class BcryptBlock(LogicBlock):
     
     
     
-    if (self.bcrypt_variant == "compare") :
-      
-      code = "const " +  self.var_name +  " = await bcrypt.compare(" + self.plain_text + "," + self.hash + ")"
+    if (self.bcrypt_variant == "compare"):
+      code = "const " +  self.var_name +  " = await bcrypt.compare(" + self.plain_text + ", " + self.hash + ");"
       
     else:
-      code = "const " +  self.var_name +  " = await bcrypt.hash(" + self.plain_text + "," + self.salt_rounds + ")"
+      code = "const " +  self.var_name +  " = await bcrypt.hash(" + self.plain_text + ", " + str(self.salt_rounds) + ");"
     code_split = code.split('\n')
     
     code_split = [f"{self.TAB_CHAR*tabs}" + x for x in code_split]
