@@ -12,10 +12,13 @@ class TemplateParser:
                 project,
                 model=None,
                 alias=None,
-                many_model=None
+                many_model=None,
+                is_preview=False
               ):
     self.in_f = open(os.path.join(__location__, in_file), "r")
-    self.out_f = open(out_file, "w")
+    if (is_preview==False):
+      self.out_f = open(out_file, "w")
+    self.is_preview = is_preview
     self.__location__ = __location__
     self.lines = self.in_f.readlines()
     self.out_lines = []
@@ -167,7 +170,8 @@ class TemplateParser:
 
   def close_files(self):
     self.in_f.close()
-    self.out_f.close()
+    if not self.is_preview:
+      self.out_f.close()
 
 
   def init_parse_lines(self):

@@ -29,41 +29,48 @@ from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
 
 ########## SERVER ##########
 
-def build_controller_page(project, model, is_auth=False):
-  page = ControllerPage(project, model, is_auth)
+def build_controller_page(project, controller, model=None, is_auth=False):
+  page = ControllerPage(project, controller, is_auth, is_preview=True)
   output = page.to_string()
   page.close_files()
   return output
 
 def build_model_page(project, model):
-  page = ModelPage(project, model)
+  page = ModelPage(project, model,  is_preview=True)
   output = page.to_string()
   page.close_files()
   return output
 
 def build_db_page(project):
-  page = DatabasePage(project)
+  page = DatabasePage(project,  is_preview=True)
   output = page.to_string()
   page.close_files()
   return output
 
 def build_server_page(project):
-  page = ServerIndexPage(project)
+  page = ServerIndexPage(project,  is_preview=True)
   output = page.to_string()
   page.close_files()
   return output
 
 def build_routes_page(project):
-  page = RoutesPage(project)
+  page = RoutesPage(project,  is_preview=True)
   output = page.to_string()
   page.close_files()
   return output
 
 def build_middlewares_page(project):
-  page = MiddlewaresPage(project)
-  output = page.to_string()
-  page.close_files()
+  middlewares = MiddlewaresPage(project,  is_preview=True)
+  
+  output = middlewares.to_string()
+  
+  middlewares.close_files()
   return output
+
+
+
+
+
 
 
 ########## CLIENT ##########

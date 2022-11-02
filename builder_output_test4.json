@@ -1,0 +1,109 @@
+{
+  "project_name": "testProject",
+  "db_params": [
+    {
+      "model_name": "User",
+      "auth": true,
+      "schema": [
+        {
+          "name": "username",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "email",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "password",
+          "required": true,
+          "type": "String"
+        }
+      ],
+      "has_many": [
+        [
+          "Post",
+          "posts"
+        ]
+      ],
+      "belongs_to": [],
+      "routes": [
+        {
+          "route": "index",
+          "middleware": "verifyJWT",
+          "logic": ""
+        },
+        {
+          "route": "show",
+          "middleware": "verifyJWT",
+          "logic": ""
+        },
+        {
+          "route": "create",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "update",
+          "middleware": "verifyJWT",
+          "logic": ""
+        },
+        {
+          "route": "delete",
+          "middleware": "verifyJWT",
+          "logic": ""
+        }
+      ]
+    },
+    {
+      "model_name": "Post",
+      "auth": false,
+      "schema": [
+        {
+          "name": "text",
+          "required": true,
+          "type": "String"
+        }
+      ],
+      "has_many": [],
+      "belongs_to": [
+        [
+          "User",
+          "author"
+        ]
+      ],
+      "routes": [
+        {
+          "route": "index",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "show",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "create",
+          "middleware": "verifyJWT",
+          "logic": ""
+        },
+        {
+          "route": "update",
+          "middleware": "verifyJWT",
+          "logic": ""
+        },
+        {
+          "route": "delete",
+          "middleware": "verifyJWT",
+          "logic": ""
+        }
+      ]
+    }
+  ],
+  "auth_object": "User",
+  "server_port": 8080,
+  "mongostr": "",
+  "email": "r@r.co"
+}

@@ -9,7 +9,8 @@ class ModelPage(TemplateParser):
   def __init__(
       self,
       project : Project,
-      model : Model
+      model : Model,
+      is_preview = False
     ) -> None:
 
     __location__ = os.path.realpath(
@@ -24,7 +25,8 @@ class ModelPage(TemplateParser):
       out_file,
       __location__,
       project,
-      model
+      model,
+      is_preview = is_preview
     )
 
     self.parse_file()
@@ -104,7 +106,7 @@ class ModelPage(TemplateParser):
             }
           ]
           """
-          self.out_lines.append(f"\t{alias}: [\n")
+          self.out_lines.append(f"\t{camel_case(alias)}: [\n")
           self.out_lines.append(f"\t\t{{\n")
           self.out_lines.append(f"\t\t\ttype: mongoose.Schema.Types.ObjectId,\n")
           self.out_lines.append(f"\t\t\tref: '{many_model.name}'\n")
