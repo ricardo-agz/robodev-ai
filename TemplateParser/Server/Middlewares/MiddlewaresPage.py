@@ -30,8 +30,11 @@ class MiddlewaresPage(TemplateParser):
   def parses_file(self):
     for line in self.lines:
       if "$$imports$$" in line:
-        #const jwt = require("jsonwebtoken");
-        #const User = require('../models/user');
+        """
+        Ex. 
+        const jwt = require("jsonwebtoken");
+        const User = require('../models/user');
+        """
         logic = []
         for middleware in self.project.middlewares:
           logic= logic + middleware.logic
@@ -39,18 +42,27 @@ class MiddlewaresPage(TemplateParser):
         self.out_lines.append(import_statements)
         
       if "$$handler$$" in line:
+        """
+        Writes middleware function
+        Ex.
+        const verifyJWT = (req, res, next) => { ...}
+        """
         for middleware in self.project.middlewares:
-          print(middleware.getContent())
           self.out_lines.append(middleware.getContent())
         
-      elif "$$exports" in line:
-          temp = ""
-          for i, middleware in enumerate(self.project.middlewares):
-            if (i != len(self.project.middlewares)) - 1:
-              temp += "\t" + middleware.handler  + ",\n"
-            else:
-              temp += "\t" + middleware.handler + "\n"
-          self.out_lines.append(temp)
+      elif "$$exports$$" in line:
+        """
+        Writes middleware function exports
+        Ex.
+        module.exports = { verifyJWT, ...etc }
+        """
+        temp = ""
+        for i, middleware in enumerate(self.project.middlewares):
+          if (i != len(self.project.middlewares)) - 1:
+            temp += "\t" + middleware.handler  + ",\n"
+          else:
+            temp += "\t" + middleware.handler + "\n"
+        self.out_lines.append(temp)
 
       elif "$$" not in line:
         self.out_lines.append(line)
