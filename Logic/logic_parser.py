@@ -38,6 +38,7 @@ def parse_block(block, success=[], error=[]):
   multiple = block["multiple"] if 'multiple' in block else None
   return_content = block['returnContent'] if 'returnContent' in block else None
   code = block['code'] if 'code' in block else None
+  populate = block['populate'] if 'populate' in block else None
 
   if block_type == 'query':
     if (multiple):
@@ -45,7 +46,7 @@ def parse_block(block, success=[], error=[]):
     else:
       variant = "one"
     
-    return QueryBlock(model=model, params=params, var_name=var_name, variant=variant)
+    return QueryBlock(model=model, params=params, var_name=var_name, populate=populate, variant=variant)
 
   elif block_type == 'custom':
     return CustomBlock(code=code)
