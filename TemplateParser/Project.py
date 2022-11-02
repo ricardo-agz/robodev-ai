@@ -45,6 +45,7 @@ class Project:
       controllers: list[Controller],
       auth_object : str,
       email : str,
+      middlewares,
       server_port : int = 8080,
       mongostr : str = "<MONGO_CONNECTION_STRING>",
       styled : bool = True,
@@ -55,7 +56,9 @@ class Project:
     self.models = models
     self.controllers = controllers
     self.auth_object = self.model_from_name(auth_object) if auth_object else None
+    self.middlewares = middlewares
     self.server_port = server_port
+    
     self.link = f"http://localhost:{server_port}"
     self.mongostr = mongostr
     self.email = email
@@ -70,7 +73,7 @@ class Project:
 
 
   def build_directory(self) -> dict:
-    return init_project_structure(self.project_name, self.models, self.auth_object)
+    return init_project_structure(self.project_name, self.models, self.controllers, self.middlewares, self.auth_object)
 
   def parse_warnings(self) -> None:
     model_names = []
@@ -266,7 +269,7 @@ class Project:
 
 
 ########## PROJECT STRUCTURE ##########
-def init_project_structure(project_name, models, auth_object=None):
+def init_project_structure(project_name, models, controllers, middlewares, auth_object=None):
   """
   Function used to create tree of directories to preview files in builder
   """
@@ -402,11 +405,8 @@ def init_project_structure(project_name, models, auth_object=None):
       "name": f"{camel_case(model.name)}.js",
       "type": "file"    
     })
-    controller_files.append({
-      "id": f"{model.name}_controller",
-      "name": f"{camel_case(model.name)}Controller.js",
-      "type": "file"    
-    })
+  
+ 
 
     show_pages = []
     """
@@ -444,22 +444,23 @@ def init_project_structure(project_name, models, auth_object=None):
     #   "type": "folder",
     #   "children": show_pages
     # })
-
-  if auth_object:
-    """ SERVER """
-    # add auth controler to controllers folder
-    controller_files.append({
-      "id": f"{auth_object.name}_controller_auth",
-      "name": f"authController.js",
+  for controller in controllers:
+   controller_files.append({
+      "id": f"{controller.name}_controller",
+      "name": f"{camel_case(controller.name)}Controller.js",
       "type": "file"    
     })
+
+  if len(middlewares) != 0:
+    project_structure['children'][0]['children'][3]['children'].append({  
+        "id": "middlewares",
+        "name": "middlewares.js",
+        "type": "file"
+      })
+  
     # add middlewares page to routes folder
     ## changed first ['children'][1] to ['children'][0] because we sommented out client part
-    project_structure['children'][0]['children'][3]['children'].append({
-      "id": "middlewares",
-      "name": "middlewares.js",
-      "type": "file"
-    })
+    
 
     """ CLIENT """
     # add Auth folder

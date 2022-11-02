@@ -6,7 +6,11 @@ import os
 from TemplateParser.TemplateParser import TemplateParser
 from TemplateParser.Project import Project
 from TemplateParser.Model import Model
+<<<<<<< HEAD
 from TemplateParser.helpers import camel_case, pascal_case
+=======
+from TemplateParser.helpers import camel_case, pascal_case, extra_libraries_exist
+>>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3
 
 
 class PackageJSONPage(TemplateParser):
@@ -30,3 +34,8 @@ class PackageJSONPage(TemplateParser):
     )
 
     self.parse_file()
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3

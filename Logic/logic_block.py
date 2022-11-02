@@ -6,8 +6,12 @@ class LogicBlock:
   ) -> None:
       self.block_type = block_type
       self.recursive = recursive
-      self.TAB_CHAR = "    "
+      self.tabs = 2
+      self.TAB_CHAR = "  "
       self.rec_id = 0
+
+  def set_tabs(self, tabs):
+    self.tabs = tabs
 
   def set_rec_id(self, id):
     self.rec_id = id

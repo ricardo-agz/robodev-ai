@@ -36,9 +36,10 @@ class Route:
       self.logic = logic
       self.pagination = pagination
       self.alias = alias
+      self.TAB_CHAR = "  "
 
       if self.logic != "":
-        print(f"THIS ROUTE HAS LOGIC: {self.logic}")
+        pass
 
   def get_logic(self):
     return self.logic
@@ -47,7 +48,7 @@ class Route:
     """
     router.get('/users/:id', verifyJWT, UserController.find)
     """
-    middleware = f", {self.middleware}" if self.middleware else ""
+    middleware = f", " + ",".join(self.middleware) if len(self.middleware) != 0 else ""
     return f"router.{self.verb.lower()}('{self.url}'{middleware}, {self.controller_name}Controller.{self.handler});\n"
   
   def get_params_from_url(self):
@@ -65,26 +66,27 @@ class Route:
     out = f"const {{ {param_str} }} = req.params;"
 
     if len(params) > 0:
-      return out
+      return out			
     return ""
 
   def get_handler_function(self):
     # header comment
     url_params = self.get_params_from_url()
     params_comment =  f" * params: {url_params}\n\t" if len(url_params) > 0 else ""
-    func = f'\t/*\n\t * {self.handler}\n\t * url: {self.url}\n\t{params_comment} */\n'
+    func = f'{self.TAB_CHAR}/*\n{self.TAB_CHAR} * {self.handler}\n{self.TAB_CHAR} * url: {self.url}\n{self.TAB_CHAR}{params_comment} */\n'
     # declaration
-    func += f'\t{self.handler}: async (req, res)' + " => {\n"
-    func += "\t\ttry {\n"
-    func += f"\t\t\t{self.get_param_declaration()}\n" if len(url_params) > 0 else ""
+    func += f'{self.TAB_CHAR}{self.handler}: async (req, res)' + " => {\n"
+    func += f"{2*self.TAB_CHAR}try {{\n"
+    func += f"{self.TAB_CHAR*3}{self.get_param_declaration()}\n" if len(url_params) > 0 else ""
     logic = json_to_formatted_code(self.logic)
     for line in logic.split("\n"):
       if (line != ""):
-        func += "\t" + line + "\n"
-    func += "\t\t} catch(e) {\n"
-    func += f"\t\t\tres.status(500).send({{ message: `server error in {self.controller_name}Controller {self.handler}() : ${{e}}` }});\n"
-    func += "\t\t};\n"
-    func += "\t},\n"
+        func += f"{self.TAB_CHAR}" + line + "\n"
+    func += f"{self.TAB_CHAR*2}}} catch(e) {{\n"
+    # func += f"\t\t\tres.status(500).send({{ message: `server error in {self.controller_name}Controller {self.handler}() : ${{e}}` }});\n"
+    func += f"{self.TAB_CHAR*3}console.error(`server error in {self.controller_name}Controller {self.handler}() : ${{e}}`);\n"
+    func += f"{self.TAB_CHAR*2}}};\n"
+    func += f"{self.TAB_CHAR}}},\n"
     return func
 
 

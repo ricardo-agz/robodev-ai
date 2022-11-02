@@ -5,11 +5,9 @@ class ErrorBlock(LogicBlock):
     self,
     status=None,
     message=None,
-    tabs = 1
   ) -> None:
     self.status = 500 if not status else status
     self.message = "Server error..." if not message else message
-    self.tabs = tabs
 
     super().__init__(
       block_type="error",

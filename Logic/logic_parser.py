@@ -1,11 +1,14 @@
 from Logic.conditional_block import ConditionalBlock
 from Logic.custom_block import CustomBlock
+from Logic.next_block import NextBlock
 from Logic.query_block import QueryBlock
 from Logic.error_block import ErrorBlock
 from Logic.return_block import ReturnBlock
 from Logic.delete_block import DeleteBlock
 from Logic.update_block import UpdateBlock
 from Logic.create_block import CreateBlock
+from Logic.bcrypt_block import BcryptBlock
+from Logic.jwt_block import JWTBlock
 
 
 def recurse_block(block):
@@ -23,11 +26,17 @@ def recurse_block(block):
   else:
     return parse_block(block)
 
+
 def parse_block(block, success=[], error=[]):
+  
   block_type = block['blockVariant']
   model = block['model']  if 'model' in block else None
   params = block['params'] if 'params' in block else None
   var_name = block['varName'] if 'varName' in block else None
+  bcrypt_variant = block['bcryptVariant'] if 'bcryptVariant' in block else None
+  plain_text = block['plainText'] if 'plainText' in block else None
+  hash = block['hash'] if 'hash' in block else None
+  salt_rounds = block['saltRounds'] if 'saltRounds' in block else None
   variant = block['variant'] if 'variant' in block else None
   condition = block['condition'] if 'condition' in block else None
   status = block['status'] if 'status' in block else None
@@ -38,7 +47,11 @@ def parse_block(block, success=[], error=[]):
   multiple = block["multiple"] if 'multiple' in block else None
   return_content = block['returnContent'] if 'returnContent' in block else None
   code = block['code'] if 'code' in block else None
-  populate = block['populate'] if 'populate' in block else None
+  jwt_variant = block['jwtVariant'] if 'jwtVariant' in block else None
+  payload = block['payload'] if 'payload' in block else None
+  secret =  block['secret'] if 'secret' in block else None
+  token =  block['token'] if 'token' in block else None
+  expiration = block['expiration'] if 'expiration' in block else None
 
   if block_type == 'query':
     if (multiple):
@@ -46,7 +59,7 @@ def parse_block(block, success=[], error=[]):
     else:
       variant = "one"
     
-    return QueryBlock(model=model, params=params, var_name=var_name, populate=populate, variant=variant)
+    return QueryBlock(model=model, params=params, var_name=var_name, variant=variant)
 
   elif block_type == 'custom':
     return CustomBlock(code=code)
@@ -105,6 +118,16 @@ def parse_block(block, success=[], error=[]):
       success=success, 
       error=error
     )
+  elif block_type == "BCrypt":
+    
+    return BcryptBlock(model, var_name, bcrypt_variant, plain_text, hash, salt_rounds)
+  
+  elif block_type == "JWT":
+    
+    return JWTBlock(model, jwt_variant, payload, secret, token, expiration, success, error)
+
+  elif block_type == "next":
+    return NextBlock();
 
 
 

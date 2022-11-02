@@ -6,12 +6,10 @@ class ReturnBlock(LogicBlock):
     status=None,
     data=None,
     return_content=None,
-    tabs = 1
   ) -> None:
     self.status = 200 if not status else status
     self.data = False if not data else data
     self.return_content = "Success!" if not return_content else return_content
-    self.tabs = tabs
 
     super().__init__(
       block_type="return",

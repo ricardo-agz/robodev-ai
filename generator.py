@@ -1,12 +1,15 @@
 from distutils.command.build import build
-from msilib.schema import Control
+# from msilib.schema import Control
 import os
+from re import M
 import shutil
 
 import json
 from TemplateParser.Model import Model
 from TemplateParser.Project import Project
 from TemplateParser.Route import Route
+from TemplateParser.Middleware import Middleware
+
 from TemplateParser.Client.App.AppPage import AppPage
 from TemplateParser.Client.AppCss.AppCss import AppCss
 from TemplateParser.Client.AuthContext.AuthContextPage import AuthContextPage
@@ -125,9 +128,12 @@ def project_from_builder_data(builder_data):
   email = builder_data['email']
   controllers = builder_data["controllers"]
   routes = builder_data["routes"]
-
+  middlewares = builder_data["middlewares"]
   # PARSING MODELS
   models = []
+
+  print(builder_data)
+
   for model in db_params:
     model_obj = Model(
       id = model["id"],
@@ -138,17 +144,30 @@ def project_from_builder_data(builder_data):
       auth = model['auth'] if 'auth' in model else False
     )
 
-    #model_obj.set_routes(routes)
+  #model_obj.set_routes(routes)
     models.append(model_obj)
 
+  middlewares_array = []
   routes_table = {}
 
   controller_map = {}
 
+  middleware_map = {}
+
   for controller in controllers:
     controller_map[controller["id"]] = controller["name"]
 
+  for middleware in middlewares:
+    middleware_map[middleware["id"]] = middleware["handler"]
+    middlewares_array.append(Middleware(middleware["id"], middleware["handler"], middleware["logic"]))
+
+
   for route in routes:
+    name_array = []
+
+    for id in route["middleware"]:
+      name_array.append(middleware_map[id])
+
     route_obj = Route(
       controller_id = route["controller"],
       controller_name = controller_map[route["controller"]],
@@ -157,7 +176,7 @@ def project_from_builder_data(builder_data):
       handler = route["handler"],
       verb = route["verb"],
       logic = route["logic"],
-      middleware=route["middleware"]
+      middleware=name_array
     )
     if route_obj.controller_id in routes_table:
       routes_table[route_obj.controller_id].append(route_obj)
@@ -178,6 +197,7 @@ def project_from_builder_data(builder_data):
 
     controllers_objects.append(controller_obj)
   
+  print(controllers_objects)
   # CREATE PROJECT
   project = Project(
     project_name = project_name,
@@ -185,6 +205,7 @@ def project_from_builder_data(builder_data):
     controllers = controllers_objects,
     auth_object = auth_model_name,
     email = email,
+    middlewares=middlewares_array,
     server_port = server_port,
     mongostr = mongostr,
     styled = False,
@@ -196,7 +217,7 @@ def project_from_builder_data(builder_data):
 
 def generator(builder_data):
   # try:
-    print(builder_data)
+   
     project_name = camel_to_snake(builder_data['project_name'])
     db_params = builder_data['db_params']
     auth_model_name = pascal_case(builder_data['auth_object'])
@@ -205,7 +226,9 @@ def generator(builder_data):
     email = builder_data['email']
     controllers = builder_data["controllers"]
     routes = builder_data["routes"]
-
+    middlewares = builder_data["middlewares"]
+    
+    print("SINDI")
     # PARSING MODELS
     models = []
     for model in db_params:
@@ -220,15 +243,32 @@ def generator(builder_data):
 
       #model_obj.set_routes(routes)
       models.append(model_obj)
-
+    print("SINDI2")
+    middlewares_array = []
     routes_table = {}
 
     controller_map = {}
 
+    middleware_map = {}
+
     for controller in controllers:
       controller_map[controller["id"]] = controller["name"]
 
+    print("SINDI4")
+
+    for middleware in middlewares:
+      middleware_map[middleware["id"]] = middleware["handler"]
+      middlewares_array.append(Middleware(middleware["id"], middleware["handler"], middleware["logic"]))
+
+
+    print("SINDI3")
+
     for route in routes:
+      name_array = []
+
+      for id in route["middleware"]:
+        name_array.append(middleware_map[id])
+
       route_obj = Route(
         controller_id = route["controller"],
         controller_name = controller_map[route["controller"]],
@@ -237,7 +277,7 @@ def generator(builder_data):
         handler = route["handler"],
         verb = route["verb"],
         logic = route["logic"],
-        middleware=route["middleware"]
+        middleware=name_array
       )
       if route_obj.controller_id in routes_table:
         routes_table[route_obj.controller_id].append(route_obj)
@@ -257,6 +297,7 @@ def generator(builder_data):
         controller_obj.addRoutes(temp_route)
 
       controllers_objects.append(controller_obj)
+
     
     # CREATE PROJECT
     project = Project(
@@ -265,10 +306,13 @@ def generator(builder_data):
       controllers = controllers_objects,
       auth_object = auth_model_name,
       email = email,
+      middlewares=middlewares_array,
       server_port = server_port,
       mongostr = mongostr,
       styled = False
     )
+    
+    
 
     # CREATING DIRECTORIES
     ROOT_DIR = os.path.abspath(os.curdir)
@@ -287,6 +331,8 @@ def generator(builder_data):
     server_index.write_out_file()
     server_index.close_files()
 
+
+    print("AFTER")
     package = PackageJSONPage(project)
     package.write_out_file()
     package.close_files()
@@ -305,19 +351,18 @@ def generator(builder_data):
     db_page.write_out_file()
     db_page.close_files()
     os.chdir(SERVER_PATH)
-
+    
     # BUILD CONTROLLER FILES
     os.chdir('./controllers')
     for controller in project.controllers:
       model_controler = ControllerPage(project, controller)
       model_controler.write_out_file()
       model_controler.close_files()
-    if project.auth_object:
-      auth_controler = ControllerPage(project, project.auth_object, is_auth=True)
-      auth_controler.write_out_file()
-      auth_controler.close_files()
+    
     os.chdir(SERVER_PATH)
 
+
+    
     # BUILD MODEL FILES
     os.chdir('./models')
     for model in project.models:
@@ -331,8 +376,12 @@ def generator(builder_data):
     routes = RoutesPage(project)
     routes.write_out_file()
     routes.close_files()
-    if project.auth_object:
+    
+    #BUILD MIDDLEWARE FILES
+    if len(middlewares_array) != 0:
+      
       middlewares = MiddlewaresPage(project)
+      
       middlewares.write_out_file()
       middlewares.close_files()
     os.chdir(SERVER_PATH)

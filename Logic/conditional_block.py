@@ -6,10 +6,8 @@ class ConditionalBlock(LogicBlock):
     condition=None,
     success = [],
     error = [],
-    tabs = 1
   ) -> None:
     self.condition = "true" if not condition else condition
-    self.tabs = tabs
     self.success = success
     self.error = error
 
@@ -29,7 +27,7 @@ class ConditionalBlock(LogicBlock):
     if len(self.error) > 0:
       out_str +=  " else {\n" + error_str + f"{self.TAB_CHAR*tabs}}};\n"
     else:
-      out_str += ";\n"
+      out_str += "\n"
 
     return out_str
 

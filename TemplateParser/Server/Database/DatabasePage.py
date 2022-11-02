@@ -6,7 +6,8 @@ from TemplateParser.helpers import append_at_index
 class DatabasePage(TemplateParser):
   def __init__(
       self,
-      project : Project
+      project : Project,
+      is_preview = False
     ) -> None:
 
     __location__ = os.path.realpath(
@@ -21,6 +22,7 @@ class DatabasePage(TemplateParser):
       out_file,
       __location__,
       project,
+      is_preview=is_preview
     )
 
     self.parse_file()

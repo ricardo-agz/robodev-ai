@@ -10,7 +10,6 @@ class CreateBlock(MongooseBlock):
     var_name = None,
     success = [],
     error = None,
-    tabs = 1
   ) -> None:
 
     super().__init__(
@@ -20,7 +19,6 @@ class CreateBlock(MongooseBlock):
       var_name= f"new{model}" if not var_name else var_name,
       success=success,
       error=error,
-      tabs=tabs,
       recursive=True
     )
 

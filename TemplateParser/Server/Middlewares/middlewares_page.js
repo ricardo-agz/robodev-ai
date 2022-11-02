@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 
@@ -22,4 +23,13 @@ const verifyJWT = (req, res, next) => {
 
 module.exports = {
   verifyJWT,
+=======
+$$imports$$
+require('dotenv').config();
+
+$$handler$$
+
+module.exports = {
+  $$exports$$
+>>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3
 };
