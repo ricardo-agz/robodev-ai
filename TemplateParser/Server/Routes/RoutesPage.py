@@ -35,9 +35,6 @@ class RoutesPage(TemplateParser):
         insert = self.add_controller_declarations()
         self.out_lines = self.out_lines + insert
 
-      elif "$$AUTH_CONTROLLER$$" in line and self.project.auth_object:
-        self.out_lines.append("const AuthController = require('../controllers/authController');\n")
-
       elif "$$ROUTES$$" in line:
         insert = self.write_routes()
         self.out_lines = self.out_lines + insert
@@ -52,19 +49,14 @@ class RoutesPage(TemplateParser):
 
         self.out_lines.append("const { " + import_str + " } = require('./middlewares');\n")
 
-      elif "$$AUTH_ROUTES$$" in line and self.project.auth_object:
-        self.out_lines.append("// Auth\n")
-        self.out_lines.append("router.post('/auth/login', AuthController.login);\n")
-        self.out_lines.append("router.post('/auth/register', AuthController.register);\n\n")
-
       else:
         self.out_lines.append(line)
         
 
-
-
   def add_controller_declarations(self):
       """
+      Writes import statements for all controllers in project
+      Ex.
       const UserController = require('./controllers/UserController');
       const CourseController = require('./controllers/CourseController');
       """
@@ -76,6 +68,8 @@ class RoutesPage(TemplateParser):
 
   def write_routes(self):
     """
+    Writes route endpoints for all routes in all controllers in project
+    Ex.
     app.get('/users', UserController.all)
     app.get('/users/:id', verifyJWT, UserController.find)
     app.post('/users', verifyJWT, UserController.create)
