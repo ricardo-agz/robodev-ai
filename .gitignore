@@ -2,3 +2,4 @@ process21
 process22
 .env
 __pycache__
+__pycache__/
