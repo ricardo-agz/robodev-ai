@@ -1,8 +1,5 @@
 import os
-<<<<<<< HEAD
-=======
 from TemplateParser.Middleware import Middleware
->>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3
 from TemplateParser.TemplateParser import TemplateParser
 from TemplateParser.Project import Project
 from TemplateParser.helpers import append_at_index, camel_case
@@ -10,12 +7,8 @@ from TemplateParser.helpers import append_at_index, camel_case
 class RoutesPage(TemplateParser):
   def __init__(
       self,
-<<<<<<< HEAD
-      project : Project
-=======
       project : Project,
       is_preview = False
->>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3
     ) -> None:
 
     __location__ = os.path.realpath(
@@ -30,10 +23,7 @@ class RoutesPage(TemplateParser):
       out_file,
       __location__,
       project,
-<<<<<<< HEAD
-=======
       is_preview=is_preview
->>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3
     )
 
     self.parse_file()
@@ -52,10 +42,6 @@ class RoutesPage(TemplateParser):
         insert = self.write_routes()
         self.out_lines = self.out_lines + insert
 
-<<<<<<< HEAD
-      elif "$$MIDDLEWARE_IMPORT$$" in line and self.project.auth_object:
-        self.out_lines.append("const { verifyJWT } = require('./middlewares');\n")
-=======
       elif "$$MIDDLEWARE_IMPORT$$" in line:
         import_str = ""
         for i,middleware in enumerate(self.project.middlewares):
@@ -65,7 +51,6 @@ class RoutesPage(TemplateParser):
             import_str += middleware.handler
 
         self.out_lines.append("const { " + import_str + " } = require('./middlewares');\n")
->>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3
 
       elif "$$AUTH_ROUTES$$" in line and self.project.auth_object:
         self.out_lines.append("// Auth\n")
@@ -85,11 +70,7 @@ class RoutesPage(TemplateParser):
       """
       out = []
       for controller in self.project.controllers:
-<<<<<<< HEAD
-        out.append(f"const {controller.name}Controller = require('./controllers/{controller.name}Controller');\n")
-=======
         out.append(f"const {controller.name}Controller = require('../controllers/{controller.name}Controller');\n")
->>>>>>> 63078ef11eced2c8e9b33e15177acfc21c71c6f3
       return out
 
 
