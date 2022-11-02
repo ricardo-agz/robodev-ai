@@ -1,0 +1,67 @@
+[
+  {
+    "block_type": "query",
+    "model": "User",
+    "variant": "many",
+    "params": "{name: 'ricky'}",
+    "var_name": "user"
+  },
+  {
+    "block_type": "conditional",
+    "condition": "user.private",
+    "success": [
+      {
+        "block_type": "query",
+        "model": "User",
+        "variant": "many",
+        "params": "{ name: user.name }",
+        "var_name": "user2"
+      },
+      {
+        "block_type": "error",
+        "status": 500,
+        "message": "Cannot edit a private user"
+      }
+    ],
+    "error": [
+      {
+        "block_type": "error",
+        "status": 500,
+        "message": "Cannot do"
+      }
+    ]
+  },
+  {
+    "block_type": "update",
+    "variant": "one",
+    "params": "user.id",
+    "update_fields": [
+      ["name", "req.body.name"],
+      ["age", "18"]
+    ],
+    "success": [
+      {
+        "block_type": "return",
+        "status": 200,
+        "message": "User successfully updated"
+      },
+      {
+        "block_type": "return",
+        "status": 200,
+        "message": "User successfully updated"
+      }
+    ],
+    "error": [
+      {
+        "block_type": "return",
+        "status": 200,
+        "message": "User successfully updated"
+      },
+      {
+        "block_type": "error",
+        "status": 500,
+        "message": "Cannot edit a private user error heere"
+      }
+    ]
+  }
+]

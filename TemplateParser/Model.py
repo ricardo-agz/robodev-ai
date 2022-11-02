@@ -50,6 +50,7 @@ class Model:
 
   def __init__(
                 self,
+                id: str,
                 name : str,
                 schema,
                 routes = None,
@@ -58,6 +59,7 @@ class Model:
                 auth = False
               ) -> None:
 
+    self.id = id
     self.name = pascal_case(name.strip())
     self.plural = pluralize(self.name)
     self.schema = schema
@@ -66,7 +68,6 @@ class Model:
     self.one_to_many = []
     self.many_to_many = []
     self.self_many = self.set_self_referencing()
-    self.routes = routes if routes else self.init_default_routes()
     self.auth = auth
 
     
@@ -77,22 +78,6 @@ class Model:
         out += param['name'] + " "
     return out.strip()
 
-  def init_default_routes(self):
-    index = Route("index", "get", f"/{self.plural.lower()}", self)
-    show = Route("show", "get", f"/{self.name.lower()}/:id", self)
-    create = Route("create", "post", f"/{self.plural.lower()}", self)
-    update = Route("update", "put", f"/{self.name.lower()}/:id/edit", self)
-    destroy = Route("destroy", "delete", f"/{self.name.lower()}/:id", self)
-
-    return [index, show, create, update, destroy]
-
-  def add_route(self, route):
-    if not type(route) == Route:
-      raise Exception("route is not a Route object")
-    self.routes.append(route)
-
-  def set_routes(self, routes):
-    self.routes = routes
 
   def add_to_schema(self, param):
     """
@@ -160,13 +145,13 @@ class Model:
 
   # GETTERS
 
-  def get_frontend_routes(self) -> list[Route]:
-    out = []
-    for route in self.routes:
-      if route.name == "index" or route.name == "show" or \
-        route.name == "create" or route.name == "update":
-        out.append(route)
-    return out
+  # def get_frontend_routes(self) -> list[Route]:
+  #   out = []
+  #   for route in self.routes:
+  #     if route.name == "index" or route.name == "show" or \
+  #       route.name == "create" or route.name == "update":
+  #       out.append(route)
+  #   return out
 
   def get_params(self):
     return self.schema
@@ -186,5 +171,4 @@ class Model:
   def get_self_referencing(self):
     return self.self_many
 
-  def get_routes(self):
-    return self.routes
+

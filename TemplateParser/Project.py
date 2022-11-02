@@ -1,5 +1,6 @@
 from TemplateParser.Model import Model
 from TemplateParser.Route import Route
+from TemplateParser.Controller import Controller
 from TemplateParser.helpers import camel_case, camel_to_dash, pascal_case, singularize, camel_to_snake
 
 def val_in_tuple_arr(val, tup_arr):
@@ -41,8 +42,10 @@ class Project:
       self,
       project_name : str,
       models : list[Model],
+      controllers: list[Controller],
       auth_object : str,
       email : str,
+      middlewares,
       server_port : int = 8080,
       mongostr : str = "<MONGO_CONNECTION_STRING>",
       styled : bool = True,
@@ -51,8 +54,11 @@ class Project:
 
     self.project_name = project_name if project_name != "" else "untitled_project"
     self.models = models
+    self.controllers = controllers
     self.auth_object = self.model_from_name(auth_object) if auth_object else None
+    self.middlewares = middlewares
     self.server_port = server_port
+    
     self.link = f"http://localhost:{server_port}"
     self.mongostr = mongostr
     self.email = email
@@ -67,8 +73,7 @@ class Project:
 
 
   def build_directory(self) -> dict:
-    return init_project_structure(self.project_name, self.models, self.auth_object)
-
+    return init_project_structure(self.project_name, self.models, self.controllers, self.middlewares, self.auth_object)
 
   def parse_warnings(self) -> None:
     model_names = []
@@ -242,24 +247,29 @@ class Project:
         drop_route_name = f"drop{singularize(pascal_case(alias))}" if alias else f"add{many_model.name}"
         many_id = f"{camel_case(many_model.name)}Id"
         add_route = Route(
-          name=add_route_name, 
-          method="post",
-          path=f"/{model.plural.lower()}/:id/{camel_to_dash(add_route_name)}/:{many_id}",
-          model=model
+          handler=add_route_name, 
+          verb="post",
+          url=f"/{model.plural.lower()}/:id/{camel_to_dash(add_route_name)}/:{many_id}",
         )
         drop_route = Route(
-          name=drop_route_name, 
-          method="post", 
-          path=f"/{model.plural.lower()}/:id/{camel_to_dash(drop_route_name)}/:{many_id}",
-          model=model
+          handler=drop_route_name, 
+          verb="post", 
+          url=f"/{model.plural.lower()}/:id/{camel_to_dash(drop_route_name)}/:{many_id}"
         )
-        model.add_route(add_route)
-        model.add_route(drop_route)
+        
+        for controller in self.controllers:
+          if (controller.model_affiliation == model.id):
+            add_route.controller_id = controller.id
+            add_route.controller_name = controller.name
+            drop_route.controller_id = controller.id
+            drop_route.controller_name = controller.name
+            controller.addRoutes(add_route)
+            controller.addRoutes(drop_route)
 
 
 
 ########## PROJECT STRUCTURE ##########
-def init_project_structure(project_name, models, auth_object=None):
+def init_project_structure(project_name, models, controllers, middlewares, auth_object=None):
   """
   Function used to create tree of directories to preview files in builder
   """
@@ -270,60 +280,62 @@ def init_project_structure(project_name, models, auth_object=None):
     "type": "folder",
     "children": [
       # CLIENT
-      {
-        "id": "client",
-        "name": "client",
-        "type": "folder",
-        "children": [
-          # SRC
-          {
-            "id": "src",
-            "name": "src",
-            "type": "folder",
-            "children": [
-              # COMPONENTS
-              {
-                "id": "components",
-                "name": "components",
-                "type": "folder",
-                "children": []
-              },
-              # HOOKS
-              {
-                "id": "hooks",
-                "name": "hooks",
-                "type": "folder",
-                "children": [
-                  {
-                    "id": "use_api",
-                    "name": "useApi.js",
-                    "type": "file",
-                  }
-                ]
-              },
-              # PAGES
-              {
-                "id": "pages",
-                "name": "pages",
-                "type": "folder",
-                "children": [
+      
+      # {
+      #   "id": "client",
+      #   "name": "client",
+      #   "type": "folder",
+      #   "children": [
+      #     # SRC
+      #     {
+      #       "id": "src",
+      #       "name": "src",
+      #       "type": "folder",
+      #       "children": [
+      #         # COMPONENTS
+      #         {
+      #           "id": "components",
+      #           "name": "components",
+      #           "type": "folder",
+      #           "children": []
+      #         },
+      #         # HOOKS
+      #         {
+      #           "id": "hooks",
+      #           "name": "hooks",
+      #           "type": "folder",
+      #           "children": [
+      #             {
+      #               "id": "use_api",
+      #               "name": "useApi.js",
+      #               "type": "file",
+      #             }
+      #           ]
+      #         },
+      #         # PAGES
+      #         {
+      #           "id": "pages",
+      #           "name": "pages",
+      #           "type": "folder",
+      #           "children": [
 
-                ]
-              },
-              {
-                "id": "client_app",
-                "name": "App.js",
-                "type": "file",
-              },
-              {
-                "id": "client_home",
-                "name": "Home.js",
-                "type": "file",
-              },
-            ]
-          }
-        ]
-      },
+      #           ]
+      #         },
+      #         {
+      #           "id": "client_app",
+      #           "name": "App.js",
+      #           "type": "file",
+      #         },
+      #         {
+      #           "id": "client_home",
+      #           "name": "Home.js",
+      #           "type": "file",
+      #         },
+      #       ]
+      #     }
+      #   ]
+      # },
+      
       # SERVER
       {
         "id": "server",
@@ -393,13 +405,11 @@ def init_project_structure(project_name, models, auth_object=None):
       "name": f"{camel_case(model.name)}.js",
       "type": "file"    
     })
-    controller_files.append({
-      "id": f"{model.name}_controller",
-      "name": f"{camel_case(model.name)}Controller.js",
-      "type": "file"    
-    })
+  
+ 
 
     show_pages = []
+    """
     for route in model.get_frontend_routes():
       if route.name == "index":
         show_pages.append({
@@ -425,30 +435,36 @@ def init_project_structure(project_name, models, auth_object=None):
           "name": f"{pascal_case(model.name)}Edit.js",
           "type": "file"  
         })
-    project_structure['children'][0]['children'][0]['children'][2]['children'].append({
-      "id": f"{model.name}_folder",
-      "name": f"{camel_case(model.name)}",
-      "type": "folder",
-      "children": show_pages
-    })
+    """
 
-  if auth_object:
-    """ SERVER """
-    # add auth controler to controllers folder
-    controller_files.append({
-      "id": f"{auth_object.name}_controller_auth",
-      "name": f"authController.js",
+    """Frontend"""
+    # project_structure['children'][0]['children'][0]['children'][2]['children'].append({
+    #   "id": f"{model.name}_folder",
+    #   "name": f"{camel_case(model.name)}",
+    #   "type": "folder",
+    #   "children": show_pages
+    # })
+  for controller in controllers:
+   controller_files.append({
+      "id": f"{controller.name}_controller",
+      "name": f"{camel_case(controller.name)}Controller.js",
       "type": "file"    
     })
+
+  if len(middlewares) != 0:
+    project_structure['children'][0]['children'][3]['children'].append({  
+        "id": "middlewares",
+        "name": "middlewares.js",
+        "type": "file"
+      })
+  
     # add middlewares page to routes folder
-    project_structure['children'][1]['children'][3]['children'].append({
-      "id": "middlewares",
-      "name": "middlewares.js",
-      "type": "file"
-    })
+    ## changed first ['children'][1] to ['children'][0] because we sommented out client part
+    
 
     """ CLIENT """
     # add Auth folder
+    """
     project_structure['children'][0]['children'][0]['children'].insert(0, {
       "id": "auth_folder",
       "name": "auth",
@@ -490,11 +506,13 @@ def init_project_structure(project_name, models, auth_object=None):
         "type": "file"
       },
     ]
-    #                            client         src            hooks
+                               client         src            hooks
     project_structure['children'][0]['children'][0]['children'][2]['children'] += auth_hooks
+    """
   
-  project_structure['children'][1]['children'][1]['children'] = controller_files  # controllers
-  project_structure['children'][1]['children'][2]['children'] = model_files       # models
+  # also changed ['children'][0] to ['children'][1]
+  project_structure['children'][0]['children'][1]['children'] = controller_files  # controllers
+  project_structure['children'][0]['children'][2]['children'] = model_files       # models
 
   return project_structure
   

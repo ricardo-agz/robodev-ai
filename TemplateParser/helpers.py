@@ -59,3 +59,63 @@ def singularize(s):
   if inflectEngine.singular_noun(s):
     return inflectEngine.singular_noun(s)
   return s
+
+def import_generator(logic):
+  
+  models = []
+  jwt = False
+  bcrypt = False
+
+  import_list = ""
+
+  print(logic)
+
+  queue = logic
+
+  while len(queue) != 0:
+    block = queue.pop()
+    if "success" in block:
+      queue = queue + block["success"]
+    if "error" in block:
+      queue = queue + block["error"]
+
+    if "model" in block:
+      if (block["model"] not in models):
+        models.append(block["model"])
+    
+    if (block["blockVariant"] == "BCrypt"):
+      bcrypt = True
+    if (block["blockVariant"] == "JWT"):
+      jwt = True
+  
+    
+
+  for model in models:
+    import_list += f"const {model.lower()[0].upper() +model.lower()[1::]} = require('../models/{model.lower()}');\n"
+
+  if(jwt):
+    import_list+= 'const jwt = require("jsonwebtoken");\n'
+  if(bcrypt):
+    import_list+= 'const bcrypt = require("bcrypt");\n'
+  return import_list
+
+def extra_libraries_exist(logic):
+  
+  jwt = False
+  bcrypt = False
+
+  queue = logic
+
+  while len(queue) != 0:
+    block = queue.pop()
+    if "success" in block:
+      queue = queue + block["success"]
+    if "error" in block:
+      queue = queue + block["error"]
+    
+    if (block["blockVariant"] == "BCrypt"):
+      bcrypt = True
+    if (block["blockVariant"] == "JWT"):
+      jwt = True
+
+  return {"jwt": jwt, "bcrypt": bcrypt}
