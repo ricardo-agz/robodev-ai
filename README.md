@@ -1,5 +1,11 @@
 # Neutrino V3
 
+## Running the code:
+`docker-compose build`
+
+`docker-compose up`
+
+&nbsp;
 ## Structure
 
 ### /TemplateParser
