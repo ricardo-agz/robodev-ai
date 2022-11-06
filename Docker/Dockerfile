@@ -1,5 +1,5 @@
 # start by pulling the python image
-FROM python:3
+FROM python:3.9
 
 # switch working directory
 WORKDIR /app
@@ -18,3 +18,4 @@ EXPOSE 5000
 ENTRYPOINT [ "python" ]
 
 CMD [ "app.py" ]
+# CMD ["flask", "run", "--host", "0.0.0.0"]
