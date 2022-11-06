@@ -1,4 +1,5 @@
 from shutil import rmtree
+from waitress import serve
 from TemplateParser.helpers import camel_to_snake
 from flask import Flask, request, send_from_directory, after_this_request, jsonify
 import generator
@@ -11,7 +12,7 @@ from Logic.interact import json_to_formatted_code
 from page_builder import build_client_app_page, build_client_auth_context, build_client_home_page, build_client_login, build_client_navbar, build_client_private_route, build_client_show_all, build_client_show_edit, build_client_show_new, build_client_show_one, build_client_use_api, build_client_use_auth, build_client_use_find, build_controller_page, build_db_page, build_middlewares_page, build_model_page, build_routes_page, build_server_page
 from Config.init import load_config
 
-ENV = 'dev'
+ENV = os.environ.get('ENV') or "prod"
 config = load_config(ENV)
 
 
@@ -27,6 +28,12 @@ def home_view():
   res.headers.add('Access-Control-Allow-Origin', '*')
   return res, 200
 
+
+@app.route("/test")
+def test_view():
+  res = jsonify({'message': 'This is a test route. Not much to see here... [edit-2]'})
+  res.headers.add('Access-Control-Allow-Origin', '*')
+  return res, 200
 
 """
 Returns a string of the specified page
@@ -265,9 +272,16 @@ def add_task():
   return res, 400
 
 
-
 if __name__ == "__main__":
   port = int(os.environ.get('PORT', 5000))
-  app.run(host='0.0.0.0', port=port)
+  print(f'This is a {"PRODUCTION" if ENV == "prod" else "DEVELOPMENT"} environment')
+  print(f"Listening on http://127.0.0.1:{port}...")
+
+  if ENV == 'prod':
+    serve(app, host='0.0.0.0', port=port)
+  else:
+    app.run(host='0.0.0.0', port=port)
+  
+  
 
     
