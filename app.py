@@ -1,4 +1,3 @@
-# import imp
 from shutil import rmtree
 from TemplateParser.helpers import camel_to_snake
 from flask import Flask, request, send_from_directory, after_this_request, jsonify
@@ -7,20 +6,22 @@ import os
 import json
 from flask_cors import CORS, cross_origin
 import glob
-
-
-## testing git fix pt 2
-
 from Logic.interact import json_to_formatted_code
 
 from page_builder import build_client_app_page, build_client_auth_context, build_client_home_page, build_client_login, build_client_navbar, build_client_private_route, build_client_show_all, build_client_show_edit, build_client_show_new, build_client_show_one, build_client_use_api, build_client_use_auth, build_client_use_find, build_controller_page, build_db_page, build_middlewares_page, build_model_page, build_routes_page, build_server_page
+from Config.init import load_config
+
+ENV = 'dev'
+config = load_config(ENV)
+
 
 app = Flask(__name__)
 CORS(app)
+app.config.from_object(config)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+
 @app.route("/")
-# @cross_origin()
 def home_view():
   res = jsonify({'message': 'Welcome to Neutrino!'})
   res.headers.add('Access-Control-Allow-Origin', '*')
@@ -133,7 +134,6 @@ def preview_page():
 Gets a list of warnings and errors that may or may not cause build to fail
 """
 @app.route("/getwarnings", methods=["PUT"])
-# @cross_origin()
 def get_warnings():
   if request.get_json():
     data = request.get_json()
@@ -151,7 +151,6 @@ def get_warnings():
 Gets formatted code returned given json
 """
 @app.route("/logiccodepreview", methods=["POST"])
-# @cross_origin()
 def get_logic_code_preview():
   if request.get_json():
     data = request.get_json()
@@ -170,7 +169,6 @@ def get_logic_code_preview():
 Returns a json representation of the project directory structure
 """
 @app.route("/builddirectory", methods=["PUT"])
-# @cross_origin()
 def build_directory():
   if request.get_json():
     data = request.get_json()
@@ -191,7 +189,6 @@ def build_directory():
 Gets a list of the one-to-many and many-to-many relationships for each model
 """
 @app.route("/getrelations", methods=["PUT"])
-# @cross_origin()
 def parse_relations():
   if request.get_json():
     data = request.get_json()
@@ -219,7 +216,6 @@ def parse_relations():
 Main Generator function, creates project and returns zip file
 """
 @app.route("/generator", methods=["POST"])
-# @cross_origin()
 def add_task():
   # Clean up previous project zip files
   try:
@@ -271,6 +267,7 @@ def add_task():
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', threaded=True)
+  port = int(os.environ.get('PORT', 5000))
+  app.run(host='0.0.0.0', port=port)
 
     
