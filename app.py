@@ -12,7 +12,7 @@ from Logic.interact import json_to_formatted_code
 from page_builder import build_client_app_page, build_client_auth_context, build_client_home_page, build_client_login, build_client_navbar, build_client_private_route, build_client_show_all, build_client_show_edit, build_client_show_new, build_client_show_one, build_client_use_api, build_client_use_auth, build_client_use_find, build_controller_page, build_db_page, build_middlewares_page, build_model_page, build_routes_page, build_server_page
 from Config.init import load_config
 
-ENV = os.environ.get('ENV') or "prod"
+ENV = os.environ.get('ENV') or "dev"
 config = load_config(ENV)
 
 
