@@ -247,6 +247,7 @@ def generator(builder_data):
     controllers = builder_data["controllers"]
     routes = builder_data["routes"]
     middlewares = builder_data["middlewares"]
+    relations = builder_data["relations"]
 
     print("SINDI")
     # PARSING MODELS
@@ -311,11 +312,26 @@ def generator(builder_data):
 
         controllers_objects.append(controller_obj)
 
+    # Convert relations array into an array of Relation objects
+    relations_arr = []
+    for rel in relations:
+        rel_obj = Relation(
+            _id=rel['id'],
+            model_a=rel['model_a'],
+            model_b=rel['model_b'],
+            field_a=rel['field_a'],
+            field_b=rel['field_b'],
+            relation_name=rel['relation_name'],
+            relation_type=rel['relation_type'],
+        )
+        relations_arr.append(rel_obj)
+
     # CREATE PROJECT
     project = Project(
         project_name=project_name,
         models=models,
         controllers=controllers_objects,
+        relations=relations_arr,
         auth_object=auth_model_name,
         email=email,
         middlewares=middlewares_array,
