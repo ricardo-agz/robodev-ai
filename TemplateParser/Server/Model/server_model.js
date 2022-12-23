@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const $$Name$$Schema = new mongoose.Schema({
 	$$DYNAMIC_PARAMS$$
-  $$MANY_ARRAY$$
+    $$MANY_ARRAY$$
 });
 
 $$ONE_TO_MANY:ONE
