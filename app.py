@@ -12,7 +12,9 @@ from Logic.interact import json_to_formatted_code
 from page_builder import build_client_app_page, build_client_auth_context, build_client_home_page, build_client_login, \
     build_client_navbar, build_client_private_route, build_client_show_all, build_client_show_edit, \
     build_client_show_new, build_client_show_one, build_client_use_api, build_client_use_auth, build_client_use_find, \
-    build_controller_page, build_db_page, build_middlewares_page, build_model_page, build_routes_page, build_server_page
+    build_controller_page, build_db_page, build_middlewares_page, build_model_page, build_routes_page, \
+    build_server_page, build_transporter_page, build_mailer_page, build_base_mailer_page, build_default_layout_page, \
+    build_mailer_template_page
 from Config.init import load_config
 
 ENV = os.environ.get('ENV') or "dev"
@@ -96,14 +98,27 @@ def preview_page():
             page_output = build_client_use_find(project)
         elif page == "auth_context":
             page_output = build_client_auth_context(project)
+        elif page == "mailer_transporter":
+            page_output = build_transporter_page(project)
+        elif page == "base_mailer":
+            page_output = build_base_mailer_page(project)
+        elif page == "default_email_layout":
+            page_output = build_default_layout_page(project)
         elif "_" in page:
             temp = page.split("_")
             model_name = temp[0]
             model = project.model_from_name(model_name)
 
-            # SERVER
-            if "controller" in page:
+            if "mailer" in page:
+                mailer = project.mailer_from_name(model_name)
+                page_output = build_mailer_page(project, mailer)
 
+            elif "template" in page:
+                template = project.template_from_name(model_name)
+                page_output = build_mailer_template_page(project, template)
+
+            # SERVER
+            elif "controller" in page:
                 temp_controller = None
                 check_string = page.replace("_controller", "")
                 for controller in project.controllers:
@@ -112,20 +127,9 @@ def preview_page():
                 page_output = build_controller_page(project, temp_controller)
 
             elif "model" in page:
-
                 page_output = build_model_page(project, model)
 
-            # CLIENT
-            elif "indexpage" in page:
-                page_output = build_client_show_all(project, model)
-            elif "showpage" in page:
-                page_output = build_client_show_one(project, model)
-            elif "updatepage" in page:
-                page_output = build_client_show_edit(project, model)
-            elif "createpage" in page:
-                page_output = build_client_show_new(project, model)
             else:
-
                 res = jsonify({"message": "Invalid page"})
                 res.headers.add('Access-Control-Allow-Origin', '*')
                 return res, 400
@@ -189,14 +193,14 @@ Returns a json representation of the project directory structure
 def build_directory():
     if request.get_json():
         data = request.get_json()
-        # try:
-        project = generator.project_from_builder_data(data)
+        try:
+            project = generator.project_from_builder_data(data)
 
-        res = jsonify(project.build_directory())
-        res.headers.add('Access-Control-Allow-Origin', '*')
-        return res, 200
-        # except Exception as e:
-        # return jsonify({"message": f"Build failed, compile project to view warnings: {e}"}), 500
+            res = jsonify(project.build_directory())
+            res.headers.add('Access-Control-Allow-Origin', '*')
+            return res, 200
+        except Exception as e:
+            return jsonify({"message": f"Build failed, compile project to view warnings: {e}"}), 500
 
     res = jsonify({"message": "Please pass a valid input"})
     res.headers.add('Access-Control-Allow-Origin', '*')

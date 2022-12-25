@@ -1,5 +1,7 @@
+from TemplateParser.MailerTemplate import MailerTemplate
 from TemplateParser.Model import Model
 from TemplateParser.Relation import Relation
+from TemplateParser.Mailer import Mailer
 from TemplateParser.Route import Route
 from TemplateParser.Controller import Controller
 from TemplateParser.helpers import camel_case, camel_to_dash, pascal_case, singularize, camel_to_snake
@@ -47,6 +49,7 @@ class Project:
             models: list[Model],
             controllers: list[Controller],
             relations: list[Relation],
+            mailers: list[Mailer],
             auth_object: str,
             email: str,
             middlewares,
@@ -62,6 +65,7 @@ class Project:
         self.auth_object = self.model_from_name(auth_object) if auth_object else None
         self.middlewares = middlewares
         self.relations = relations
+        self.mailers = mailers
         self.server_port = server_port
 
         self.link = f"http://localhost:{server_port}"
@@ -74,7 +78,7 @@ class Project:
         self.parse_warnings()
 
     def build_directory(self) -> dict:
-        return init_project_structure(self.project_name, self.models, self.controllers, self.middlewares,
+        return init_project_structure(self.project_name, self.models, self.controllers, self.middlewares, self.mailers,
                                       self.auth_object)
 
     def parse_warnings(self) -> None:
@@ -157,6 +161,19 @@ class Project:
         # print(f"{model_name} does not exist, models = {str(models_list)}")
         return None
 
+    def mailer_from_name(self, mailer_name: str) -> Mailer:
+        """
+        Returns matching Model object (if any) from given model_name
+        """
+        if not mailer_name:
+            return None
+
+        for mailer in self.mailers:
+            if mailer.name.lower() == mailer_name.strip().lower():
+                return mailer
+
+        return None
+
     def model_from_id(self, model_id: str) -> Model:
         """
         Returns matching Model object (if any) from given id
@@ -171,83 +188,39 @@ class Project:
         print(f"model {model_id} does not exist")
         return None
 
+    def template_from_name(self, template_name: str) -> MailerTemplate:
+        """
+        Returns matching template object from name
+        """
+        if not template_name:
+            return None
+
+        for mailer in self.mailers:
+            for temp in mailer.templates:
+                if temp.name.lower() == template_name.lower():
+                    return temp
+
+        print(f"model {template_name} does not exist")
+        return None
+
     def set_model_relations(self):
         for rel in self.relations:
             a_obj = self.model_from_id(rel.model_a)
             b_obj = self.model_from_id(rel.model_b)
 
 
-
-
-
 ########## PROJECT STRUCTURE ##########
-def init_project_structure(project_name, models, controllers, middlewares, auth_object=None):
+def init_project_structure(project_name, models, controllers, middlewares, mailers, auth_object=None):
     """
-  Function used to create tree of directories to preview files in builder
-  """
+    Function used to create tree of directories to preview files in builder
+    """
     project_structure = {
         # ROOT
         "id": camel_to_snake(project_name),
         "name": camel_to_snake(project_name),
         "type": "folder",
         "children": [
-            # CLIENT
-
-            # {
-            #   "id": "client",
-            #   "name": "client",
-            #   "type": "folder",
-            #   "children": [
-            #     # SRC
-            #     {
-            #       "id": "src",
-            #       "name": "src",
-            #       "type": "folder",
-            #       "children": [
-            #         # COMPONENTS
-            #         {
-            #           "id": "components",
-            #           "name": "components",
-            #           "type": "folder",
-            #           "children": []
-            #         },
-            #         # HOOKS
-            #         {
-            #           "id": "hooks",
-            #           "name": "hooks",
-            #           "type": "folder",
-            #           "children": [
-            #             {
-            #               "id": "use_api",
-            #               "name": "useApi.js",
-            #               "type": "file",
-            #             }
-            #           ]
-            #         },
-            #         # PAGES
-            #         {
-            #           "id": "pages",
-            #           "name": "pages",
-            #           "type": "folder",
-            #           "children": [
-
-            #           ]
-            #         },
-            #         {
-            #           "id": "client_app",
-            #           "name": "App.js",
-            #           "type": "file",
-            #         },
-            #         {
-            #           "id": "client_home",
-            #           "name": "Home.js",
-            #           "type": "file",
-            #         },
-            #       ]
-            #     }
-            #   ]
-            # },
-
+            # (client is deprecated)
             # SERVER
             {
                 "id": "server",
@@ -318,42 +291,6 @@ def init_project_structure(project_name, models, controllers, middlewares, auth_
             "type": "file"
         })
 
-        show_pages = []
-        """
-    for route in model.get_frontend_routes():
-      if route.name == "index":
-        show_pages.append({
-          "id": f"{model.name}_indexpage",
-          "name": f"{pascal_case(model.plural)}.js",
-          "type": "file"  
-        })
-      elif route.name == "show":
-        show_pages.append({
-          "id": f"{model.name}_showpage",
-          "name": f"{pascal_case(model.name)}Show.js",
-          "type": "file"  
-        })
-      elif route.name == "create":
-        show_pages.append({
-          "id": f"{model.name}_createpage",
-          "name": f"{pascal_case(model.name)}New.js",
-          "type": "file"  
-        })
-      elif route.name == "update":
-        show_pages.append({
-          "id": f"{model.name}_updatepage",
-          "name": f"{pascal_case(model.name)}Edit.js",
-          "type": "file"  
-        })
-    """
-
-        """Frontend"""
-        # project_structure['children'][0]['children'][0]['children'][2]['children'].append({
-        #   "id": f"{model.name}_folder",
-        #   "name": f"{camel_case(model.name)}",
-        #   "type": "folder",
-        #   "children": show_pages
-        # })
     for controller in controllers:
         controller_files.append({
             "id": f"{controller.name}_controller",
@@ -367,6 +304,67 @@ def init_project_structure(project_name, models, controllers, middlewares, auth_
             "name": "middlewares.js",
             "type": "file"
         })
+
+    if len(mailers) > 0:
+        project_structure['children'][0]['children'].insert(2, {
+            "id": "mailers_folder",
+            "name": "mailers",
+            "type": "folder",
+            "children": []
+        })
+
+        for dirname in project_structure['children'][0]['children']:
+            if dirname["id"] == "mailers_folder":
+                dirname["children"].append({
+                    "id": "templates_folder",
+                    "name": "templates",
+                    "type": "folder",
+                    "children": [
+                        {
+                            "id": "layouts_folder",
+                            "name": "layouts",
+                            "type": "folder",
+                            "children": [
+                                {
+                                    "id": f"default_email_layout",
+                                    "name": "default.hbs",
+                                    "type": "file",
+                                }
+                            ]
+                        },
+                        {
+                            "id": "partials_folder",
+                            "name": "partials",
+                            "type": "folder",
+                            "children": []
+                        },
+                    ]
+                })
+
+                # append mailer templates
+                templates_dir = dirname["children"][0]["children"]
+                for mailer in mailers:
+                    for template in mailer.templates:
+                        templates_dir.append({
+                            "id": f"{template.name.lower()}_template",
+                            "name": f"{camel_case(template.name)}.hbs",
+                            "type": "file",
+                        })
+
+                dirname["children"].append({
+                    "id": f"base_mailer",
+                    "name": "baseMailer.js",
+                    "type": "file",
+                })
+                for mailer in mailers:
+                    dirname["children"].append({
+                        "id": f"{mailer.name}_mailer",
+                        "name":
+                            f"{camel_case(mailer.name)}Mailer.js" if "mailer" not in mailer.name.lower() else
+                            f"{camel_case(mailer.name)}.js",
+                        "type": "file",
+                    })
+                break
 
         # add middlewares page to routes folder
         ## changed first ['children'][1] to ['children'][0] because we sommented out client part
@@ -419,8 +417,10 @@ def init_project_structure(project_name, models, controllers, middlewares, auth_
     project_structure['children'][0]['children'][0]['children'][2]['children'] += auth_hooks
     """
 
-    # also changed ['children'][0] to ['children'][1]
-    project_structure['children'][0]['children'][1]['children'] = controller_files  # controllers
-    project_structure['children'][0]['children'][2]['children'] = model_files  # models
+    for folder in project_structure["children"][0]["children"]:
+        if folder["id"] == "models":
+            folder["children"] = model_files
+        elif folder["id"] == "controllers":
+            folder["children"] = controller_files
 
     return project_structure

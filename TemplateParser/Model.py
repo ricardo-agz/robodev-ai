@@ -81,9 +81,9 @@ class Model:
 
     def add_to_schema(self, param):
         """
-    used to parent model parameter 
-    ex. {"name": parent_name, "type": "mongoose.Schema.Types.ObjectId", "required": True, "alias": alias}
-    """
+        used to parent model parameter
+        ex. {"name": parent_name, "type": "mongoose.Schema.Types.ObjectId", "required": True, "alias": alias}
+        """
         if not ('name' in param and 'type' in param and 'required' in param):
             raise Exception("Invalid param: must have field 'name', 'type', and 'required'")
 
@@ -91,9 +91,9 @@ class Model:
 
     def does_belong_to(self, other_model):
         """
-    returns true if model belongs to other_model 
-    ex. post.does_belong_to(user) -> True
-    """
+        returns true if model belongs to other_model
+        ex. post.does_belong_to(user) -> True
+        """
         if type(other_model) is str:
             return val_in_tuple_arr(other_model, self.belongs_to)
 
@@ -108,9 +108,9 @@ class Model:
 
     def does_have_many(self, other_model):
         """
-    returns true if model has many of other_model 
-    ex. user.does_have_many(post) -> True
-    """
+        returns true if model has many of other_model
+        ex. user.does_have_many(post) -> True
+        """
         if type(other_model) is str:
             return val_in_tuple_arr(other_model, self.has_many)
 
@@ -119,9 +119,6 @@ class Model:
                 return True
 
         return False
-
-    def does_have_many_aliased(self, other_model, alias):
-        pass
 
     # SETTERS
     def set_one_to_many(self, one_to_many_list):
@@ -132,9 +129,9 @@ class Model:
 
     def set_self_referencing(self):
         """
-    initialized model's self referencing many-to-many relationship list
-    ex. if user has many users as 'friends', 'friends' would be added to list
-    """
+        initialized model's self referencing many-to-many relationship list
+        ex. if user has many users as 'friends', 'friends' would be added to list
+        """
         # self_referencing = [alias1, alias2, ...]
         self_referencing = []
         for (many_name, many_alias) in self.has_many:

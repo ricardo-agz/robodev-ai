@@ -2,36 +2,75 @@
 These functions are used to build individual project pages to be used
 as a preview in the builder
 """
-# SERVER
-from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
-from TemplateParser.Server.Database.DatabasePage import DatabasePage
-from TemplateParser.Server.Model.ModelPage import ModelPage
-from TemplateParser.Server.Model.ModelPage import ModelPage
-from TemplateParser.Server.Controller.Controller import ControllerPage
-from TemplateParser.Server.Routes.RoutesPage import RoutesPage
-from TemplateParser.Server.Middlewares.MiddlewaresPage import MiddlewaresPage
 # CLIENT
 from TemplateParser.Client.App.AppPage import AppPage
+from TemplateParser.Client.AuthContext.AuthContextPage import AuthContextPage
+from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
 from TemplateParser.Client.Home.HomePage import HomePage
-from TemplateParser.Client.SrcIndex.SrcIndexPage import SrcIndexPage
 from TemplateParser.Client.LoginPage.LoginPage import LoginPage
+from TemplateParser.Client.Nav.NavPage import NavPage
 from TemplateParser.Client.PrivateRoute.PrivateRoute import PrivateRoutePage
 from TemplateParser.Client.ShowAll.ShowAllPage import ShowAllPage
-from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
 from TemplateParser.Client.ShowEdit.ShowEditPage import ShowEditPage
 from TemplateParser.Client.ShowNew.ShowNewPage import ShowNewPage
-from TemplateParser.Client.Nav.NavPage import NavPage
+from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
+from TemplateParser.Client.SrcIndex.SrcIndexPage import SrcIndexPage
 from TemplateParser.Client.UseApi.UseApiPage import UseApiPage
 from TemplateParser.Client.UseAuth.UseAuthPage import UseAuthPage
 from TemplateParser.Client.UseFind.UseFindPage import UseFindPage
-from TemplateParser.Client.AuthContext.AuthContextPage import AuthContextPage
-from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
+from TemplateParser.Server.BaseMailer.BaseMailerPage import BaseMailerPage
+from TemplateParser.Server.Controller.Controller import ControllerPage
+from TemplateParser.Server.Database.DatabasePage import DatabasePage
+from TemplateParser.Server.DefaultLayout.DefaultLayoutPage import DefaultLayoutPage
+# SERVER
+from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
+from TemplateParser.Server.Mailer.MailerPage import MailerPage
+from TemplateParser.Server.MailerTemplate.MailerTemplatePage import MailerTemplatePage
+from TemplateParser.Server.MailerTransporter.MailerTransporterPage import MailerTransporterPage
+from TemplateParser.Server.Middlewares.MiddlewaresPage import MiddlewaresPage
+from TemplateParser.Server.Model.ModelPage import ModelPage
+from TemplateParser.Server.Routes.RoutesPage import RoutesPage
 
 
 ########## SERVER ##########
 
 def build_controller_page(project, controller, model=None, is_auth=False):
     page = ControllerPage(project, controller, is_auth, is_preview=True)
+    output = page.to_string()
+    page.close_files()
+    return output
+
+
+def build_transporter_page(project):
+    page = MailerTransporterPage(project, is_preview=True)
+    output = page.to_string()
+    page.close_files()
+    return output
+
+
+def build_base_mailer_page(project):
+    page = BaseMailerPage(project, is_preview=True)
+    output = page.to_string()
+    page.close_files()
+    return output
+
+
+def build_mailer_template_page(project, template):
+    page = MailerTemplatePage(project, template, is_preview=True)
+    output = page.to_string()
+    page.close_files()
+    return output
+
+
+def build_default_layout_page(project):
+    page = DefaultLayoutPage(project, is_preview=True)
+    output = page.to_string()
+    page.close_files()
+    return output
+
+
+def build_mailer_page(project, mailer):
+    page = MailerPage(project, mailer, is_preview=True)
     output = page.to_string()
     page.close_files()
     return output

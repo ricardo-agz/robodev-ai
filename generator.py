@@ -5,35 +5,15 @@ from re import M
 import shutil
 
 import json
+
+from TemplateParser.Mailer import Mailer
+from TemplateParser.MailerTemplate import MailerTemplate
 from TemplateParser.Model import Model
 from TemplateParser.Project import Project
 from TemplateParser.Relation import Relation
 from TemplateParser.Route import Route
 from TemplateParser.Middleware import Middleware
 
-from TemplateParser.Client.App.AppPage import AppPage
-from TemplateParser.Client.AppCss.AppCss import AppCss
-from TemplateParser.Client.AuthContext.AuthContextPage import AuthContextPage
-from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
-from TemplateParser.Client.ConfigJson.ConfigJsonPage import ConfigJsonPage
-from TemplateParser.Client.ExportIndex.ExportIndexPage import ExportIndexPage
-from TemplateParser.Client.Home.HomePage import HomePage
-from TemplateParser.Client.IndexCss.SrcIndexCss import SrcIndexCss
-from TemplateParser.Client.IndexHtml.IndexHtmlPage import IndexHtmlPage
-from TemplateParser.Client.LoginPage.LoginPage import LoginPage
-from TemplateParser.Client.Manifest.ManifestPage import ManifestPage
-from TemplateParser.Client.Nav.NavPage import NavPage
-from TemplateParser.Client.Package.PackagePage import ClientPackagePage
-from TemplateParser.Client.PrivateRoute.PrivateRoute import PrivateRoutePage
-from TemplateParser.Client.ShowAll.ShowAllPage import ShowAllPage
-from TemplateParser.Client.ShowEdit.ShowEditPage import ShowEditPage
-from TemplateParser.Client.ShowNew.ShowNewPage import ShowNewPage
-from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
-from TemplateParser.Client.SrcIndex.SrcIndexPage import SrcIndexPage
-from TemplateParser.Client.UseApi.UseApiPage import UseApiPage
-from TemplateParser.Client.UseAuth.UseAuthPage import UseAuthPage
-from TemplateParser.Client.UseFind.UseFindPage import UseFindPage
-from TemplateParser.Client.ValidatedForm.ValidatedFormPage import ValidatedFormPage
 from TemplateParser.Server.Database.DatabasePage import DatabasePage
 from TemplateParser.Server.DotEnv.DotEnvPage import DotEnvPage
 from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
@@ -45,6 +25,7 @@ from TemplateParser.Server.Readme.ReadmePage import ReadmePage
 from TemplateParser.Server.Routes.RoutesPage import RoutesPage
 from TemplateParser.helpers import camel_case, camel_to_snake, pascal_case
 from TemplateParser.Controller import Controller
+from TemplateParser.Server.MailerTransporter.MailerTransporterPage import MailerTransporterPage
 
 
 def get_method_from_route(route: str) -> str:
@@ -98,22 +79,6 @@ def create_directories(
     os.mkdir(f"./{project.project_name}")  # Create main project folder
     os.chdir(PROJECT_ROOT)  # Navigate to project folder
     os.mkdir("./server")  # Create server folder
-    # os.mkdir("./client")          # Create client folder
-
-    # """ CLIENT """
-    # os.chdir(CLIENT_PATH)         # navigate to client folder
-    # os.mkdir("./public")          # Create public folder
-    # os.mkdir("./src")             # Create src folder
-    # os.chdir("./src")
-    # os.mkdir("./hooks")
-    # if project.auth_object:
-    #   os.mkdir("./services")
-    #   os.mkdir("./components")
-    #   os.mkdir("./auth")
-    # os.mkdir("./pages")
-    # os.chdir("./pages")
-    # for model in project.models:
-    #   os.mkdir(f"./{camel_case(model.name)}")
 
     """ SERVER """
     os.chdir(SERVER_PATH)  # navigate to server folder
@@ -121,6 +86,8 @@ def create_directories(
     os.mkdir("./models")  # Create models folder
     os.mkdir("./config")  # Create config folder
     os.mkdir("./routes")  # Create routes folder
+    if len(project.mailers) > 0:
+        os.mkdir("./mailers")  # Create mailers folder
 
 
 # Why does project_from_builder_data exist. What is its purpose. Please provide documentation
@@ -135,6 +102,8 @@ def project_from_builder_data(builder_data):
     routes = builder_data["routes"]
     middlewares = builder_data["middlewares"]
     relations = builder_data["relations"]
+    mailers = builder_data["mailers"]
+
     # PARSING MODELS
     models = []
 
@@ -153,13 +122,11 @@ def project_from_builder_data(builder_data):
         # model_obj.set_routes(routes)
         models.append(model_obj)
 
-    middlewares_array = []
     routes_table = {}
-
     controller_map = {}
-
     middleware_map = {}
 
+    middlewares_array = []
     for controller in controllers:
         controller_map[controller["id"]] = controller["name"]
 
@@ -203,6 +170,25 @@ def project_from_builder_data(builder_data):
         )
         relations_arr.append(rel_obj)
 
+    # convert mailers json into array of Mailer objects
+    mailers_arr = []
+    for mailer in mailers:
+        templates_arr = []
+        for temp in mailer["templates"]:
+            temp_obj = MailerTemplate(
+                _id=temp["id"],
+                name=temp["name"],
+                content=temp["content"],
+            )
+            templates_arr.append(temp_obj)
+
+        mailer_obj = Mailer(
+            _id=mailer["id"],
+            name=mailer["name"],
+            templates=templates_arr
+        )
+        mailers_arr.append(mailer_obj)
+
     # Create array of controller objects
     controllers_objects = []
     for controller in controllers:
@@ -216,7 +202,6 @@ def project_from_builder_data(builder_data):
 
         controllers_objects.append(controller_obj)
 
-    print(controllers_objects)
     # CREATE PROJECT
     project = Project(
         project_name=project_name,
@@ -226,6 +211,7 @@ def project_from_builder_data(builder_data):
         email=email,
         middlewares=middlewares_array,
         relations=relations_arr,
+        mailers=mailers_arr,
         server_port=server_port,
         mongostr=mongostr,
         styled=False,
@@ -237,7 +223,6 @@ def project_from_builder_data(builder_data):
 
 def generator(builder_data):
     # try:
-
     project_name = camel_to_snake(builder_data['project_name'])
     db_params = builder_data['db_params']
     auth_model_name = pascal_case(builder_data['auth_object'])
@@ -248,8 +233,8 @@ def generator(builder_data):
     routes = builder_data["routes"]
     middlewares = builder_data["middlewares"]
     relations = builder_data["relations"]
+    mailers = builder_data["mailers"]
 
-    print("SINDI")
     # PARSING MODELS
     models = []
     for model in db_params:
@@ -326,12 +311,32 @@ def generator(builder_data):
         )
         relations_arr.append(rel_obj)
 
+    # convert mailers json into array of Mailer objects
+    mailers_arr = []
+    for mailer in mailers:
+        templates_arr = []
+        for temp in mailer["templates"]:
+            temp_obj = MailerTemplate(
+                _id=temp["id"],
+                name=temp["name"],
+                content=temp["content"],
+            )
+            templates_arr.append(temp_obj)
+
+        mailer_obj = Mailer(
+            _id=mailer["id"],
+            name=mailer["name"],
+            templates=templates_arr
+        )
+        mailers_arr.append(mailer_obj)
+
     # CREATE PROJECT
     project = Project(
         project_name=project_name,
         models=models,
         controllers=controllers_objects,
         relations=relations_arr,
+        mailers=mailers_arr,
         auth_object=auth_model_name,
         email=email,
         middlewares=middlewares_array,
@@ -357,7 +362,6 @@ def generator(builder_data):
     server_index.write_out_file()
     server_index.close_files()
 
-    print("AFTER")
     package = PackageJSONPage(project)
     package.write_out_file()
     package.close_files()
@@ -383,7 +387,6 @@ def generator(builder_data):
         model_controler = ControllerPage(project, controller)
         model_controler.write_out_file()
         model_controler.close_files()
-
     os.chdir(SERVER_PATH)
 
     # BUILD MODEL FILES
@@ -392,6 +395,18 @@ def generator(builder_data):
         model_page = ModelPage(project, model)
         model_page.write_out_file()
         model_page.close_files()
+    os.chdir(SERVER_PATH)
+
+    # BUILD MAILER FILES
+    os.chdir('./mailers')
+    transporter_page = MailerTransporterPage(project)
+    transporter_page.write_out_file()
+    transporter_page.close_files()
+    for mailer in project.mailers:
+        pass
+        # mailer_page = ModelPage(project, model)
+        # mailer_page.write_out_file()
+        # mailer_page.close_files()
     os.chdir(SERVER_PATH)
 
     # BUILD ROUTE FILES
@@ -407,6 +422,7 @@ def generator(builder_data):
         middlewares.write_out_file()
         middlewares.close_files()
     os.chdir(SERVER_PATH)
+
 
     # """ 
     # ----- CLIENT -----
