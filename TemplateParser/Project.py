@@ -1,3 +1,4 @@
+from TemplateParser import Middleware
 from TemplateParser.MailerTemplate import MailerTemplate
 from TemplateParser.Model import Model
 from TemplateParser.Relation import Relation
@@ -52,7 +53,7 @@ class Project:
             mailers: list[Mailer],
             auth_object: str,
             email: str,
-            middlewares,
+            middlewares: list[Middleware],
             server_port: int = 8080,
             mongostr: str = "<MONGO_CONNECTION_STRING>",
             styled: bool = True,
