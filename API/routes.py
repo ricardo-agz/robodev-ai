@@ -4,7 +4,7 @@ import os
 import glob
 from Logic.interact import json_to_formatted_code
 from TemplateParser.Project import find_node
-from page_builder import build_controller_page, build_db_page, build_middlewares_page, build_model_page, \
+from TemplateParser.page_builder import build_controller_page, build_db_page, build_middlewares_page, build_model_page,\
     build_routes_page, build_server_page, build_transporter_page, build_mailer_page, build_base_mailer_page, \
     build_default_layout_page, build_mailer_template_page, build_dotenv_page, build_package_json_page
 
@@ -176,17 +176,16 @@ def export_project(app):
             return res, status
 
         # Successful Export
-        dir_path = os.path.dirname(os.path.realpath(__file__))
+        curr_dir = os.path.dirname(os.path.realpath(__file__))
+        root_dir = os.path.dirname(curr_dir)
         attachment = send_from_directory(
-            dir_path,
-            "neutrino_project_" + data["project_name"] + ".zip",
+            root_dir,
+            "neutrino_project_" + project_name + ".zip",
             as_attachment=True
         )
-
         res = attachment
-        status = 200
 
-        return res, status
+        return res, 200
 
     res = jsonify({"message": "Please pass a valid input"})
     status = 400

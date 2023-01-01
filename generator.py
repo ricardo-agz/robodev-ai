@@ -11,9 +11,21 @@ from TemplateParser.Route import Route
 from TemplateParser.Middleware import Middleware
 from TemplateParser.helpers import camel_to_snake, pascal_case
 from TemplateParser.Controller import Controller
-from page_builder import build_server_page, build_package_json_page, build_dotenv_page, build_readme_page, \
-    build_db_page, build_controller_page, build_model_page, build_transporter_page, build_routes_page, \
-    build_middlewares_page, build_mailer_page, build_base_mailer_page
+from page_builder import build_controller_page, build_db_page, build_middlewares_page, build_model_page, \
+    build_routes_page, build_server_page, build_transporter_page, build_mailer_page, build_base_mailer_page, \
+    build_default_layout_page, build_mailer_template_page, build_dotenv_page, build_package_json_page
+
+
+def call_function_by_name(function_name, *args, **kwargs):
+    # Get the function object
+    function = globals().get(function_name)
+
+    # Check if the function exists
+    if function is None:
+        raise ValueError(f"Function '{function_name}' not found")
+
+    # Call the function and return the result
+    return function(*args, **kwargs)
 
 
 def create_directories(
@@ -167,7 +179,88 @@ def project_from_builder_data(builder_data, exportable=False) -> tuple:
         return None, e
 
 
+def get_query_string(node_id, query):
+    # Split the string by the '&' character
+    items = node_id.split("&")
+
+    # Iterate through the items and find the one that starts with "controller="
+    for item in items:
+        if item.startswith(f"{query}="):
+            # Split the item by the '=' character and return the second part (the value)
+            return item.split("=")[1]
+
+    # If no item was found, return None
+    return None
+
+
+def process_tree(structure, project):
+    # Iterate through the children of the root node
+    for node in structure["children"]:
+        # Check if the node is a folder
+        if node["type"] == "folder":
+            # Call os.mkdir() to create the folder
+            os.mkdir(node["name"])
+            os.chdir(node["name"])
+
+            # Recursively process the children of the folder
+            process_tree(node, project)
+            os.chdir("..")
+        else:
+            # The node is a file, so call the build_*_page() function
+            node_id = node["id"]
+            model_name = get_query_string(node_id, "model")
+            controller_name = get_query_string(node_id, "controller")
+            mailer_name = get_query_string(node_id, "mailer")
+            template_name = get_query_string(node_id, "template")
+
+            model = project.model_from_name(model_name)
+            controller = project.controller_from_name(controller_name)
+            mailer = project.mailer_from_name(mailer_name)
+            mailer_template = project.mailer_template_from_name(mailer_name, template_name)
+
+            if model:
+                call_function_by_name(node["function"], project, model, is_preview=False)
+            elif controller:
+                call_function_by_name(node["function"], project, controller, is_preview=False)
+            elif mailer and not mailer_template:
+                call_function_by_name(node["function"], project, mailer, is_preview=False)
+            elif mailer and mailer_template:
+                call_function_by_name(node["function"], project, mailer_template, is_preview=False)
+            else:
+                call_function_by_name(node["function"], project, is_preview=False)
+
+
 def generator(builder_data) -> tuple:
+    project, error = project_from_builder_data(builder_data, exportable=True)
+    if error:
+        return None, error
+
+    try:
+        # CREATING DIRECTORIES
+        project_structure = project.build_directory()
+
+        root_dir = os.path.abspath(os.curdir)
+        project_root = f"{root_dir}/{project.project_name}"
+        server_path = f"{project_root}/server"
+
+        os.mkdir(f"./{project.project_name}")
+        os.chdir(project_root)
+
+        process_tree(project_structure, project)
+
+        os.chdir(root_dir)
+        shutil.make_archive(f"neutrino_project_{project.project_name}", 'zip', project.project_name)
+        shutil.rmtree(project.project_name)
+
+        print(f"Neutrino Task: {project.project_name}")
+        return project.project_name, None
+
+    except Exception as e:
+        traceback.print_exc()
+        return None, e
+
+
+def generator_old(builder_data) -> tuple:
     project, error = project_from_builder_data(builder_data, exportable=True)
     if error:
         return None, error
