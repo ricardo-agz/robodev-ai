@@ -46,7 +46,6 @@ def compile_page_preview():
         mailer = project.mailer_from_name(mailer_name)
         mailer_template = project.mailer_template_from_name(mailer_name, mailer_template_name)
 
-        page_output = ""
         project_structure = project.build_directory()
 
         # page id is what follows after 'page=' in query string
@@ -57,7 +56,7 @@ def compile_page_preview():
 
         print("page id: ", page_id)
         print("find node: ", node)
-        # print("model: ", model, ", controller: ", controller, ", mailer: ", mailer, ", template: ", mailer_template)
+        print("model: ", model, ", controller: ", controller, ", mailer: ", mailer, ", template: ", mailer_template)
 
         if model:
             page_output = call_function_by_name(node["function"], project, model)
