@@ -35,10 +35,16 @@ class MailerBlock(LogicBlock):
         if " " in subject_str:
             if not subject_str[0] == '"' and not subject_str[-1] == '"':
                 subject_str = '"' + subject_str + '"'
+        if subject_str.strip() == "":
+            subject_str = '""'
+
+        recipient_str = '""' if self.recipient == "" else self.recipient.lower()
+        if "@" in recipient_str:
+            recipient_str = '"' + recipient_str + '"'
 
         tabs = self.tabs if not tabs else tabs
         out_str = f"{self.TAB_CHAR}" * tabs + f"{camel_case(self.mailer)}.send{self.template}({{\n"
-        out_str += f"{self.TAB_CHAR}" * (tabs + 1) + f"{self.recipient},\n"
+        out_str += f"{self.TAB_CHAR}" * (tabs + 1) + f"{recipient_str},\n"
         out_str += f"{self.TAB_CHAR}" * (tabs + 1) + f"{subject_str},\n"
         out_str += f"{self.TAB_CHAR}" * (tabs + 1) + f"{context_str},\n"
         out_str += f"{self.TAB_CHAR}" * tabs + f"}})\n"
