@@ -74,6 +74,7 @@ def import_generator(logic):
     jwt = False
     bcrypt = False
     import_list = ""
+    mailers = []
 
     queue = logic
 
@@ -87,6 +88,12 @@ def import_generator(logic):
         if "model" in block:
             if block["model"] not in models:
                 models.append(block["model"])
+        if "mailer" in block:
+            if block["mailer"] not in mailers:
+                mailers.append({
+                    "mailer": block["mailer"],
+                    "sender": block["sender"]
+                })
 
         if block["blockVariant"] == "BCrypt":
             bcrypt = True
@@ -96,10 +103,21 @@ def import_generator(logic):
     for model in models:
         import_list += f"const {model.lower()[0].upper() + model.lower()[1::]} = require('../models/{model.lower()}');\n"
 
+    for obj in mailers:
+        mailer = obj["mailer"]
+        import_list += f"const {mailer} = require('../mailers/{camel_case(mailer)}');\n"
+
     if jwt:
         import_list += 'const jwt = require("jsonwebtoken");\n'
     if bcrypt:
         import_list += 'const bcrypt = require("bcrypt");\n'
+
+    import_list += "\n"
+    for obj in mailers:
+        mailer = obj["mailer"]
+        sender = obj["sender"]
+        import_list += f"const {camel_case(mailer)} = new {mailer}('{sender}');\n"
+
     return import_list
 
 

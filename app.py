@@ -5,8 +5,7 @@ from flask_cors import CORS
 from Config.init import load_config
 
 from API.routes import export_project, build_project_directory, compile_logic_code_preview, compile_project_warnings, \
-    compile_page_preview
-
+    compile_page_preview, compile_single_logic_block_preview
 
 ENV = os.environ.get('ENV') or "dev"
 config = load_config(ENV)
@@ -48,6 +47,13 @@ def get_warnings():
 @app.route("/logiccodepreview", methods=["POST"])
 def get_logic_code_preview():
     res, status = compile_logic_code_preview()
+    res.headers.add('Access-Control-Allow-Origin', '*')
+    return res, status
+
+
+@app.route("/compilelogicblock", methods=["POST"])
+def compile_logic_block_preview():
+    res, status = compile_single_logic_block_preview()
     res.headers.add('Access-Control-Allow-Origin', '*')
     return res, status
 

@@ -109,6 +109,21 @@ def compile_logic_code_preview():
     return res, 400
 
 
+def compile_single_logic_block_preview():
+    """
+    Used for testing, compiles singular logic block
+    """
+    if request.get_json():
+        data = request.get_json()
+        code_generated = json_to_formatted_code([data], True)
+
+        res = jsonify({"code": code_generated})
+        return res, 200
+
+    res = jsonify({"message": "Please pass a valid input"})
+    return res, 400
+
+
 def build_project_directory():
     """
     Returns a json representation of the project directory structure
