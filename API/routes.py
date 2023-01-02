@@ -3,15 +3,32 @@ import generator
 import os
 import glob
 from Logic.interact import json_to_formatted_code
-from page_builder import build_controller_page, build_db_page, build_middlewares_page, build_model_page, \
+from TemplateParser.Project import find_node
+from TemplateParser.page_builder import build_controller_page, build_db_page, build_middlewares_page, build_model_page,\
     build_routes_page, build_server_page, build_transporter_page, build_mailer_page, build_base_mailer_page, \
-    build_default_layout_page, build_mailer_template_page
+    build_default_layout_page, build_mailer_template_page, build_dotenv_page, build_package_json_page
+
+
+def call_function_by_name(function_name, *args, **kwargs):
+    # Get the function object
+    function = globals().get(function_name)
+
+    # Check if the function exists
+    if function is None:
+        raise ValueError(f"Function '{function_name}' not found")
+
+    # Call the function and return the result
+    return function(*args, **kwargs)
 
 
 def compile_page_preview():
     if request.get_json():
         # here we want to get the page and model from query string (i.e. ?page=server_index)
         page = request.args.get('page')
+        model_name = request.args.get('model')
+        controller_name = request.args.get('controller')
+        mailer_name = request.args.get('mailer')
+        mailer_template_name = request.args.get('template')
 
         data = request.get_json()
         project, error = generator.project_from_builder_data(data)
@@ -24,49 +41,33 @@ def compile_page_preview():
             res = jsonify({"message": "No page passed"})
             return res, 400
 
-        page_output = ""
-        if page == "server_index":
-            page_output = build_server_page(project)
-        elif page == "database":
-            page_output = build_db_page(project)
-        elif page == "routes":
-            page_output = build_routes_page(project)
-        elif page == "middlewares":
-            page_output = build_middlewares_page(project)
-        elif page == "mailer_transporter":
-            page_output = build_transporter_page(project)
-        elif page == "base_mailer":
-            page_output = build_base_mailer_page(project)
-        elif page == "default_email_layout":
-            page_output = build_default_layout_page(project)
-        elif "_" in page:
-            temp = page.split("_")
-            model_name = temp[0]
-            model = project.model_from_name(model_name)
+        model = project.model_from_name(model_name)
+        controller = project.controller_from_name(controller_name)
+        mailer = project.mailer_from_name(mailer_name)
+        mailer_template = project.mailer_template_from_name(mailer_name, mailer_template_name)
 
-            if "mailer" in page:
-                mailer = project.mailer_from_name(model_name)
-                page_output = build_mailer_page(project, mailer)
+        project_structure = project.build_directory()
 
-            elif "template" in page:
-                template = project.template_from_name(model_name)
-                page_output = build_mailer_template_page(project, template)
+        # page id is what follows after 'page=' in query string
+        start_index = request.url.index("?") + 6
+        page_id = request.url[start_index:]
 
-            # SERVER
-            elif "controller" in page:
-                temp_controller = None
-                check_string = page.replace("_controller", "")
-                for controller in project.controllers:
-                    if check_string == controller.name:
-                        temp_controller = controller
-                page_output = build_controller_page(project, temp_controller)
+        node = find_node(project_structure, page_id)
 
-            elif "model" in page:
-                page_output = build_model_page(project, model)
+        print("page id: ", page_id)
+        print("find node: ", node)
+        print("model: ", model, ", controller: ", controller, ", mailer: ", mailer, ", template: ", mailer_template)
 
-            else:
-                res = jsonify({"message": "Invalid page"})
-                return res, 400
+        if model:
+            page_output = call_function_by_name(node["function"], project, model)
+        elif controller:
+            page_output = call_function_by_name(node["function"], project, controller)
+        elif mailer and not mailer_template:
+            page_output = call_function_by_name(node["function"], project, mailer)
+        elif mailer and mailer_template:
+            page_output = call_function_by_name(node["function"], project, mailer_template)
+        else:
+            page_output = call_function_by_name(node["function"], project)
 
         res = jsonify({"content": page_output})
         return res, 200
@@ -100,6 +101,21 @@ def compile_logic_code_preview():
     if request.get_json():
         data = request.get_json()
         code_generated = json_to_formatted_code(data["logic"], True)
+
+        res = jsonify({"code": code_generated})
+        return res, 200
+
+    res = jsonify({"message": "Please pass a valid input"})
+    return res, 400
+
+
+def compile_single_logic_block_preview():
+    """
+    Used for testing, compiles singular logic block
+    """
+    if request.get_json():
+        data = request.get_json()
+        code_generated = json_to_formatted_code([data], True)
 
         res = jsonify({"code": code_generated})
         return res, 200
@@ -175,17 +191,16 @@ def export_project(app):
             return res, status
 
         # Successful Export
-        dir_path = os.path.dirname(os.path.realpath(__file__))
+        curr_dir = os.path.dirname(os.path.realpath(__file__))
+        root_dir = os.path.dirname(curr_dir)
         attachment = send_from_directory(
-            dir_path,
-            "neutrino_project_" + data["project_name"] + ".zip",
+            root_dir,
+            "neutrino_project_" + project_name + ".zip",
             as_attachment=True
         )
-
         res = attachment
-        status = 200
 
-        return res, status
+        return res, 200
 
     res = jsonify({"message": "Please pass a valid input"})
     status = 400
