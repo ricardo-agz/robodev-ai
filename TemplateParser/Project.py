@@ -57,6 +57,7 @@ class Project:
             middlewares: list[Middleware],
             server_port: int = 8080,
             mongostr: str = "<MONGO_CONNECTION_STRING>",
+            config = None,
             styled: bool = True,
             avoid_exceptions=False
     ) -> None:
@@ -72,6 +73,7 @@ class Project:
 
         self.link = f"http://localhost:{server_port}"
         self.mongostr = mongostr
+        self.config = config
         self.email = email
         self.styled = styled
         self.warnings = []

@@ -7,6 +7,7 @@ from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
 from TemplateParser.Server.Mailer.MailerPage import MailerPage
 from TemplateParser.Server.MailerTemplate.MailerTemplatePage import MailerTemplatePage
 from TemplateParser.Server.MailerTransporter.MailerTransporterPage import MailerTransporterPage
+from TemplateParser.Server.MediaConfig.MediaConfigPage import MediaConfigPage
 from TemplateParser.Server.Middlewares.MiddlewaresPage import MiddlewaresPage
 from TemplateParser.Server.Model.ModelPage import ModelPage
 from TemplateParser.Server.PackageJSON.PackageJSONPage import PackageJSONPage
@@ -101,4 +102,9 @@ def build_dotenv_page(project, is_preview=True):
 
 def build_readme_page(project, is_preview=True):
     page = ReadmePage(project, is_preview=is_preview)
+    return write_and_close(page, is_preview)
+
+
+def build_media_config_page(project, is_preview=True):
+    page = MediaConfigPage(project, is_preview=is_preview)
     return write_and_close(page, is_preview)

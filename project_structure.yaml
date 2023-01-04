@@ -13,6 +13,11 @@ server:
           type: file
           name: "database.js"
           function: build_db_page
+        - id: "media-config"
+          type: file
+          name: "mediaConfig.js"
+          function: build_media_config_page
+
 
       # Controllers
     - id: "controllers-folder"
