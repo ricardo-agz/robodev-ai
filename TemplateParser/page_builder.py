@@ -5,6 +5,7 @@ as a preview in the builder
 from TemplateParser.Server.DotEnv.DotEnvPage import DotEnvPage
 from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
 from TemplateParser.Server.Mailer.MailerPage import MailerPage
+from TemplateParser.Server.MediaConfig import MediaConfigPage
 from TemplateParser.Server.MailerTemplate.MailerTemplatePage import MailerTemplatePage
 from TemplateParser.Server.MailerTransporter.MailerTransporterPage import MailerTransporterPage
 from TemplateParser.Server.Middlewares.MiddlewaresPage import MiddlewaresPage
@@ -101,4 +102,8 @@ def build_dotenv_page(project, is_preview=True):
 
 def build_readme_page(project, is_preview=True):
     page = ReadmePage(project, is_preview=is_preview)
+    return write_and_close(page, is_preview)
+
+def build_media_config_page(project, config, is_preview=True):
+    page = MediaConfigPage(project, config, is_preview=is_preview)
     return write_and_close(page, is_preview)
