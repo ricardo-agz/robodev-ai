@@ -5,6 +5,7 @@ as a preview in the builder
 from TemplateParser.Server.DotEnv.DotEnvPage import DotEnvPage
 from TemplateParser.Server.Index.ServerIndexPage import ServerIndexPage
 from TemplateParser.Server.Mailer.MailerPage import MailerPage
+from TemplateParser.Server.MediaConfig import MediaConfigPage
 from TemplateParser.Server.MailerTemplate.MailerTemplatePage import MailerTemplatePage
 from TemplateParser.Server.MailerTransporter.MailerTransporterPage import MailerTransporterPage
 from TemplateParser.Server.Middlewares.MiddlewaresPage import MiddlewaresPage
@@ -16,6 +17,25 @@ from TemplateParser.Server.BaseMailer.BaseMailerPage import BaseMailerPage
 from TemplateParser.Server.Controller.Controller import ControllerPage
 from TemplateParser.Server.Database.DatabasePage import DatabasePage
 from TemplateParser.Server.DefaultLayout.DefaultLayoutPage import DefaultLayoutPage
+from TemplateParser.Server.Routes.RoutesPage import RoutesPage
+from TemplateParser.Server.Middlewares.MiddlewaresPage import MiddlewaresPage
+from TemplateParser.Server.MediaConfig.MediaConfigPage import MediaConfigPage
+# CLIENT
+from TemplateParser.Client.App.AppPage import AppPage
+from TemplateParser.Client.Home.HomePage import HomePage
+from TemplateParser.Client.SrcIndex.SrcIndexPage import SrcIndexPage
+from TemplateParser.Client.LoginPage.LoginPage import LoginPage
+from TemplateParser.Client.PrivateRoute.PrivateRoute import PrivateRoutePage
+from TemplateParser.Client.ShowAll.ShowAllPage import ShowAllPage
+from TemplateParser.Client.ShowOne.ShowOnePage import ShowOnePage
+from TemplateParser.Client.ShowEdit.ShowEditPage import ShowEditPage
+from TemplateParser.Client.ShowNew.ShowNewPage import ShowNewPage
+from TemplateParser.Client.Nav.NavPage import NavPage
+from TemplateParser.Client.UseApi.UseApiPage import UseApiPage
+from TemplateParser.Client.UseAuth.UseAuthPage import UseAuthPage
+from TemplateParser.Client.UseFind.UseFindPage import UseFindPage
+from TemplateParser.Client.AuthContext.AuthContextPage import AuthContextPage
+from TemplateParser.Client.AuthHeader.AuthHeaderPage import AuthHeaderPage
 
 
 def write_and_close(page, is_preview: bool):
@@ -101,4 +121,8 @@ def build_dotenv_page(project, is_preview=True):
 
 def build_readme_page(project, is_preview=True):
     page = ReadmePage(project, is_preview=is_preview)
+    return write_and_close(page, is_preview)
+
+def build_media_config_page(project, config, is_preview=True):
+    page = MediaConfigPage(project, config, is_preview)
     return write_and_close(page, is_preview)
