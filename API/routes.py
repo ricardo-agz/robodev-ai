@@ -4,9 +4,11 @@ import os
 import glob
 from Logic.interact import json_to_formatted_code
 from TemplateParser.Project import find_node
-from TemplateParser.page_builder import build_controller_page, build_db_page, build_middlewares_page, build_model_page,\
+# MAKE SURE TO ADD ANY BUILD FUNCTION IMPORTS HERE
+from page_builder import build_controller_page, build_db_page, build_middlewares_page, build_model_page,\
     build_routes_page, build_server_page, build_transporter_page, build_mailer_page, build_base_mailer_page, \
-    build_default_layout_page, build_mailer_template_page, build_dotenv_page, build_package_json_page
+    build_default_layout_page, build_mailer_template_page, build_dotenv_page, build_package_json_page, \
+    build_media_config_page
 
 
 def call_function_by_name(function_name, *args, **kwargs):
