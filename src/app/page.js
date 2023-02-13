@@ -39,7 +39,7 @@ export default function Home() {
                 </div>
                 <p className='mt-4 opacity-60'>
                 DM &nbsp;
-                <code className={styles.code}><a href="https://twitter.com/ricardo_agzz" target="_blank">@ricardo_agzz</a></code>&nbsp;
+                <code className={styles.code}><a href="https://twitter.com/ricardo_agzz" target="_blank" rel="noreferrer noopener">@ricardo_agzz</a></code>&nbsp;
                 on Twitter to get access
                 </p>
             </div>
