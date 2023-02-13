@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from './page.module.css'
 import { useState } from 'react'
+import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,15 +17,22 @@ export default function Home() {
 
             <div className={styles.header}>
                 <div></div>
-                <div className="flex items-center cursor-pointer">
-                    <div>log in</div>
-                    <div className={styles.thirteen}>
-                        <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
+
+                <Link href="/login">
+                    <div className="flex items-center cursor-pointer">
+                        <div>log in</div>
+                        <div className={styles.thirteen}>
+                            <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
+                        </div>
                     </div>
-                </div>
+                </Link>
             </div>
 
             <div className={styles.center}>
+                <p className='mb-8 opacity-60'>
+                <code className={styles.code}>an AI chatbot that converts natural language into full backend web applications</code>
+                {/* an AI chatbot that converts natural language into full backend web applications */}
+                </p>
                 <div className={styles.description}>
                     <input 
                         type="text" 
@@ -45,7 +53,9 @@ export default function Home() {
             </div>
 
             <div>
-
+                <p className='mb-8 opacity-60 text-sm'>
+                <code className={styles.code}>/* yes, this waitlist was built by robodev */</code>
+                </p>
             </div>
 
         </main>
