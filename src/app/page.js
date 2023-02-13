@@ -30,7 +30,7 @@ export default function Home() {
 
             <div className={styles.center}>
                 <p className='mb-8 opacity-60'>
-                <code className={styles.code}>an AI chatbot that converts natural language into full backend web applications</code>
+                an AI chatbot that converts natural language into full backend web applications
                 </p>
                 <div className={styles.description}>
                     <input 
@@ -44,7 +44,7 @@ export default function Home() {
                         <p>enter</p>
                     </div>
                 </div>
-                <p className='mt-4 opacity-60'>
+                <p className='mt-4 opacity-60 text-left w-full'>
                 DM &nbsp;
                 <code className={styles.code}><a href="https://twitter.com/ricardo_agzz" target="_blank" rel="noreferrer noopener">@ricardo_agzz</a></code>&nbsp;
                 on Twitter to get access
@@ -53,7 +53,7 @@ export default function Home() {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/*} yes, this waitlist was built by robodev {*/"}</code>
+                <code className={styles.code}>{"/* yes, this waitlist was built by robodev */"}</code>
                 </p>
             </div>
 
