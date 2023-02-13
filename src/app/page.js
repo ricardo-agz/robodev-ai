@@ -31,7 +31,6 @@ export default function Home() {
             <div className={styles.center}>
                 <p className='mb-8 opacity-60'>
                 <code className={styles.code}>an AI chatbot that converts natural language into full backend web applications</code>
-                {/* an AI chatbot that converts natural language into full backend web applications */}
                 </p>
                 <div className={styles.description}>
                     <input 
@@ -54,7 +53,7 @@ export default function Home() {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>/* yes, this waitlist was built by robodev */</code>
+                <code className={styles.code}>{"/*} yes, this waitlist was built by robodev {*/"}</code>
                 </p>
             </div>
 

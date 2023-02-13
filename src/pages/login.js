@@ -49,7 +49,7 @@ export default function Home() {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>/* yes, this login was built by robodev */</code>
+                <code className={styles.code}>{"/* yes, this login was built by robodev */"}</code>
                 </p>
             </div>
 
