@@ -125,6 +125,10 @@
     overflow: hidden;
     box-shadow: 0px 2px 8px -1px #0000001a;
   }
+
+  .thirteen img {
+    filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
+  }
   
   .thirteen::before,
   .thirteen::after {
@@ -217,10 +221,6 @@
   
   
   @media (prefers-color-scheme: dark) {
-    .vercelLogo {
-      filter: invert(1);
-    }
-  
     .logo,
     .thirteen img {
       filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
