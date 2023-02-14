@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from './styles.module.css'
 import { useState } from 'react'
-import Link from 'next/Link'
+import Link from 'next/link'
 
 import usePost from '../hooks/usePost'
 
