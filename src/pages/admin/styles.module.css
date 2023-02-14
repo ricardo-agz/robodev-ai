@@ -1,4 +1,14 @@
-.main {
+
+.dashboardMain {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; */
+    align-items: center;
+    padding: 6rem;
+    min-height: 100vh;
+  }
+
+  .main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -6,6 +16,16 @@
     padding: 6rem;
     min-height: 100vh;
   }
+
+.tableCol {
+    padding: 0.25rem 1rem 0.25rem 1rem;
+    border: 1px solid white;
+}
+
+.tableCell {
+    padding: 0.25rem 1rem 0.25rem 1rem;
+    border: 1px solid #ffffff50;
+}
 
   .enter {
     height: 3rem;
@@ -272,8 +292,7 @@
     }
 
   }
-  
-  
+
   
   @media (prefers-color-scheme: dark) {
     .logo,

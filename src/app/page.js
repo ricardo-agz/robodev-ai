@@ -47,7 +47,9 @@ export default function Home() {
                 <p className='mt-4 opacity-60 text-left w-full'>
                 DM &nbsp;
                 <code className={styles.code}><a href="https://twitter.com/ricardo_agzz" target="_blank" rel="noreferrer noopener">@ricardo_agzz</a></code>&nbsp;
-                on Twitter to get access
+                on Twitter to get access <br/>
+                <span className='text-xs'>(or join the <Link href="/waitlist" className='underline'>waitlist</Link> if you don't have twitter)</span>
+                
                 </p>
             </div>
 
