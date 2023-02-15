@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-const PASSWORD_HASH = '$2b$10$6w5OEQw2lrnq0.MZkNar6ej9ipo1qVwJfiO1oV6Ndvh/vcAOfBjR2';
+const PASSWORD_HASH = '$2b$10$ShagWcEm4t.XOQQ236QPm.Vpu7LHjpOh622LkybdZjnBEiAFSxLb2';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
