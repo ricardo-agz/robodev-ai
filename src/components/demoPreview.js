@@ -55,9 +55,9 @@ export default function DemoPreview() {
             </div>
             <div className={styles.listRow}>
                 <div className="flex-1">
-                    <p className='opacity-80 text-xs ml-3'>
+                    {/* <p className='opacity-80 text-xs ml-3'>
                         <code className={styles.code}>(newt will code the backend for a twitter-like app...)</code>
-                    </p>
+                    </p> */}
                 </div>
                 <Link href="/login">
                     <button className={styles.button}>
