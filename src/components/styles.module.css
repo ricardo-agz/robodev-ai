@@ -126,9 +126,16 @@
 
   .aiText {
     margin-left: 1rem;
-    height: 2rem;
     min-width: 1rem;
     font-size: small;
+  }
+
+  .messageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 12rem;
+    overflow: scroll;
   }
 
   .label {

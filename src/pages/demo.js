@@ -68,13 +68,21 @@ export default function Demo() {
             </Link>
         </div>
 
+        
+
         <div className={styles.center}>
-            <div className={styles.listRow}>
+            <div className={styles.listRow} style={{height: "3rem", alignItems: 'flex-end'}}>
                 <Image src="/newt_profile.jpg" alt="13" width={60} height={60} style={{borderRadius: "5rem", border: "3px solid white"}} priority />
-                <div className='flex flex-col justify-end'>
-                    <code className={styles.aiText} >{messages[messages.length-1]}</code>
+                <div className={styles.messageContainer}>
+                    { messages.map((m, i) => (
+                        <code 
+                            className={styles.aiText} 
+                            style={{opacity: i === messages.length-1 ? 1 : .5, marginBottom: 20}}
+                        >{m}</code>
+                    ))}
                 </div>
             </div>
+
             <div className={styles.listRow}>
                 <textarea 
                     type="text" 
