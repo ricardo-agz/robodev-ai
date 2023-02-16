@@ -7,16 +7,12 @@ from redis import Redis
 from flask import Flask, jsonify
 from flask_cors import CORS
 from Config.init import load_config
+from Config.redis_store import store
+from Config.logger import logger
+
 
 from API.routes import export_project, build_project_directory, compile_logic_code_preview, compile_project_warnings, \
     compile_page_preview, compile_single_logic_block_preview
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logFormatter = logging.Formatter("%(name)-12s %(asctime)s %(levelname)-8s %(filename)s:%(funcName)s %(message)s")
-consoleHandler = logging.StreamHandler(stdout)
-logger.addHandler(consoleHandler)
 
 load_dotenv()
 ENV = os.getenv('ENV', 'prod')
@@ -25,10 +21,6 @@ config = load_config(ENV)
 app = Flask(__name__)
 CORS(app)
 app.config.from_object(config)
-
-logger.info(f"Connecting to Redis at host={config.REDIS_HOST}, port={config.REDIS_PORT}...")
-store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=0)
-logger.info("Redis started")
 
 
 @app.route("/")
@@ -94,11 +86,10 @@ def add_task():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 8000))
-    print(f'This is a {"PRODUCTION" if ENV == "prod" else "DEVELOPMENT"} environment', flush=True)
-    print(f"Listening on http://127.0.0.1:{port}...", flush=True)
+    logger.info(f'This is a {"PRODUCTION" if config.ENV == "prod" else "DEVELOPMENT"} environment')
+    logger.info(f"Listening on http://localhost:{config.FLASK_PORT}...")
 
     if ENV == 'prod':
-        serve(app, host='0.0.0.0', port=port)
+        serve(app, host='0.0.0.0', port=config.FLASK_PORT)
     else:
-        app.run(host='0.0.0.0', port=port)
+        app.run(host='0.0.0.0', port=config.FLASK_PORT)
