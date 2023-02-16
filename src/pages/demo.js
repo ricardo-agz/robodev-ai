@@ -49,16 +49,23 @@ export default function Demo() {
 
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('jwt')
+  }
+
   return (
     <main className={styles.main}>
 
         <div className={styles.header}>
             <div></div>
-            <div className="flex items-center cursor-pointer">
-                <div className={styles.thirteen}>
-                    <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
+            <Link href="/login">
+                <div className="flex items-center cursor-pointer" onClick={handleLogout}>
+                    <div>log out</div>
+                    <div className={styles.thirteen}>
+                        <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
+                    </div>
                 </div>
-            </div>
+            </Link>
         </div>
 
         <div className={styles.center}>
