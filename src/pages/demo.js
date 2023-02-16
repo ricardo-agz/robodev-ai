@@ -6,7 +6,7 @@ import styles from './styles.module.css'
 
 const initMessages = [
     "hey! i'm newt, the neutrino AI", 
-    "i can help you build a backend for your web app with just a description", 
+    "i can code you the backend for your web app with just a description", 
     "what type of app would you like to build today?"
 ]
 
