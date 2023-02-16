@@ -1,0 +1,19 @@
+{
+  "project_name": "...",
+  "db_params": [],
+  "relations": [],
+  "controllers": [],
+  "routes": [],
+  "middlewares": [],
+  "mailers": [],
+  "auth": {},
+  "auth_object": null,
+  "server_port": 8080,
+  "mongostr": "undefined",
+  "email": "",
+  "config": {
+    "email": "",
+    "server_port": 8080,
+    "mongostr": ""
+  }
+}

@@ -1,0 +1,297 @@
+You are an AI assistant tasked with designing the pseudo code for the logic for API routes. You are only allowed to use the following functions/operations and the pseudocode should be in the specified format.
+API routes are given in the format <http verb> <url>
+for example: get /users/:id
+you can access url params by calling req.params for example: req.params.id
+you can access the json body of the request by calling req.body for example: req.body.username
+
+Operations:
+QUERY model; search_fields; multiple?
+CREATE model; create_fields
+UPDATE model; search_fields; update_fields; multiple?
+DELETE model; search_fields; multiple?
+RETURN status; message; data
+ERROR status; message
+IFELSE condition
+HASH_TEXT plaintext
+COMPARE_TO_HASH plaintext; hashed_text
+SIGN_JWT_TOKEN payload
+VERIFY_JWT_TOKEN token
+PASS
+
+Syntax:
+variables can be assigned by the -> operator
+for example: QUERY User; { _id: 1 }; false -> firstUser
+
+arguments to each operation should be seperated by a semicolon ';'
+there can only be 1 operation per line
+RETURN works like a regular return in a function does, i.e. no code after RETURN is executed
+
+Error checking:
+the create, update, delete, and the sign_jwt_token and verify_jwt_token functions can catch errors and perform operations for both the error and success conditions, the syntax is as follows:
+UPDATE model; search_fields; update_fields; multiple?
+=> 
+RETURN "successfully updated"
+<=
+=x 
+ERROR "this syntax is catching an error"
+x=
+both the =><= and =xx= sections must be included even if there is no code inside for appropriate syntax
+
+All of these functions should have an error check, if no logic needs to be done on success, just leave the => <= empty,
+for example:
+CREATE User; { name: "joe" } -> user
+    =x
+    ERROR 500; "error creating user"
+    x=
+    =>
+    <=
+
+If some logic is impossible to implement with the specified methods, you can insert custom javascript code as follows:
+CUSTOM
+    console.log("hello")
+    console.log("world")
+    PASS
+
+Human:
+API logic to query all users named "ricky" and return the users list. Return an error if no users exist
+
+AI:
+QUERY User; { name: "ricky" }; true -> users
+IF users.length == 0
+    ERROR 404; "no users found"
+ELSE
+    RETURN 200; "users found"; users
+    PASS
+
+Human:
+The route url is: /posts/:id 
+This route queries all posts with that given ID
+$$ACTION$$
+
+AI:
+QUERY Post; { _id: req.params.id }; false -> post
+IF post
+    RETURN 200; "post found"; post
+ELSE 
+    ERROR 404; "no post found"
+    PASS
+
+Human:
+The route url is: /users/:id/groups
+This route queries all groups that the user belongs to
+This is my database schema:
+User:
+- username: string
+- groups: list[ObjectIds]
+Group:
+- name:string
+- members: list[ObjectIds]
+$$ACTION$$
+
+AI:
+QUERY User; { _id: req.params.id }; false -> user
+IF user
+    QUERY Group; { members: user._id }; true -> groups
+    IF groups.length == 0
+        ERROR 404; "no groups found"
+    ELSE
+        RETURN 200; "successfully retrieved groups"; groups
+
+Human:
+The route url is: /users/:id/groups
+This route queries all groups that the user belongs to
+This is my database schema:
+User:
+- username: string
+- groups: list[ObjectIds]
+Group:
+- name:string
+- members: list[ObjectIds]
+$$ACTION$$
+
+AI:
+QUERY User; { _id: req.params.id }; false -> user
+IF user
+    QUERY Group; { members: user._id }; true -> groups
+    IF groups.length == 0
+        ERROR 404; "no groups found"
+    ELSE
+        RETURN 200; "successfully retrieved groups"; groups
+
+
+Human:
+The route url is: /auth/login
+The route logs a user in to the api
+This is my database schema:
+User:
+- username: string
+- posts: list[ObjectIds]
+Post:
+- content:string
+$$ACTION$$
+
+AI:
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    COMPARE_TO_HASH req.body.password; user.password -> match 
+    IF match 
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =x
+            ERROR "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token 
+    ELSE
+        ERROR 401; "invalid username or password" 
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+
+Human:
+The route url is: GET /auth/verify-email/:verify_token
+The route verifies a user's email
+This is my database schema:
+User:
+- username: string
+- verified: boolean
+- verify-link: string
+$$ACTION$$
+
+AI:
+QUERY User; { verify_link: req.params.verify_token }; false -> user 
+IF user 
+    UPDATE User; { _id: user._id }; { verified: true }
+        =>
+        RETURN 200; "email verified successfully" 
+        <=
+        =x
+        ERROR 500; "error verifying email" 
+        x=
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+
+Human:
+The route url is: GET /user/:id/orders
+The route gets all orders belonging to a user 
+User:
+- username: string
+Order:
+- user: ObjectId
+$$ACTION$$
+
+AI:
+QUERY User; { _id: req.params.id }; false -> user 
+IF user 
+    QUERY Order; { user: user._id }; true -> orders
+    IF orders.length == 0 
+        ERROR 404; "no orders found"
+    ELSE 
+        RETURN 200; "successfully retrieved orders"; orders 
+ELSE
+    ERROR 404; "user not found"
+    PASS
+
+Human:
+The route url is: PUT /users/:id/change-username/:new_username
+The route changes the username of the user
+User:
+- username: string
+$$ACTION$$
+
+AI:
+QUERY User; { _id: req.params.id }; false -> user 
+IF user 
+    UPDATE User; { _id: user._id }; { username: req.params.new_username }
+        =>
+        RETURN 200; "username successfully changed"
+        <=
+        =x
+        ERROR 500; "error changing username"
+        x=
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+
+Human:
+The route url is: PUT /users/:id/update-timestamp
+The route sets the timestamp of the user to the current date
+User:
+- username: string
+- timestamp: date
+$$ACTION$$
+
+AI:
+QUERY User; { _id: req.params.id }; false -> user 
+IF user 
+    CUSTOM
+        const currentDate = new Date();
+        PASS
+    UPDATE User; { _id: user._id }; { timestamp: currentDate }
+        =>
+        RETURN 200; "timestamp successfully changed"
+        <=
+        =x
+        ERROR 500; "error changing timestamp"
+        x=
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+
+Human:
+The route url is GET /random-code
+The route creates a random string of 6 characters and returns it
+$$ACTION$$
+
+AI:
+CUSTOM
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    PASS
+RETURN "successfully created code", code
+
+Human:
+POST  /api/users/:follower_id/follow/:followed_id
+This route lets a user follow another user
+This is my schema
+User:
+- username: string
+- followers: list[ObjectId]
+- following: list[ObjectId]
+Implement the route logic in pseudocode, perform error checking when necessary
+
+AI:
+QUERY User, { _id: req.params.follower_id }, false -> follower
+IF follower
+    QUERY User, { _id: req.params.followed_id }, false -> followed
+    IF followed
+        UPDATE User, { _id: follower._id }, { $push: { following: followed._id } }
+            =>
+            <=
+            =x
+            ERROR 500, "error following"
+            x=
+        UPDATE User, { _id: followed._id }, { $push: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500, "error following"
+            x=
+        RETURN 200, "followed successfully"
+    ELSE
+        ERROR 404, "followed user not found"
+ELSE
+    ERROR 404, "follower user not found"
+    PASS
+
+Human:
+$$APP_DESCRIPTION$$
+This is my database schema: $$SCHEMA$$
+This is the API route: $$API_ROUTE$$
+$$ROUTE_DESCRIPTION$$
+$$ACTION$$
+
+AI:
+

@@ -1,0 +1,162 @@
+Generating models...
+Models Pre Parsed:
+User,Gym,Subscription,Equipment,Location,Review
+Models Parsed:
+['User', 'Gym', 'Subscription', 'Equipment', 'Location', 'Review']
+
+
+Generating model relationships...
+Relations Pre Parsed:
+OwnershipHandler,User,Gym,one-to-many,gyms,owner;
+SubscriptionHandler,User,Subscription,one-to-many,subscriptions,user;
+GymEquipmentHandler,Gym,Equipment,many-to-many,equipment,gyms,GymEquipment;
+GymLocationHandler,Gym,Location,one-to-one,location,gym;
+ReviewHandler,User,Review,many-to-many,reviews,reviewed_by,Review;
+Relations Parsed:
+[('OwnershipHandler', 'User', 'Gym', 'one-to-many', 'gyms', 'owner', None), ('SubscriptionHandler', 'User', 'Subscription', 'one-to-many', 'subscriptions', 'user', None), ('GymEquipmentHandler', 'Gym', 'Equipment', 'many-to-many', 'equipment', 'gyms', 'GymEquipment'), ('GymLocationHandler', 'Gym', 'Location', 'one-to-one', 'location', 'gym', None), ('ReviewHandler', 'User', 'Review', 'many-to-many', 'reviews', 'reviewed_by', 'Review')]
+
+
+Generating models' schema...
+Schema Pre Parsed:
+User
+username: string
+email: string
+password: string
+
+Gym
+name: string
+description: string
+
+Subscription
+name: string
+price: number
+
+Equipment
+name: string
+description: string
+
+Location
+name: string
+address: string
+
+Review
+rating: number
+content: string
+Schema Parsed:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Gym', [('name', 'string'), ('description', 'string')]), ('Subscription', [('name', 'string'), ('price', 'number')]), ('Equipment', [('name', 'string'), ('description', 'string')]), ('Location', [('name', 'string'), ('address', 'string')]), ('Review', [('rating', 'number'), ('content', 'string')])]
+
+
+Generating controllers...
+Controllers Pre Parsed:
+Auth,User,Gym,Subscription,Equipment,Location,Review
+Controllers Parsed:
+['Auth', 'User', 'Gym', 'Subscription', 'Equipment', 'Location', 'Review']
+
+
+Generating routes...
+Routes Pre Parsed:
+Auth:
+POST | /api/login | login | Logs in a user
+POST | /api/register | register | Creates a new user, checks to make sure the username is not already taken
+POST | /api/change-password/:id | changePassword | Allows the user with the given id to update their password
+
+User:
+index
+show
+update
+delete
+
+Gym:
+index
+show
+create
+update
+delete
+
+Subscription:
+index
+show
+create
+update
+delete
+
+Equipment:
+index
+show
+create
+update
+delete
+
+Location:
+index
+show
+create
+update
+delete
+
+Review:
+index
+show
+create
+update
+delete
+POST | /api/reviews/:user_id/add | addReview | Adds a review for a specific user
+Routes Parsed:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('Gym', ['index']), ('Gym', ['show']), ('Gym', ['create']), ('Gym', ['update']), ('Gym', ['delete']), ('Subscription', ['index']), ('Subscription', ['show']), ('Subscription', ['create']), ('Subscription', ['update']), ('Subscription', ['delete']), ('Equipment', ['index']), ('Equipment', ['show']), ('Equipment', ['create']), ('Equipment', ['update']), ('Equipment', ['delete']), ('Location', ['index']), ('Location', ['show']), ('Location', ['create']), ('Location', ['update']), ('Location', ['delete']), ('Review', ['index']), ('Review', ['show']), ('Review', ['create']), ('Review', ['update']), ('Review', ['delete']), ('Review', ['post', '/api/reviews/:user_id/add', 'addReview', 'Adds a review for a specific user'])]
+
+
+Generating route logic for POST /api/login Logs in a user...
+QUERY User; { username: req.body.username }; false -> user
+IF user
+    COMPARE_TO_HASH req.body.password; user.password -> match
+    IF match
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =x
+            ERROR "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token
+    ELSE
+        ERROR 401; "invalid username or password"
+ELSE
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/register Creates a new user, checks to make sure the username is not already taken...
+QUERY User; { username: req.body.username }; false -> user
+IF user
+    ERROR 400; "username already taken"
+ELSE 
+    HASH_TEXT req.body.password -> hashedPassword
+    CREATE User; { username: req.body.username; email: req.body.email; password: hashedPassword }
+        =>
+        <=
+        =x 
+        ERROR 500; "error creating user"
+        x=
+    RETURN 200; "successfully created user"
+Generating route logic for POST /api/change-password/:id Allows the user with the given id to update their password...
+QUERY User, { _id: req.params.id }, false -> user
+IF user
+    HASH_TEXT req.body.password -> hashedPassword
+    UPDATE User, { _id: user._id }, { password: hashedPassword }
+        =>
+        RETURN 200, "password successfully changed"
+        <=
+        =x
+        ERROR 500, "error changing password"
+        x=
+ELSE
+    ERROR 404, "user not found"
+    PASS
+Generating route logic for POST /api/reviews/:user_id/add Adds a review for a specific user...
+QUERY User; { _id: req.params.user_id }; false -> user 
+IF user 
+    CREATE Review; { user: user._id, rating: req.body.rating, content: req.body.content } -> review
+        =x
+        ERROR 500; "error creating review"
+        x=
+    RETURN 200; "successfully added review"; review
+ELSE
+    ERROR 404; "user not found"
+    PASS
+
+==========

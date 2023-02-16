@@ -1,19 +1,34 @@
-from waitress import serve
-from flask import Flask, jsonify
 import os
+import logging
+from dotenv import load_dotenv
+from sys import stdout
+from waitress import serve
+from redis import Redis
+from flask import Flask, jsonify
 from flask_cors import CORS
 from Config.init import load_config
 
 from API.routes import export_project, build_project_directory, compile_logic_code_preview, compile_project_warnings, \
     compile_page_preview, compile_single_logic_block_preview
 
-ENV = os.environ.get('ENV') or "prod"
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logFormatter = logging.Formatter("%(name)-12s %(asctime)s %(levelname)-8s %(filename)s:%(funcName)s %(message)s")
+consoleHandler = logging.StreamHandler(stdout)
+logger.addHandler(consoleHandler)
+
+load_dotenv()
+ENV = os.getenv('ENV', 'prod')
 config = load_config(ENV)
 
 app = Flask(__name__)
 CORS(app)
 app.config.from_object(config)
-app.config['CORS_HEADERS'] = 'Content-Type'
+
+logger.info(f"Connecting to Redis at host={config.REDIS_HOST}, port={config.REDIS_PORT}...")
+store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=0)
+logger.info("Redis started")
 
 
 @app.route("/")
@@ -28,6 +43,12 @@ def test_view():
     res = jsonify({'message': 'This is a test route. Not much to see here... [edit-2]'})
     res.headers.add('Access-Control-Allow-Origin', '*')
     return res, 200
+
+
+@app.route('/test-redis')
+def hello():
+    store.incr('hits')
+    return 'This route has been viewed %s time(s).' % store.get('hits')
 
 
 @app.route("/previewpage", methods=["PUT"])
