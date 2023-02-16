@@ -43,6 +43,7 @@ export default function DemoPreview() {
                 <div className={styles.messageContainer}>
                     { messages.map((m, i) => (
                         <code 
+                            key={m}
                             className={styles.aiText} 
                             style={{opacity: i === messages.length-1 ? 1 : .5, marginBottom: 20}}
                         >{m}</code>
