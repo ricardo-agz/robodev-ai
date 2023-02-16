@@ -7,7 +7,7 @@ from Config.init import load_config
 from API.routes import export_project, build_project_directory, compile_logic_code_preview, compile_project_warnings, \
     compile_page_preview, compile_single_logic_block_preview
 
-ENV = os.environ.get('ENV') or "dev"
+ENV = os.environ.get('ENV') or "prod"
 config = load_config(ENV)
 
 app = Flask(__name__)
@@ -73,9 +73,9 @@ def add_task():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    print(f'This is a {"PRODUCTION" if ENV == "prod" else "DEVELOPMENT"} environment')
-    print(f"Listening on http://127.0.0.1:{port}...")
+    port = int(os.environ.get('PORT', 8000))
+    print(f'This is a {"PRODUCTION" if ENV == "prod" else "DEVELOPMENT"} environment', flush=True)
+    print(f"Listening on http://127.0.0.1:{port}...", flush=True)
 
     if ENV == 'prod':
         serve(app, host='0.0.0.0', port=port)

@@ -152,10 +152,12 @@ def project_from_builder_data(builder_data, exportable=False) -> tuple:
                 id=controller["id"],
                 model_affiliation=controller["affiliation"],
             )
-            for temp_route in routes_table[controller["id"]]:
-                controller_obj.addRoutes(temp_route)
+            # check if the controller has any routes, if not, no point adding it
+            if controller["id"] in routes_table:
+                for temp_route in routes_table[controller["id"]]:
+                    controller_obj.addRoutes(temp_route)
 
-            controllers_objects.append(controller_obj)
+                controllers_objects.append(controller_obj)
 
         # CREATE PROJECT
         project = Project(
