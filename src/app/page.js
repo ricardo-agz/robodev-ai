@@ -5,6 +5,7 @@ import { Inter } from '@next/font/google'
 import styles from './page.module.css'
 import { useState } from 'react'
 import Link from 'next/link'
+import DemoPreview from '@/components/demoPreview';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,34 +29,17 @@ export default function Home() {
                 </Link>
             </div>
 
-            <div className={styles.center}>
-                <p className='mb-8 opacity-60'>
-                an AI chatbot that converts natural language into full backend web applications
-                </p>
-                <div className={styles.description}>
-                    <input 
-                        type="text" 
-                        className={styles.input} 
-                        value={accessCode} 
-                        placeholder="access code"
-                        onChange={(e) => setAccessCode(e.target.value)} 
-                    />
-                    <div className={styles.enter}>
-                        <p>enter</p>
-                    </div>
-                </div>
-                <p className='mt-4 opacity-60 text-left w-full'>
-                DM &nbsp;
-                <code className={styles.code}><a href="https://twitter.com/ricardo_agzz" target="_blank" rel="noreferrer noopener">@ricardo_agzz</a></code>&nbsp;
-                on Twitter to get access <br/>
-                <span className='text-xs'>(or join the <Link href="/waitlist" className='underline'>waitlist</Link> if you don&apos;t have twitter)</span>
-                
-                </p>
-            </div>
+            <DemoPreview/>
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/* yes, this waitlist was built by robodev */"}</code>
+                <code className={styles.code}>
+                    {"/* "} 
+                    or message &nbsp;
+                    <a href="https://twitter.com/ricardo_agzz" target="_blank" rel="noreferrer noopener">@ricardo_agzz</a>&nbsp;
+                    on Twitter to get access                
+                    {" */"}
+                </code>
                 </p>
             </div>
 

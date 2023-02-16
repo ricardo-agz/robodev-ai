@@ -1,17 +1,14 @@
-"use client";
-
 import Image from 'next/image'
-import { Inter } from '@next/font/google'
 import styles from './styles.module.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router';
 import Link from 'next/link'
 
 import usePost from '@/hooks/usePost';
 
-const inter = Inter({ subsets: ['latin'] })
-
 export default function Login() {
-    const { loading, response, error, postData } = usePost(`${process.env.NEXT_PUBLIC_NEUTRINO_IDENTITY_URL}auth/login`);
+    const { loading, response, error, postData } = usePost(`${process.env.NEXT_PUBLIC_NEUTRINO_IDENTITY_URL}login`);
+    const router = useRouter();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -28,6 +25,13 @@ export default function Login() {
             setClientError("please fill out all required fields... ")
         }
     }
+
+    useEffect(() => {
+        if (response && response.data.token) {
+            localStorage.setItem('jwt', response.data.token)   
+            router.push(`/demo`);
+        }
+    }, [response])
 
     return (
         <main className={styles.main}>

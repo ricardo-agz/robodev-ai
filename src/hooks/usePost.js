@@ -26,7 +26,7 @@ export default function usePost(url) {
                 setLoading(false)
             })
             .catch((err) => {
-                setError(err.message);
+                setError(err.response.data.message);
                 setLoading(false);
             })
     }   

@@ -12,6 +12,12 @@
     cursor: pointer;
   }
   
+  .aiText {
+    margin-left: 1rem;
+    height: 2rem;
+    min-width: 1rem;
+  }
+  
   .description {
     display: inherit;
     justify-content: inherit;

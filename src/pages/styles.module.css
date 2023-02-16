@@ -12,6 +12,12 @@
     cursor: pointer;
   }
 
+  .aiText {
+    margin-left: 1rem;
+    height: 2rem;
+    min-width: 1rem;
+  }
+
   .submit {
     height: 3rem;
     cursor: pointer;
@@ -19,6 +25,20 @@
     margin: 0;
     padding: 1rem;
     margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    background-color: rgba(var(--callout-rgb), 0.5);
+    border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+    border-radius: var(--border-radius);
+  }
+
+  .previous {
+    height: 3rem;
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+    padding: 1rem;
+    margin-right: 1rem;
     display: flex;
     align-items: center;
     background-color: rgba(var(--callout-rgb), 0.5);
