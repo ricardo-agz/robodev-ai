@@ -18,7 +18,7 @@ export default function Login() {
         setClientError("")
         if (email && password) {
             postData({
-                email,
+                username: email,
                 password
             })
         } else {
