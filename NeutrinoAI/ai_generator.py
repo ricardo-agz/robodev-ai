@@ -1,14 +1,14 @@
 import os
 import json
 
-from NeutrinoGPT.generate import NeutrinoGPT
-from BuildfileCompiler.buildfile_compiler import BuildfileCompiler
-from logger import FileLogger
+from NeutrinoAI.NeutrinoGPT.generate import NeutrinoGPT
+from NeutrinoAI.BuildfileCompiler.buildfile_compiler import BuildfileCompiler
+from NeutrinoAI.logger import FileLogger
 
 logger = FileLogger()
 
 
-class AIBuildileGenerator:
+class AIBuildfileGenerator:
     def __init__(self, app_description: str):
         self.app_description = app_description
         self.neutrino_gpt = NeutrinoGPT(self.app_description)
@@ -53,7 +53,7 @@ they have been used.
 """
     logger.clear_logs()
 
-    neutrino_ai = AIBuildileGenerator(app_description=app_description)
+    neutrino_ai = AIBuildfileGenerator(app_description=app_description)
     write_to_outfile(str(neutrino_ai.get_buildfile()), "output.txt")
     json_data = neutrino_ai.get_buildfile_json()
     write_to_outfile(json_data, "output.json")

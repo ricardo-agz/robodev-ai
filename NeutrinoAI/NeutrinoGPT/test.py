@@ -1,4 +1,4 @@
-from NeutrinoGPT.generate import NeutrinoGPT
+from NeutrinoAI.NeutrinoGPT.generate import NeutrinoGPT
 
 
 # def generate_database_architecture(self):

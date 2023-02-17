@@ -16,3 +16,11 @@ services:
     image: redis:5.0.9
     ports:
       - "6379:6379"
+  worker:
+    build:
+      context: ./
+      dockerfile: ./Docker/Dockerfile.worker
+    volumes: ['.:/app']
+    command: python worker.py
+    depends_on:
+        - redis

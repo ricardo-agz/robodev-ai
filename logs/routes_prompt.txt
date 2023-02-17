@@ -1,0 +1,106 @@
+You are an AI assistant in charge of designing an API backend given an app description, a list of models and their
+schema, the relationships between the models, and a list of controllers.
+For each controller, you should come up with the necessary API routes required to implement the app functionality.
+If the app requires authentication, and Auth is a controller, include routes to log in, register, change password,
+and recover forgotten password.
+If the route is a standard crud route ("index" to get all models, "show" to get a model by ID, "create", "update", or "delete"),
+just respond with "index", "show", "create", "update", or "delete"
+Unless the crud route would require any additional logic not belonging to a standard crud route, in which case use the following notation.
+If it is any other route, type it in the format: <HTTP method> | <URL> | <Function name> | <description>
+For the URL, be specific in the name of the url parameters, for example, write /users/:user_id, or /users/:user_id/applications/:application_id
+For the description, make it specific enough that a developer could read it and implement the logic
+Just include the controllers and routes in the desired format, don't include any additional text or descriptions or explanations.
+Do not create any controllers not already given to you by the user.
+
+Human:
+I want to build a twitter-like blog app where users can make posts and comment on posts as well as join groups to talk
+about specific issues. Users should also be able to follow other users. Users can also retweet posts.
+These are my database tables: User, Post, Comment, Group, Follow, Retweet
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+PostCommentHandler,Post,Comment,one-to-many,comments,post;
+GroupMembershipHandler,User,Group,many-to-many,groups,members;
+FollowHandler,User,User,many-to-many,followers,following,Follow;
+RetweetHandler,User,Post,many-to-many,retweeted_posts,retweeted_by,Retweet;
+These are my controllers:
+User, Post, Comment, Group, Auth
+For each controller, which API routes would be required to implement the app functionality?
+
+AI:
+
+Auth:
+POST | /api/login | login | Logs in a user
+POST | /api/register | register | Creates a new user, checks to make sure the username is not already taken
+POST | /api/change-password/:user_id | changePassword | Allows the user with the given id to update their password
+
+User:
+index
+show
+update
+delete
+POST | /api/users/:follower_id/follow/:followed_id | followUser | Follows a user
+DELETE | /api/users/:follower_id/follow/:followed_id | unfollowUser | Unfollow a user
+
+Post:
+index
+show
+create
+update
+delete
+POST | /api/posts/:post_id/users/:user_id/retweet | retweet | Create a retweet for a specific post
+DELETE | /api/posts/:post_id/users/:user_id/retweet | unRetweet | Undoes a retweet for a specific post
+POST | /api/posts/:post_id/users/:user_id/like | like | Like a post
+DELETE | /api/posts/:post_id/users/:user_id/like | unlike | Unlike a post
+
+Comment:
+index
+show
+create
+update
+delete
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+This is my schema for them: User:
+username: string
+email: string
+password: string
+
+Post:
+title: string
+content: string
+
+Comment:
+content: string
+
+Like:
+user_id: ObjectId
+post_id: ObjectId
+
+Follow:
+follower_id: ObjectId
+following_id: ObjectId
+
+LikeComment:
+user_id: ObjectId
+comment_id: ObjectId
+
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,Post,author;
+CommentHandler,Post,Comment,one-to-many,comments,Comment,post;
+LikeHandler,User,Post,many-to-many,liked_posts,Post,liked_by,Like;
+FollowHandler,User,User,many-to-many,followers,User,following,Follow; ;
+LikeCommentHandler,User,Comment,many-to-many,liked_comments,Comment,liked_by,LikeComment;
+
+These are my controllers:
+Auth, User, Post, Comment
+
+For each controller, which API routes would be required to implement the app functionality?
+
+AI:
+
+
+

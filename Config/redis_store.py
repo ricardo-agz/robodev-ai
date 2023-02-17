@@ -17,4 +17,7 @@ else:
     store = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=0)
 logger.info("Redis started")
 
-store = store
+
+def get_redis_conn():
+    return store
+

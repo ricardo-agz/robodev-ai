@@ -1,10 +1,10 @@
 import os
 import json
 
-from BuildfileCompiler.route_generator import build_crud_routes, build_single_crud_route, build_non_crud_route
-from BuildfileCompiler.gpt_pseudocode_compiler import pseudocode_compiler
-from BuildfileCompiler.util import generate_unique_id
-from logger import FileLogger
+from NeutrinoAI.BuildfileCompiler.route_generator import build_crud_routes, build_single_crud_route, build_non_crud_route
+from NeutrinoAI.BuildfileCompiler.gpt_pseudocode_compiler import pseudocode_compiler
+from NeutrinoAI.BuildfileCompiler.util import generate_unique_id
+from NeutrinoAI.logger import FileLogger
 
 logger = FileLogger()
 

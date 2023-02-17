@@ -3,10 +3,12 @@ import openai
 from dotenv import load_dotenv
 
 # from prompt_parser import PromptParser
-from logger import FileLogger
-from NeutrinoGPT.prompt_parser import PromptParser
-from NeutrinoGPT.response_parser import ModelsResponseParser, RelationsResponseParser, SchemaResponseParser, \
+from NeutrinoAI.logger import FileLogger
+from NeutrinoAI.NeutrinoGPT.prompt_parser import PromptParser
+from NeutrinoAI.NeutrinoGPT.response_parser import ModelsResponseParser, RelationsResponseParser, SchemaResponseParser, \
     relations_to_readable_string, ControllersResponseParser, format_schema_list_to_str, RoutesResponseParser
+
+from Config.logger import logger as flask_logger
 
 load_dotenv()
 
@@ -26,7 +28,7 @@ class NeutrinoGPT:
         self.prompt_parser = PromptParser(app_description=app_description)
 
     def generate_db_tables(self):
-        print("Generating models...")
+        flask_logger.info("Generating models...")
         logger.log("====================")
         logger.log("Generating models...")
         logger.log("====================\n")
@@ -60,7 +62,7 @@ class NeutrinoGPT:
         return parsed_models
 
     def generate_relations(self, models: list[str]):
-        print("Generating model relationships...")
+        flask_logger.info("Generating model relationships...")
         logger.log("\n====================")
         logger.log("Generating model relationships...")
         logger.log("====================\n")
@@ -102,7 +104,7 @@ class NeutrinoGPT:
             models: list[str],
             relations: list[tuple[str, str, str, str, str, str]]
     ):
-        print("Generating models' schema...")
+        flask_logger.info("Generating models' schema...")
         logger.log("\n====================")
         logger.log("Generating models' schema...")
         logger.log("====================\n")
@@ -145,7 +147,7 @@ class NeutrinoGPT:
             models: list[str],
             relations: list[tuple[str, str, str, str, str, str]]
     ):
-        print("Generating controllers...")
+        flask_logger.info("Generating controllers...")
         logger.log("\n====================")
         logger.log("Generating controllers...")
         logger.log("====================\n")
@@ -204,7 +206,7 @@ class NeutrinoGPT:
             relations: list[tuple[str, str, str, str, str, str]],
             controllers: list[str]
     ):
-        print("Generating routes...")
+        flask_logger.info("Generating routes...")
         logger.log("\n====================")
         logger.log("Generating routes...")
         logger.log("====================\n")
@@ -252,7 +254,7 @@ class NeutrinoGPT:
             url: str,
             description: str
     ):
-        print(f"Generating route logic for {method.upper()} {url} {description}...")
+        flask_logger.info(f"Generating route logic for {method.upper()} {url} {description}...")
         logger.log(f"Generating route logic for {method.upper()} {url} {description}...\n")
         schema_str = format_schema_list_to_str(schema)
         prompt = self.prompt_parser.route_logic_prompt
@@ -292,7 +294,7 @@ class NeutrinoGPT:
         routes = self.generate_routes(models, schema, relations, controllers)
         route_logic = []
 
-        print("Generating route logic...")
+        flask_logger.info("Generating route logic...")
         logger.log("====================")
         logger.log("Generating route logic...")
         logger.log("====================\n")

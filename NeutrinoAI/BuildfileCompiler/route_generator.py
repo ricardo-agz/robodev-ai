@@ -1,4 +1,4 @@
-from BuildfileCompiler.util import generate_unique_id
+from NeutrinoAI.BuildfileCompiler.util import generate_unique_id
 
 
 def build_crud_routes(controller_id, model, schema):

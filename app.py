@@ -4,22 +4,53 @@ from dotenv import load_dotenv
 from sys import stdout
 from waitress import serve
 from redis import Redis
-from flask import Flask, jsonify
+from rq import Queue
+from rq.job import Job
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from Config.init import load_config
-from Config.redis_store import store
+from Config.redis_store import store, get_redis_conn
 from Config.logger import logger
+from tasks import get_buildfile_neutrinoai
 
 from API.routes import export_project, build_project_directory, compile_logic_code_preview, compile_project_warnings, \
     compile_page_preview, compile_single_logic_block_preview
 
 load_dotenv()
-ENV = os.getenv('ENV', 'prod')
+ENV = os.getenv('ENV', 'dev')
 config = load_config(ENV)
 
 app = Flask(__name__)
 CORS(app)
 app.config.from_object(config)
+
+q = Queue(connection=get_redis_conn())
+
+
+@app.route('/enqueue_task')
+def enqueue_task():
+    description = request.json['description']  # Get the description from the request body
+    job = q.enqueue(get_buildfile_neutrinoai, description)  # Enqueue the task
+    return jsonify({'message': 'Task enqueued', 'job_id': job.id})
+
+
+@app.route('/check_task/<string:job_id>')
+def check_task(job_id):
+    job = q.fetch_job(job_id)  # Get the job object by ID
+    if job is None:
+        return jsonify({'message': f'Job {job_id} not found'})
+    elif job.is_finished:
+        return jsonify({'message': 'Job is finished', 'result': job.result})
+    else:
+        return jsonify({'message': 'Job is still running'})
+
+
+@app.route('/jobs')
+def list_jobs():
+    job_ids = q.job_ids  # Get a list of all job IDs in the default queue
+    jobs = [Job.fetch(id, connection=get_redis_conn()) for id in job_ids]  # Fetch the job objects
+    job_data = [{'id': job.id, 'status': job.get_status()} for job in jobs]  # Get the ID and status of each job
+    return jsonify(job_data)
 
 
 @app.route("/")

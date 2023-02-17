@@ -1,0 +1,459 @@
+ROUTE PROMPT:
+POST /api/login Logs in a user
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+POST /api/register Creates a new user, checks to make sure the username is not already taken
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+POST /api/change-password/:user_id Allows the user with the given id to update their password
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+POST /api/users/:follower_id/follow/:followed_id Follows a user
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+DELETE /api/users/:follower_id/follow/:followed_id Unfollow a user
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+POST /api/posts/:post_id/users/:user_id/like Like a post
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+DELETE /api/posts/:post_id/users/:user_id/like Unlike a post
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+POST /api/comments/:comment_id/users/:user_id/like Like a comment
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
+ROUTE PROMPT:
+DELETE /api/comments/:comment_id/users/:user_id/like Unlike a comment
+You are an AI assistant in charge of generating database relations given an app description and a list of models.
+Relationships can be one-to-many if model A can create or own many model Bs but model B can only belong to 1 model A
+(for example a User can make many Posts but a Post can only belong to one User). Relationships can be many-to-many
+if model A can have many model Bs and model B can have many model As (for example a User can 
+be in many GroupChats and a GroupChat can have many Users). Many-to-many relationships may be implemented with a joint table.
+For Example User has many Users through Follows.
+Relationships can be one-to-one if model A is associated with a single model B and model B is associated with a single model A.
+For example User has one Passport and Passport has one User
+Relationship names should be descriptive and end in 'Handler'. No two relations should have the same name.
+No two many-to-many relationships should have the same joint table.
+Just include the relations, don't include any additional text or descriptions or explanations.
+Give each relation as a line in the following format:
+<RelationshipName><ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+
+Common Examples:
+Implementing likes where Users can like Posts: This would require a many-to-many between User and Post through Like. ex:
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Implementing follows where Users can follow other Users would be a many-to-many between User and User through Follow. ex:
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+
+One-to-one example: UserCartHandler,User,Cart,one-to-one,cart,user;
+
+Human:
+I want to build a blog app where users can make posts and comment on posts as well as join 
+groups to talk about specific issues. Users should also be able to like posts.
+These are my database tables: User, Post, Comment, Group.
+What would the database relationships be (if any)?
+
+AI:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment, Like*, Follow*, LikeComment*
+What would the database relationships be (if any)?
+
+AI:
+
+
+
+
+
+--------------------
+
+
