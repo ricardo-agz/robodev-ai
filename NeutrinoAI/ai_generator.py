@@ -4,8 +4,29 @@ import json
 from NeutrinoAI.NeutrinoGPT.generate import NeutrinoGPT
 from NeutrinoAI.BuildfileCompiler.buildfile_compiler import BuildfileCompiler
 from NeutrinoAI.logger import FileLogger
+from Config.logger import logger as flask_logger
 
 logger = FileLogger()
+
+
+def find_non_serializable(data, path=''):
+    """Find the first non-serializable object in a nested dictionary or list."""
+    if isinstance(data, (str, int, float, bool)):
+        return None  # Primitive types are always serializable
+    elif data is None:
+        return None
+    elif isinstance(data, (list, tuple)):
+        for i, item in enumerate(data):
+            result = find_non_serializable(item, f'{path}[{i}]')
+            if result:
+                return result
+    elif isinstance(data, dict):
+        for key, value in data.items():
+            result = find_non_serializable(value, f'{path}.{key}')
+            if result:
+                return result
+    else:
+        return f"{path} = {str(data)} is not serializable"
 
 
 class AIBuildfileGenerator:
@@ -28,7 +49,20 @@ class AIBuildfileGenerator:
 
     def get_buildfile_json(self) -> str:
         buildfile_data = self.buildfile_compiler.get_buildfile()
-        json_out = json.dumps(buildfile_data, indent=4)
+        json_out = None
+        try:
+            json_out = json.dumps(buildfile_data, indent=4)
+        except Exception as e:
+            flask_logger.info(f"Error compiling to JSON: {e}")
+            non_serializable = find_non_serializable(buildfile_data)
+            if non_serializable:
+                flask_logger.info(f"Failed to serialize: {non_serializable}")
+            else:
+                for key, value in buildfile_data.items():
+                    try:
+                        json_out = json.dumps({key: value})
+                    except TypeError as e:
+                        flask_logger.info(f"Failed to serialize key '{key}': {e}")
 
         return json_out
 

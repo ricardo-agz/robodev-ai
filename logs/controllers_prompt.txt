@@ -37,3 +37,153 @@ Which controllers would be required to implement this app in a generic MVC frame
 
 AI:
 
+You are an AI assistant in charge of designing an API backend given an app description, a list of models and their
+schema, and the relationships between the models. You should come up with the controllers required to implement this
+architecture in a generic MVC framework.
+If the app requires authentication, include Auth as one of the controllers in the response.
+If the app requires payment processing, include Payment as one of the controllers in the response.
+Do not create controllers to handle many-to-many relationships.
+No two controllers should have the same name.
+Just include the controllers, don't include any additional text or descriptions or explanations.
+
+Human:
+I want to build a twitter-like blog app where users can make posts and comment on posts as well as join groups to talk
+about specific issues. Users should also be able to follow other users.
+These are my database tables: User, Post, Comment, Group, Follow.
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+PostCommentHandler,Post,Comment,one-to-many,comments,post;
+GroupMembershipHandler,User,Group,many-to-many,groups,members;
+FollowHandler,User,User,many-to-many,followers,following,Follow;
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+Auth,User,Post,Comment
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, like comments, and follow other users
+These are my database tables: User, Post, Comment
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,Post,author;
+CommentHandler,Post,Comment,one-to-many,comments,Comment,post;
+LikeHandler,User,Post,many-to-many,liked_posts,Post,liked_by,Like;
+LikeHandler,User,Comment,many-to-many,liked_comments,Comment,liked_by,Like;
+FollowingHandler,User,User,many-to-many,followers,User,following,Follow;
+
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+
+You are an AI assistant in charge of designing an API backend given an app description, a list of models and their
+schema, and the relationships between the models. You should come up with the controllers required to implement this
+architecture in a generic MVC framework.
+If the app requires authentication, include Auth as one of the controllers in the response.
+If the app requires payment processing, include Payment as one of the controllers in the response.
+Do not create controllers to handle many-to-many relationships.
+No two controllers should have the same name.
+Just include the controllers, don't include any additional text or descriptions or explanations.
+
+Human:
+I want to build a twitter-like blog app where users can make posts and comment on posts as well as join groups to talk
+about specific issues. Users should also be able to follow other users.
+These are my database tables: User, Post, Comment, Group, Follow.
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+PostCommentHandler,Post,Comment,one-to-many,comments,post;
+GroupMembershipHandler,User,Group,many-to-many,groups,members;
+FollowHandler,User,User,many-to-many,followers,following,Follow;
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+Auth,User,Post,Comment
+
+Human:
+simple twitter-like app where users can make posts, like posts, comment on posts, and follow other users
+These are my database tables: User, Post, Comment
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,Post,author;
+CommentHandler,Post,Comment,one-to-many,comments,Comment,post;
+LikeHandler,User,Post,many-to-many,liked_posts,Post,liked_by,Like;
+FollowingHandler,User,User,many-to-many,followers,User,following,Follow;
+
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+
+You are an AI assistant in charge of designing an API backend given an app description, a list of models and their
+schema, and the relationships between the models. You should come up with the controllers required to implement this
+architecture in a generic MVC framework.
+If the app requires authentication, include Auth as one of the controllers in the response.
+If the app requires payment processing, include Payment as one of the controllers in the response.
+Do not create controllers to handle many-to-many relationships.
+No two controllers should have the same name.
+Just include the controllers, don't include any additional text or descriptions or explanations.
+
+Human:
+I want to build a twitter-like blog app where users can make posts and comment on posts as well as join groups to talk
+about specific issues. Users should also be able to follow other users.
+These are my database tables: User, Post, Comment, Group, Follow.
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+PostCommentHandler,Post,Comment,one-to-many,comments,post;
+GroupMembershipHandler,User,Group,many-to-many,groups,members;
+FollowHandler,User,User,many-to-many,followers,following,Follow;
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+Auth,User,Post,Comment
+
+Human:
+simple twitter-like app where users can make posts and follow other users
+These are my database tables: User, Post
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,Post,author;
+FollowingHandler,User,User,many-to-many,followers,User,following,Follow;
+
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+
+You are an AI assistant in charge of designing an API backend given an app description, a list of models and their
+schema, and the relationships between the models. You should come up with the controllers required to implement this
+architecture in a generic MVC framework.
+If the app requires authentication, include Auth as one of the controllers in the response.
+If the app requires payment processing, include Payment as one of the controllers in the response.
+Do not create controllers to handle many-to-many relationships.
+No two controllers should have the same name.
+Just include the controllers, don't include any additional text or descriptions or explanations.
+
+Human:
+I want to build a twitter-like blog app where users can make posts and comment on posts as well as join groups to talk
+about specific issues. Users should also be able to follow other users.
+These are my database tables: User, Post, Comment, Group, Follow.
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+PostCommentHandler,Post,Comment,one-to-many,comments,post;
+GroupMembershipHandler,User,Group,many-to-many,groups,members;
+FollowHandler,User,User,many-to-many,followers,following,Follow;
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+Auth,User,Post,Comment
+
+Human:
+simple twitter-like app where users can make posts and follow other users
+These are my database tables: User, Post
+These are the relationships between them in the following format:
+<Relationship name>,<ModelA>,<ModelB>,<relation type>,<name of relationship for A>:<ModelB>,<name of relationship for B>,<joint table for many to many (optional)>;
+AuthorshipHandler,User,Post,one-to-many,posts,Post,author;
+FollowingHandler,User,User,many-to-many,followers,User,following,Follow;
+LikeHandler,User,Post,many-to-many,liked_posts,Post,liked_by,Like;
+
+Which controllers would be required to implement this app in a generic MVC framework?
+
+AI:
+

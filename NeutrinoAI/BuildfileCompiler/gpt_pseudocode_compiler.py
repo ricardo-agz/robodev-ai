@@ -135,7 +135,7 @@ def parse_block(lines):
         args = [x.strip() for x in operation[6:].split(";")]
         if len(args) == 0:
             raise ValueError("Invalid syntax, DELETE requires a model")
-        model = args[0].strip
+        model = args[0].strip()
         search_fields = args[1] if len(args) > 1 else "{ }"
         multiple = args[2] if len(args) > 2 else False
         return {

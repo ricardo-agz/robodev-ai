@@ -21,6 +21,34 @@ Uber style ride sharing app but for truck owners to deliver shipments for client
 logger = FileLogger()
 
 
+def call_gpt_api(prompt):
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        stop=[" Human:", " AI:"]
+    )
+
+    return response
+
+
+def multiple_attempts(api_call, n=2):
+    for i in range(n):
+        try:
+            response = api_call()
+            return response
+        except Exception as e:
+            if i == n - 1:
+                raise ValueError(f"API call failed after {n} attempts: {e}")
+            else:
+                flask_logger.info(f"Failed to query API: {e}, trying again...")
+    return None
+
+
 class NeutrinoGPT:
 
     def __init__(self, app_description: str):
@@ -34,16 +62,8 @@ class NeutrinoGPT:
         logger.log("====================\n")
         logger.log(self.prompt_parser.tables_prompt, "models_prompt.txt")
 
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=self.prompt_parser.tables_prompt,
-            temperature=0.7,
-            max_tokens=256,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=[" Human:", " AI:"]
-        )
+        # automatically retry if call fails the first time
+        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.tables_prompt), n=3)
 
         db_tables_str = response.choices[0].text
         logger.log("Models Pre Parsed:")
@@ -70,16 +90,8 @@ class NeutrinoGPT:
 
         logger.log(self.prompt_parser.relations_prompt, "relations_prompt.txt")
 
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=self.prompt_parser.relations_prompt,
-            temperature=0.7,
-            max_tokens=256,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=[" Human:", " AI:"]
-        )
+        # automatically retry if call fails the first time
+        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.relations_prompt), n=3)
 
         relations_str = response.choices[0].text
         logger.log("Relations Pre Parsed:")
@@ -113,16 +125,8 @@ class NeutrinoGPT:
 
         logger.log(self.prompt_parser.schema_prompt, "schema_prompt.txt")
 
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=self.prompt_parser.schema_prompt,
-            temperature=0.7,
-            max_tokens=500,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=[" Human:", " AI:"]
-        )
+        # automatically retry if call fails the first time
+        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.schema_prompt), n=3)
 
         schema_str = response.choices[0].text
         logger.log("Schema Pre Parsed:")
@@ -160,16 +164,8 @@ class NeutrinoGPT:
 
         logger.log(self.prompt_parser.controllers_prompt, "controllers_prompt.txt")
 
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=self.prompt_parser.controllers_prompt,
-            temperature=0.7,
-            max_tokens=500,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=[" Human:", " AI:"]
-        )
+        # automatically retry if call fails the first time
+        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.controllers_prompt), n=3)
 
         controllers_str = response.choices[0].text
         logger.log("Controllers Pre Parsed:")
@@ -218,16 +214,8 @@ class NeutrinoGPT:
 
         logger.log(self.prompt_parser.routes_prompt, "routes_prompt.txt")
 
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=self.prompt_parser.routes_prompt,
-            temperature=0.7,
-            max_tokens=500,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=[" Human:", " AI:"]
-        )
+        # automatically retry if call fails the first time
+        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.routes_prompt), n=3)
 
         routes_str = response.choices[0].text
         logger.log("Routes Pre Parsed:")
@@ -269,16 +257,8 @@ class NeutrinoGPT:
         logger.log(self.prompt_parser.relations_prompt, "route_logic_prompt.txt")
         logger.log("\n\n--------------------\n\n", "route_logic_prompt.txt")
 
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt,
-            temperature=0.7,
-            max_tokens=500,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=[" Human:", " AI:"]
-        )
+        # automatically retry if call fails the first time
+        response = multiple_attempts(lambda: call_gpt_api(prompt), n=3)
 
         # here we don't need to parse, this will be handled by the gpt pseudocode compiler
         logic_str = response.choices[0].text

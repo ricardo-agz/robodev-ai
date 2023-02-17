@@ -464,3 +464,1232 @@ ELSE
 ==========
 compiling...
 ERROR COMPILING ROUTE: Invalid syntax, CREATE requires a model and create fields
+====================
+Generating models...
+====================
+
+Models Pre Parsed:
+User,Post,Comment,Like*,Follow*
+Models Parsed:
+['User', 'Post', 'Comment', 'Like*', 'Follow*']
+
+
+
+====================
+Generating model relationships...
+====================
+
+Relations Pre Parsed:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+LikeHandler,User,Comment,many-to-many,liked_comments,liked_by,Like;
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+Relations Parsed:
+[('AuthorshipHandler', 'User', 'Post', 'one-to-many', 'posts', 'author', None), ('CommentHandler', 'Post', 'Comment', 'one-to-many', 'comments', 'post', None), ('LikeHandler', 'User', 'Post', 'many-to-many', 'liked_posts', 'liked_by', 'Like'), ('LikeHandler', 'User', 'Comment', 'many-to-many', 'liked_comments', 'liked_by', 'Like'), ('FollowingHandler', 'User', 'User', 'many-to-many', 'followers', 'following', 'Follow')]
+
+
+
+====================
+Generating models' schema...
+====================
+
+Schema Pre Parsed:
+
+User
+username: string
+email: string
+password: string
+
+Post
+title: string
+content: string
+
+Comment
+content: string
+
+Like
+user_id: ObjectId
+post_id: ObjectId
+comment_id: ObjectId
+
+Follow
+user_id: ObjectId
+following_id: ObjectId
+Schema Parsed:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Post', [('title', 'string'), ('content', 'string')]), ('Comment', [('content', 'string')]), ('Like', [('user_id', 'ObjectId'), ('post_id', 'ObjectId'), ('comment_id', 'ObjectId')]), ('Follow', [('user_id', 'ObjectId'), ('following_id', 'ObjectId')])]
+
+
+
+====================
+Generating controllers...
+====================
+
+Controllers Pre Parsed:
+Auth,User,Post,Comment,Like,Follow
+Controllers Parsed:
+['Auth', 'User', 'Post', 'Comment', 'Like', 'Follow']
+
+
+
+====================
+Generating routes...
+====================
+
+Routes Pre Parsed:
+Auth:
+POST | /api/login | login | Logs in a user
+POST | /api/register | register | Creates a new user, checks to make sure the username is not already taken
+POST | /api/change-password/:user_id | changePassword | Allows the user with the given id to update their password
+
+User:
+index
+show
+update
+delete
+POST | /api/users/:follower_id/follow/:followed_id | followUser | Follows a user
+DELETE | /api/users/:follower_id/follow/:followed_id | unfollowUser | Unfollow a user
+
+Post:
+index
+show
+create
+update
+delete
+POST | /api/posts/:post_id/users/:user_id/like | like | Like a post
+DELETE | /api/posts/:post_id/users/:user_id/like | unlike | Unlike a post
+
+Comment:
+index
+show
+create
+update
+delete
+POST | /api/comments/:comment_id/users/:user_id/like | like | Like a comment
+DELETE | /api/comments/:comment_id/users/:user_id/like | unlike | Unlike a comment
+Routes Parsed:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:user_id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('User', ['post', '/api/users/:follower_id/follow/:followed_id', 'followUser', 'Follows a user']), ('User', ['delete', '/api/users/:follower_id/follow/:followed_id', 'unfollowUser', 'Unfollow a user']), ('Post', ['index']), ('Post', ['show']), ('Post', ['create']), ('Post', ['update']), ('Post', ['delete']), ('Post', ['post', '/api/posts/:post_id/users/:user_id/like', 'like', 'Like a post']), ('Post', ['delete', '/api/posts/:post_id/users/:user_id/like', 'unlike', 'Unlike a post']), ('Comment', ['index']), ('Comment', ['show']), ('Comment', ['create']), ('Comment', ['update']), ('Comment', ['delete']), ('Comment', ['post', '/api/comments/:comment_id/users/:user_id/like', 'like', 'Like a comment']), ('Comment', ['delete', '/api/comments/:comment_id/users/:user_id/like', 'unlike', 'Unlike a comment'])]
+
+
+====================
+Generating route logic...
+====================
+
+Generating route logic for POST /api/login Logs in a user...
+
+QUERY User; { username: req.body.username }; false -> user
+IF user 
+    COMPARE_TO_HASH req.body.password; user.password -> match 
+    IF match 
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =x
+            ERROR "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token 
+    ELSE
+        ERROR 401; "invalid username or password" 
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/register Creates a new user, checks to make sure the username is not already taken...
+
+QUERY User; { username: req.body.username }; false -> user
+IF user 
+    ERROR 409; "username already taken"
+ELSE 
+    HASH_TEXT req.body.password -> hashedPassword
+    CREATE User; { username: req.body.username; email: req.body.email; password: hashedPassword }
+        =x
+        ERROR 500; "error creating user"
+        x=
+        =>
+        <=
+    RETURN 201; "user created successfully"
+    PASS
+Generating route logic for POST /api/change-password/:user_id Allows the user with the given id to update their password...
+
+QUERY User; { _id: req.params.user_id }; false -> user 
+IF user 
+    HASH_TEXT req.body.newPassword -> hashedPassword
+    UPDATE User; { _id: user._id }; { password: hashedPassword }
+        =>
+        RETURN 200; "password successfully updated" 
+        <=
+        =x
+        ERROR 500; "error updating password" 
+        x=
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/users/:follower_id/follow/:followed_id Follows a user...
+
+====================
+Generating models...
+====================
+
+Models Pre Parsed:
+User,Post,Like*,Comment,Follow*
+Models Parsed:
+['User', 'Post', 'Like*', 'Comment', 'Follow*']
+
+
+
+====================
+Generating model relationships...
+====================
+
+Relations Pre Parsed:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+Relations Parsed:
+[('AuthorshipHandler', 'User', 'Post', 'one-to-many', 'posts', 'author', None), ('CommentHandler', 'Post', 'Comment', 'one-to-many', 'comments', 'post', None), ('LikeHandler', 'User', 'Post', 'many-to-many', 'liked_posts', 'liked_by', 'Like'), ('FollowingHandler', 'User', 'User', 'many-to-many', 'followers', 'following', 'Follow')]
+
+
+
+====================
+Generating models' schema...
+====================
+
+Schema Pre Parsed:
+User
+username: string
+email: string
+password: string
+
+Post
+title: string
+content: string
+
+Comment
+content: string
+
+Like
+user_id: ObjectId
+post_id: ObjectId
+
+Follow
+follower_id: ObjectId
+following_id: ObjectId
+Schema Parsed:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Post', [('title', 'string'), ('content', 'string')]), ('Comment', [('content', 'string')]), ('Like', [('user_id', 'ObjectId'), ('post_id', 'ObjectId')]), ('Follow', [('follower_id', 'ObjectId'), ('following_id', 'ObjectId')])]
+
+
+
+====================
+Generating controllers...
+====================
+
+Controllers Pre Parsed:
+Auth,User,Post,Comment,Like,Follow
+Controllers Parsed:
+['Auth', 'User', 'Post', 'Comment', 'Like', 'Follow']
+
+
+
+====================
+Generating routes...
+====================
+
+Routes Pre Parsed:
+Auth:
+POST | /api/login | login | Logs in a user
+POST | /api/register | register | Creates a new user, checks to make sure the username is not already taken
+POST | /api/change-password/:user_id | changePassword | Allows the user with the given id to update their password
+
+User:
+index
+show
+update
+delete
+POST | /api/users/:follower_id/follow/:followed_id | followUser | Follows a user
+DELETE | /api/users/:follower_id/follow/:followed_id | unfollowUser | Unfollow a user
+
+Post:
+index
+show
+create
+update
+delete
+POST | /api/posts/:post_id/users/:user_id/like | like | Like a post
+DELETE | /api/posts/:post_id/users/:user_id/like | unlike | Unlike a post
+
+Comment:
+index
+show
+create
+update
+delete
+
+Follow:
+POST | /api/follow/:follower_id/:following_id | follow | Follow
+Routes Parsed:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:user_id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('User', ['post', '/api/users/:follower_id/follow/:followed_id', 'followUser', 'Follows a user']), ('User', ['delete', '/api/users/:follower_id/follow/:followed_id', 'unfollowUser', 'Unfollow a user']), ('Post', ['index']), ('Post', ['show']), ('Post', ['create']), ('Post', ['update']), ('Post', ['delete']), ('Post', ['post', '/api/posts/:post_id/users/:user_id/like', 'like', 'Like a post']), ('Post', ['delete', '/api/posts/:post_id/users/:user_id/like', 'unlike', 'Unlike a post']), ('Comment', ['index']), ('Comment', ['show']), ('Comment', ['create']), ('Comment', ['update']), ('Comment', ['delete']), ('Follow', ['post', '/api/follow/:follower_id/:following_id', 'follow', 'Follow'])]
+
+
+====================
+Generating route logic...
+====================
+
+Generating route logic for POST /api/login Logs in a user...
+
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    COMPARE_TO_HASH req.body.password; user.password -> match 
+    IF match 
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =x
+            ERROR "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token 
+    ELSE
+        ERROR 401; "invalid username or password" 
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/register Creates a new user, checks to make sure the username is not already taken...
+
+QUERY User; { username: req.body.username }; false -> user
+IF user 
+    ERROR 400; "username is taken"
+ELSE 
+    HASH_TEXT req.body.password -> hashed_password
+    CREATE User; { username: req.body.username, email: req.body.email, password: hashed_password }
+        =>
+        RETURN 201; "user created successfully"
+        <=
+        =x
+        ERROR 500; "error creating user"
+        x=
+    PASS
+Generating route logic for POST /api/change-password/:user_id Allows the user with the given id to update their password...
+
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user
+    HASH_TEXT req.body.password -> hashedPassword
+    UPDATE User; { _id: user._id }; { password: hashedPassword }
+        =>
+        RETURN 200; "password successfully changed"
+        <=
+        =x
+        ERROR 500; "error changing password"
+        x=
+ELSE
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/users/:follower_id/follow/:followed_id Follows a user...
+
+QUERY User, { _id: req.params.follower_id }, false -> follower
+IF follower
+    QUERY User, { _id: req.params.followed_id }, false -> followed
+    IF followed
+        UPDATE User, { _id: follower._id }, { $push: { following: followed._id } }
+            =>
+            <=
+            =x
+            ERROR 500, "error following"
+            x=
+        UPDATE User, { _id: followed._id }, { $push: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500, "error following"
+            x=
+        RETURN 200, "followed successfully"
+    ELSE
+        ERROR 404, "followed user not found"
+ELSE
+    ERROR 404, "follower user not found"
+    PASS
+Generating route logic for DELETE /api/users/:follower_id/follow/:followed_id Unfollow a user...
+
+QUERY User; { _id: req.params.follower_id }; false -> follower
+IF follower
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed
+        DELETE User; { _id: follower._id }; { $pull: { following: followed._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        DELETE User; { _id: followed._id }; { $pull: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        RETURN 200; "unfollowed successfully"
+    ELSE
+        ERROR 404; "followed user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+Generating route logic for POST /api/posts/:post_id/users/:user_id/like Like a post...
+
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user 
+    QUERY Post; { _id: req.params.post_id }; false -> post
+    IF post
+        CREATE Like; { user_id: user._id, post_id: post._id }
+            =>
+            RETURN 200; "post liked successfully"
+            <=
+            =x
+            ERROR 500; "error liking post"
+            x=
+    ELSE
+        ERROR 404; "post not found"
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for DELETE /api/posts/:post_id/users/:user_id/like Unlike a post...
+
+QUERY Post; { _id: req.params.post_id }; false -> post
+IF post 
+    QUERY Like; { user_id: req.params.user_id, post_id: post._id }; false -> like
+    IF like 
+        DELETE Like; { user_id: req.params.user_id, post_id: post._id }; false 
+            =>
+            RETURN 200, "unliked post successfully"
+            <=
+            =x
+            ERROR 500, "error unliking post"
+            x=
+    ELSE 
+        ERROR 404, "like not found"
+ELSE 
+    ERROR 404, "post not found"
+    PASS
+Generating route logic for POST /api/follow/:follower_id/:following_id Follow...
+
+QUERY User; { _id: req.params.follower_id }; false -> follower 
+IF follower 
+    QUERY User; { _id: req.params.following_id }; false -> following 
+    IF following
+        CREATE Follow; { follower_id: follower._id, following_id: following._id }
+            =>
+            <=
+            =x
+            ERROR 500; "error following"
+            x=
+        RETURN 200; "followed successfully"
+    ELSE
+        ERROR 404; "following user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+
+==========
+Models:
+['User', 'Post', 'Like*', 'Comment', 'Follow*']
+Relations:
+[('AuthorshipHandler', 'User', 'Post', 'one-to-many', 'posts', 'author', None), ('CommentHandler', 'Post', 'Comment', 'one-to-many', 'comments', 'post', None), ('LikeHandler', 'User', 'Post', 'many-to-many', 'liked_posts', 'liked_by', 'Like'), ('FollowingHandler', 'User', 'User', 'many-to-many', 'followers', 'following', 'Follow')]
+Schema:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Post', [('title', 'string'), ('content', 'string')]), ('Comment', [('content', 'string')]), ('Like', [('user_id', 'ObjectId'), ('post_id', 'ObjectId')]), ('Follow', [('follower_id', 'ObjectId'), ('following_id', 'ObjectId')])]
+Controllers:
+['Auth', 'User', 'Post', 'Comment']
+Routes:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:user_id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('User', ['post', '/api/users/:follower_id/follow/:followed_id', 'followUser', 'Follows a user']), ('User', ['delete', '/api/users/:follower_id/follow/:followed_id', 'unfollowUser', 'Unfollow a user']), ('Post', ['index']), ('Post', ['show']), ('Post', ['create']), ('Post', ['update']), ('Post', ['delete']), ('Post', ['post', '/api/posts/:post_id/users/:user_id/like', 'like', 'Like a post']), ('Post', ['delete', '/api/posts/:post_id/users/:user_id/like', 'unlike', 'Unlike a post']), ('Comment', ['index']), ('Comment', ['show']), ('Comment', ['create']), ('Comment', ['update']), ('Comment', ['delete']), ('Follow', ['post', '/api/follow/:follower_id/:following_id', 'follow', 'Follow'])]
+post /api/login
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    COMPARE_TO_HASH req.body.password; user.password -> match 
+    IF match 
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =x
+            ERROR "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token 
+    ELSE
+        ERROR 401; "invalid username or password" 
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+
+post /api/register
+QUERY User; { username: req.body.username }; false -> user
+IF user 
+    ERROR 400; "username is taken"
+ELSE 
+    HASH_TEXT req.body.password -> hashed_password
+    CREATE User; { username: req.body.username, email: req.body.email, password: hashed_password }
+        =>
+        RETURN 201; "user created successfully"
+        <=
+        =x
+        ERROR 500; "error creating user"
+        x=
+    PASS
+
+post /api/change-password/:user_id
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user
+    HASH_TEXT req.body.password -> hashedPassword
+    UPDATE User; { _id: user._id }; { password: hashedPassword }
+        =>
+        RETURN 200; "password successfully changed"
+        <=
+        =x
+        ERROR 500; "error changing password"
+        x=
+ELSE
+    ERROR 404; "user not found"
+    PASS
+
+post /api/users/:follower_id/follow/:followed_id
+QUERY User, { _id: req.params.follower_id }, false -> follower
+IF follower
+    QUERY User, { _id: req.params.followed_id }, false -> followed
+    IF followed
+        UPDATE User, { _id: follower._id }, { $push: { following: followed._id } }
+            =>
+            <=
+            =x
+            ERROR 500, "error following"
+            x=
+        UPDATE User, { _id: followed._id }, { $push: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500, "error following"
+            x=
+        RETURN 200, "followed successfully"
+    ELSE
+        ERROR 404, "followed user not found"
+ELSE
+    ERROR 404, "follower user not found"
+    PASS
+
+delete /api/users/:follower_id/follow/:followed_id
+QUERY User; { _id: req.params.follower_id }; false -> follower
+IF follower
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed
+        DELETE User; { _id: follower._id }; { $pull: { following: followed._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        DELETE User; { _id: followed._id }; { $pull: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        RETURN 200; "unfollowed successfully"
+    ELSE
+        ERROR 404; "followed user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+
+post /api/posts/:post_id/users/:user_id/like
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user 
+    QUERY Post; { _id: req.params.post_id }; false -> post
+    IF post
+        CREATE Like; { user_id: user._id, post_id: post._id }
+            =>
+            RETURN 200; "post liked successfully"
+            <=
+            =x
+            ERROR 500; "error liking post"
+            x=
+    ELSE
+        ERROR 404; "post not found"
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+
+delete /api/posts/:post_id/users/:user_id/like
+QUERY Post; { _id: req.params.post_id }; false -> post
+IF post 
+    QUERY Like; { user_id: req.params.user_id, post_id: post._id }; false -> like
+    IF like 
+        DELETE Like; { user_id: req.params.user_id, post_id: post._id }; false 
+            =>
+            RETURN 200, "unliked post successfully"
+            <=
+            =x
+            ERROR 500, "error unliking post"
+            x=
+    ELSE 
+        ERROR 404, "like not found"
+ELSE 
+    ERROR 404, "post not found"
+    PASS
+
+post /api/follow/:follower_id/:following_id
+QUERY User; { _id: req.params.follower_id }; false -> follower 
+IF follower 
+    QUERY User; { _id: req.params.following_id }; false -> following 
+    IF following
+        CREATE Follow; { follower_id: follower._id, following_id: following._id }
+            =>
+            <=
+            =x
+            ERROR 500; "error following"
+            x=
+        RETURN 200; "followed successfully"
+    ELSE
+        ERROR 404; "following user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+
+==========
+compiling...
+ERROR: controller not found: Follow
+[{'name': 'Auth', 'affiliation': None, 'id': 'crl-Auth-ac5ebab7-ccf7-4519-8771-784e20e515e5'}, {'name': 'User', 'affiliation': 'mdl-User-b45859c5-a861-4696-9929-03c387e3cb54', 'id': 'crl-User-ba5a6d64-70ab-4b96-bd56-406d8c6aa3d6'}, {'name': 'Post', 'affiliation': 'mdl-Post-878840a8-602a-4ec4-8b1f-b4da4c554acd', 'id': 'crl-Post-def0b2db-b6be-42fa-8704-2f7294ede3c1'}, {'name': 'Comment', 'affiliation': 'mdl-Comment-48408335-cfba-4d18-bdfe-57c1172a16ce', 'id': 'crl-Comment-2026fc8e-9430-4619-b5c5-03159c52424a'}]
+
+
+====================
+Generating models...
+====================
+
+Models Pre Parsed:
+User,Post,Follow*
+Models Parsed:
+['User', 'Post', 'Follow*']
+
+
+
+====================
+Generating model relationships...
+====================
+
+Relations Pre Parsed:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+Relations Parsed:
+[('AuthorshipHandler', 'User', 'Post', 'one-to-many', 'posts', 'author', None), ('FollowingHandler', 'User', 'User', 'many-to-many', 'followers', 'following', 'Follow')]
+
+
+
+====================
+Generating models' schema...
+====================
+
+Schema Pre Parsed:
+
+User
+username: string
+email: string
+password: string
+
+Post
+title: string
+content: string
+
+Follow
+follower_id: string
+following_id: string
+Schema Parsed:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Post', [('title', 'string'), ('content', 'string')]), ('Follow', [('follower_id', 'string'), ('following_id', 'string')])]
+
+
+
+====================
+Generating controllers...
+====================
+
+Controllers Pre Parsed:
+Auth,User,Post,Follow
+Controllers Parsed:
+['Auth', 'User', 'Post', 'Follow']
+
+
+
+====================
+Generating routes...
+====================
+
+Routes Pre Parsed:
+Auth:
+POST | /api/login | login | Logs in a user
+POST | /api/register | register | Creates a new user, checks to make sure the username is not already taken
+POST | /api/change-password/:user_id | changePassword | Allows the user with the given id to update their password
+
+User:
+index
+show
+update
+delete
+POST | /api/users/:follower_id/follow/:followed_id | followUser | Follows a user
+DELETE | /api/users/:follower_id/follow/:followed_id | unfollowUser | Unfollow a user
+
+Post:
+index
+show
+create
+update
+delete
+Routes Parsed:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:user_id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('User', ['post', '/api/users/:follower_id/follow/:followed_id', 'followUser', 'Follows a user']), ('User', ['delete', '/api/users/:follower_id/follow/:followed_id', 'unfollowUser', 'Unfollow a user']), ('Post', ['index']), ('Post', ['show']), ('Post', ['create']), ('Post', ['update']), ('Post', ['delete'])]
+
+
+====================
+Generating route logic...
+====================
+
+Generating route logic for POST /api/login Logs in a user...
+
+QUERY User; { username: req.body.username; false -> user
+IF user
+    COMPARE_TO_HASH req.body.password; user.password -> match
+    IF match
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =>
+            <=
+            =x
+            ERROR 500; "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token
+    ELSE
+        ERROR 401; "invalid username or password"
+ELSE
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/register Creates a new user, checks to make sure the username is not already taken...
+
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    ERROR 409; "username already taken"
+ELSE 
+    CREATE User; { username: req.body.username; email: req.body.email; password: HASH_TEXT(req.body.password) } -> newUser 
+        =x
+        ERROR 500; "error creating user"
+        x=
+    RETURN 201; "user successfully created"; newUser 
+    PASS
+Generating route logic for POST /api/change-password/:user_id Allows the user with the given id to update their password...
+
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user
+    HASH_TEXT req.body.password -> hashedPassword
+    UPDATE User; { _id: user._id }; { password: hashedPassword }
+        =>
+        RETURN 200; "password successfully changed"
+        <=
+        =x
+        ERROR 500; "error changing password"
+        x=
+ELSE
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/users/:follower_id/follow/:followed_id Follows a user...
+
+QUERY User; { _id: req.params.follower_id }; false -> follower
+IF follower
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed
+        UPDATE User; { _id: follower._id }; { $push: { following: followed._id } }
+            => 
+            <=
+            =x
+            ERROR 500; "error following"
+            x= 
+        UPDATE User; { _id: followed._id }; { $push: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error following"
+            x=
+        RETURN 200; "followed successfully"
+    ELSE
+        ERROR 404; "followed user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+Generating route logic for DELETE /api/users/:follower_id/follow/:followed_id Unfollow a user...
+
+QUERY User; { _id: req.params.follower_id }; false -> follower 
+IF follower 
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed 
+        DELETE User; { _id: follower._id }; { $pull: { following: followed._id } }; false
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        DELETE User; { _id: followed._id }; { $pull: { followers: follower._id } }; false
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        RETURN 200; "unfollowed successfully" 
+    ELSE 
+        ERROR 404; "followed user not found"
+ELSE 
+    ERROR 404; "follower user not found"
+    PASS
+
+==========
+Models:
+['User', 'Post', 'Follow*']
+Relations:
+[('AuthorshipHandler', 'User', 'Post', 'one-to-many', 'posts', 'author', None), ('FollowingHandler', 'User', 'User', 'many-to-many', 'followers', 'following', 'Follow')]
+Schema:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Post', [('title', 'string'), ('content', 'string')]), ('Follow', [('follower_id', 'string'), ('following_id', 'string')])]
+Controllers:
+['Auth', 'User', 'Post']
+Routes:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:user_id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('User', ['post', '/api/users/:follower_id/follow/:followed_id', 'followUser', 'Follows a user']), ('User', ['delete', '/api/users/:follower_id/follow/:followed_id', 'unfollowUser', 'Unfollow a user']), ('Post', ['index']), ('Post', ['show']), ('Post', ['create']), ('Post', ['update']), ('Post', ['delete'])]
+post /api/login
+QUERY User; { username: req.body.username; false -> user
+IF user
+    COMPARE_TO_HASH req.body.password; user.password -> match
+    IF match
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =>
+            <=
+            =x
+            ERROR 500; "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token
+    ELSE
+        ERROR 401; "invalid username or password"
+ELSE
+    ERROR 404; "user not found"
+    PASS
+
+post /api/register
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    ERROR 409; "username already taken"
+ELSE 
+    CREATE User; { username: req.body.username; email: req.body.email; password: HASH_TEXT(req.body.password) } -> newUser 
+        =x
+        ERROR 500; "error creating user"
+        x=
+    RETURN 201; "user successfully created"; newUser 
+    PASS
+
+post /api/change-password/:user_id
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user
+    HASH_TEXT req.body.password -> hashedPassword
+    UPDATE User; { _id: user._id }; { password: hashedPassword }
+        =>
+        RETURN 200; "password successfully changed"
+        <=
+        =x
+        ERROR 500; "error changing password"
+        x=
+ELSE
+    ERROR 404; "user not found"
+    PASS
+
+post /api/users/:follower_id/follow/:followed_id
+QUERY User; { _id: req.params.follower_id }; false -> follower
+IF follower
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed
+        UPDATE User; { _id: follower._id }; { $push: { following: followed._id } }
+            => 
+            <=
+            =x
+            ERROR 500; "error following"
+            x= 
+        UPDATE User; { _id: followed._id }; { $push: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error following"
+            x=
+        RETURN 200; "followed successfully"
+    ELSE
+        ERROR 404; "followed user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+
+delete /api/users/:follower_id/follow/:followed_id
+QUERY User; { _id: req.params.follower_id }; false -> follower 
+IF follower 
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed 
+        DELETE User; { _id: follower._id }; { $pull: { following: followed._id } }; false
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        DELETE User; { _id: followed._id }; { $pull: { followers: follower._id } }; false
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        RETURN 200; "unfollowed successfully" 
+    ELSE 
+        ERROR 404; "followed user not found"
+ELSE 
+    ERROR 404; "follower user not found"
+    PASS
+
+==========
+compiling...
+====================
+Generating models...
+====================
+
+Models Pre Parsed:
+User,Post,Follow*,Like*
+Models Parsed:
+['User', 'Post', 'Follow*', 'Like*']
+
+
+
+====================
+Generating model relationships...
+====================
+
+Relations Pre Parsed:
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+FollowingHandler,User,User,many-to-many,followers,following,Follow;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;
+Relations Parsed:
+[('AuthorshipHandler', 'User', 'Post', 'one-to-many', 'posts', 'author', None), ('FollowingHandler', 'User', 'User', 'many-to-many', 'followers', 'following', 'Follow'), ('LikeHandler', 'User', 'Post', 'many-to-many', 'liked_posts', 'liked_by', 'Like')]
+
+
+
+====================
+Generating models' schema...
+====================
+
+Schema Pre Parsed:
+User
+username: string
+email: string
+password: string
+
+Post
+title: string
+content: string
+
+Follow
+follower_id: ObjectId
+following_id: ObjectId
+
+Like
+user_id: ObjectId
+post_id: ObjectId
+Schema Parsed:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Post', [('title', 'string'), ('content', 'string')]), ('Follow', [('follower_id', 'ObjectId'), ('following_id', 'ObjectId')]), ('Like', [('user_id', 'ObjectId'), ('post_id', 'ObjectId')])]
+
+
+
+====================
+Generating controllers...
+====================
+
+Controllers Pre Parsed:
+Auth,User,Post,Like,Follow
+Controllers Parsed:
+['Auth', 'User', 'Post', 'Like', 'Follow']
+
+
+
+====================
+Generating routes...
+====================
+
+Routes Pre Parsed:
+Auth:  
+POST | /api/login | login | Logs in a user 
+POST | /api/register | register | Creates a new user, checks to make sure the username is not already taken 
+POST | /api/change-password/:user_id | changePassword | Allows the user with the given id to update their password 
+
+User: 
+index 
+show 
+update 
+delete 
+POST | /api/users/:follower_id/follow/:followed_id | followUser | Follows a user 
+DELETE | /api/users/:follower_id/follow/:followed_id | unfollowUser | Unfollows a user 
+
+Post: 
+index 
+show 
+create 
+update 
+delete 
+POST | /api/posts/:post_id/users/:user_id/like | like | Like a post 
+DELETE | /api/posts/:post_id/users/:user_id/like | unlike | Unlike a post
+Routes Parsed:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:user_id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('User', ['post', '/api/users/:follower_id/follow/:followed_id', 'followUser', 'Follows a user']), ('User', ['delete', '/api/users/:follower_id/follow/:followed_id', 'unfollowUser', 'Unfollows a user']), ('Post', ['index']), ('Post', ['show']), ('Post', ['create']), ('Post', ['update']), ('Post', ['delete']), ('Post', ['post', '/api/posts/:post_id/users/:user_id/like', 'like', 'Like a post']), ('Post', ['delete', '/api/posts/:post_id/users/:user_id/like', 'unlike', 'Unlike a post'])]
+
+
+====================
+Generating route logic...
+====================
+
+Generating route logic for POST /api/login Logs in a user...
+
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    COMPARE_TO_HASH req.body.password; user.password -> match 
+    IF match 
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =x
+            ERROR "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token 
+    ELSE
+        ERROR 401; "invalid username or password" 
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for POST /api/register Creates a new user, checks to make sure the username is not already taken...
+
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    ERROR 409; "username already taken"
+ELSE
+    HASH_TEXT req.body.password -> hashedPassword
+    CREATE User; { username: req.body.username, email: req.body.email, password: hashedPassword }
+        =>
+        RETURN 201; "user created successfully" 
+        <=
+        =x 
+        ERROR 500; "error creating user" 
+        x= 
+    PASS
+Generating route logic for POST /api/change-password/:user_id Allows the user with the given id to update their password...
+
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user 
+    HASH_TEXT req.body.password -> hashedPassword
+    UPDATE User; { _id: user._id }; { password: hashedPassword }
+        =>
+        RETURN 200; "password successfully changed" 
+        <= 
+        =x 
+        ERROR 500; "error changing password" 
+        x= 
+ELSE 
+    ERROR 404; "user not found" 
+    PASS
+Generating route logic for POST /api/users/:follower_id/follow/:followed_id Follows a user...
+
+QUERY User, { _id: req.params.follower_id }, false -> follower
+IF follower
+    QUERY User, { _id: req.params.followed_id }, false -> followed
+    IF followed
+        CREATE Follow, { follower_id: follower._id, following_id: followed._id }
+            =x
+            ERROR 500, "error following"
+            x=
+        =>
+        <=
+        RETURN 200, "followed successfully"
+    ELSE
+        ERROR 404, "followed user not found"
+ELSE
+    ERROR 404, "follower user not found"
+    PASS
+Generating route logic for DELETE /api/users/:follower_id/follow/:followed_id Unfollows a user...
+
+QUERY User; { _id: req.params.follower_id }; false -> follower
+IF follower
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed
+        UPDATE User; { _id: follower._id }; { $pull: { following: followed._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        UPDATE User; { _id: followed._id }; { $pull: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        RETURN 200; "unfollowed successfully"
+    ELSE
+        ERROR 404; "followed user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+Generating route logic for POST /api/posts/:post_id/users/:user_id/like Like a post...
+
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user
+    QUERY Post; { _id: req.params.post_id }; false -> post
+    IF post
+        CREATE Like; { user_id: user._id, post_id: post._id }
+            =>
+            <=
+            =x
+            ERROR 500; "error liking post"
+            x=
+        RETURN 200; "successfully liked post"
+    ELSE
+        ERROR 404; "post not found"
+ELSE
+    ERROR 404; "user not found"
+    PASS
+Generating route logic for DELETE /api/posts/:post_id/users/:user_id/like Unlike a post...
+
+QUERY Post; { _id: req.params.post_id }; false -> post 
+IF post
+    QUERY Like; { user_id: req.params.user_id; post_id: req.params.post_id }; false -> like
+    IF like
+        DELETE Like; { user_id: req.params.user_id; post_id: req.params.post_id }
+            =>
+            RETURN 200; "post unliked successfully"
+            <=
+            =x
+            ERROR 500; "error unliking post"
+            x=
+    ELSE
+        ERROR 404; "like not found"
+ELSE 
+    ERROR 404; "post not found"
+    PASS
+
+==========
+Models:
+['User', 'Post', 'Follow*', 'Like*']
+Relations:
+[('AuthorshipHandler', 'User', 'Post', 'one-to-many', 'posts', 'author', None), ('FollowingHandler', 'User', 'User', 'many-to-many', 'followers', 'following', 'Follow'), ('LikeHandler', 'User', 'Post', 'many-to-many', 'liked_posts', 'liked_by', 'Like')]
+Schema:
+[('User', [('username', 'string'), ('email', 'string'), ('password', 'string')]), ('Post', [('title', 'string'), ('content', 'string')]), ('Follow', [('follower_id', 'ObjectId'), ('following_id', 'ObjectId')]), ('Like', [('user_id', 'ObjectId'), ('post_id', 'ObjectId')])]
+Controllers:
+['Auth', 'User', 'Post']
+Routes:
+[('Auth', ['post', '/api/login', 'login', 'Logs in a user']), ('Auth', ['post', '/api/register', 'register', 'Creates a new user, checks to make sure the username is not already taken']), ('Auth', ['post', '/api/change-password/:user_id', 'changePassword', 'Allows the user with the given id to update their password']), ('User', ['index']), ('User', ['show']), ('User', ['update']), ('User', ['delete']), ('User', ['post', '/api/users/:follower_id/follow/:followed_id', 'followUser', 'Follows a user']), ('User', ['delete', '/api/users/:follower_id/follow/:followed_id', 'unfollowUser', 'Unfollows a user']), ('Post', ['index']), ('Post', ['show']), ('Post', ['create']), ('Post', ['update']), ('Post', ['delete']), ('Post', ['post', '/api/posts/:post_id/users/:user_id/like', 'like', 'Like a post']), ('Post', ['delete', '/api/posts/:post_id/users/:user_id/like', 'unlike', 'Unlike a post'])]
+post /api/login
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    COMPARE_TO_HASH req.body.password; user.password -> match 
+    IF match 
+        SIGN_JWT_TOKEN { username: user.username } -> token
+            =x
+            ERROR "error generating token"
+            x=
+        RETURN 200; "successfully logged in"; token 
+    ELSE
+        ERROR 401; "invalid username or password" 
+ELSE 
+    ERROR 404; "user not found"
+    PASS
+
+post /api/register
+QUERY User; { username: req.body.username }; false -> user 
+IF user 
+    ERROR 409; "username already taken"
+ELSE
+    HASH_TEXT req.body.password -> hashedPassword
+    CREATE User; { username: req.body.username, email: req.body.email, password: hashedPassword }
+        =>
+        RETURN 201; "user created successfully" 
+        <=
+        =x 
+        ERROR 500; "error creating user" 
+        x= 
+    PASS
+
+post /api/change-password/:user_id
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user 
+    HASH_TEXT req.body.password -> hashedPassword
+    UPDATE User; { _id: user._id }; { password: hashedPassword }
+        =>
+        RETURN 200; "password successfully changed" 
+        <= 
+        =x 
+        ERROR 500; "error changing password" 
+        x= 
+ELSE 
+    ERROR 404; "user not found" 
+    PASS
+
+post /api/users/:follower_id/follow/:followed_id
+QUERY User, { _id: req.params.follower_id }, false -> follower
+IF follower
+    QUERY User, { _id: req.params.followed_id }, false -> followed
+    IF followed
+        CREATE Follow, { follower_id: follower._id, following_id: followed._id }
+            =x
+            ERROR 500, "error following"
+            x=
+        =>
+        <=
+        RETURN 200, "followed successfully"
+    ELSE
+        ERROR 404, "followed user not found"
+ELSE
+    ERROR 404, "follower user not found"
+    PASS
+
+delete /api/users/:follower_id/follow/:followed_id
+QUERY User; { _id: req.params.follower_id }; false -> follower
+IF follower
+    QUERY User; { _id: req.params.followed_id }; false -> followed
+    IF followed
+        UPDATE User; { _id: follower._id }; { $pull: { following: followed._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        UPDATE User; { _id: followed._id }; { $pull: { followers: follower._id } }
+            =>
+            <=
+            =x
+            ERROR 500; "error unfollowing"
+            x=
+        RETURN 200; "unfollowed successfully"
+    ELSE
+        ERROR 404; "followed user not found"
+ELSE
+    ERROR 404; "follower user not found"
+    PASS
+
+post /api/posts/:post_id/users/:user_id/like
+QUERY User; { _id: req.params.user_id }; false -> user
+IF user
+    QUERY Post; { _id: req.params.post_id }; false -> post
+    IF post
+        CREATE Like; { user_id: user._id, post_id: post._id }
+            =>
+            <=
+            =x
+            ERROR 500; "error liking post"
+            x=
+        RETURN 200; "successfully liked post"
+    ELSE
+        ERROR 404; "post not found"
+ELSE
+    ERROR 404; "user not found"
+    PASS
+
+delete /api/posts/:post_id/users/:user_id/like
+QUERY Post; { _id: req.params.post_id }; false -> post 
+IF post
+    QUERY Like; { user_id: req.params.user_id; post_id: req.params.post_id }; false -> like
+    IF like
+        DELETE Like; { user_id: req.params.user_id; post_id: req.params.post_id }
+            =>
+            RETURN 200; "post unliked successfully"
+            <=
+            =x
+            ERROR 500; "error unliking post"
+            x=
+    ELSE
+        ERROR 404; "like not found"
+ELSE 
+    ERROR 404; "post not found"
+    PASS
+
+==========
+compiling...
+ERROR COMPILING ROUTE: Invalid syntax, CREATE requires a model and create fields
