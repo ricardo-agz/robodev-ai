@@ -144,7 +144,7 @@ def build_project_directory():
     return res, 400
 
 
-def export_project(app):
+def export_project(app, buildfile=None):
     """
     Main Generator function, creates project and returns zip file
     """
@@ -160,8 +160,12 @@ def export_project(app):
         app.logger.error("Error removing or closing downloaded file handle", error)
 
     # Attempt project build
-    if request.get_json():
-        data = request.get_json()
+    if request.get_json() or buildfile:
+        if buildfile:
+            data = buildfile
+        else:
+            data = request.get_json()
+
         project, error = generator.project_from_builder_data(data)
 
         # Project Build Error

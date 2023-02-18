@@ -51,9 +51,14 @@ class MongooseBlock(LogicBlock):
         out_str = f"{self.TAB_CHAR * tabs}const {self.var_name} = await new {self.model}({{\n"
         # out_str += f"{self.TAB_CHAR*tabs}{{\n"
 
-        # update_fields = "\n".join([f"{self.TAB_CHAR*(tabs+1)}{f}: {self.format_str(v)}," for f, v in self.create_fields]) + "\n"
+        # get rid of leading and trailing "{", "}" if any and split by ","
+        split_fields = self.create_fields.strip()
+        if split_fields[0] == "{":
+            split_fields = split_fields[1:]
+        if split_fields[-1] == "}":
+            split_fields = split_fields[:-1]
+        split_fields = split_fields.split(",")
 
-        split_fields = self.create_fields.replace("{", "").replace("}", "").strip().split(",")
         if split_fields == ['']:
             split_fields = []
         else:
@@ -79,7 +84,14 @@ class MongooseBlock(LogicBlock):
             self.params = "id"
 
         if self.block_type == 'update':
-            split_fields = self.update_fields.replace("{", "").replace("}", "").strip().split(",")
+            # get rid of leading and trailing "{", "}" if any and split by ","
+            split_fields = self.create_fields.strip()
+            if split_fields[0] == "{":
+                split_fields = split_fields[1:]
+            if split_fields[-1] == "}":
+                split_fields = split_fields[:-1]
+            split_fields = split_fields.split(",")
+
             if split_fields == ['']:
                 split_fields = []
             else:

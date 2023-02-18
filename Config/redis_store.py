@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from redis import Redis
+from rq import Queue
 import logging
 from Config.init import load_config
 from Config.logger import logger
@@ -20,4 +21,8 @@ logger.info("Redis started")
 
 def get_redis_conn():
     return store
+
+
+def get_redis_queue():
+    return Queue(connection=store)
 

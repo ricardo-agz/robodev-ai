@@ -1,5 +1,6 @@
 import os
 import logging
+import json
 from dotenv import load_dotenv
 from sys import stdout
 from waitress import serve
@@ -9,7 +10,7 @@ from rq.job import Job
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from Config.init import load_config
-from Config.redis_store import store, get_redis_conn
+from Config.redis_store import store, get_redis_conn, get_redis_queue
 from Config.logger import logger
 from tasks import get_buildfile_neutrinoai
 
@@ -24,25 +25,29 @@ app = Flask(__name__)
 CORS(app)
 app.config.from_object(config)
 
-q = Queue(connection=get_redis_conn())
+q = get_redis_queue()
 
 
-@app.route('/enqueue_task')
+@app.route('/enqueue-ai-task', methods=["POST"])
 def enqueue_task():
     description = request.json['description']  # Get the description from the request body
     job = q.enqueue(get_buildfile_neutrinoai, description)  # Enqueue the task
     return jsonify({'message': 'Task enqueued', 'job_id': job.id})
 
 
-@app.route('/check_task/<string:job_id>')
+@app.route('/check-ai-task/<string:job_id>')
 def check_task(job_id):
     job = q.fetch_job(job_id)  # Get the job object by ID
     if job is None:
-        return jsonify({'message': f'Job {job_id} not found'})
+        return jsonify({'message': f'Job {job_id} not found'}), 404
     elif job.is_finished:
-        return jsonify({'message': 'Job is finished', 'result': job.result})
+        buildfile = json.loads(job.result)
+        return jsonify({'buildfile': buildfile, 'message': 'successfully created project'}), 200
     else:
-        return jsonify({'message': 'Job is still running'})
+        # Get the current status of the job
+        status = job.meta.get('status', 'working on your app...')
+        # Return the status as a JSON response
+        return jsonify({'message': status}), 202
 
 
 @app.route('/jobs')

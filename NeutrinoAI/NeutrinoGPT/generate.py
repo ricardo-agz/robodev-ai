@@ -1,6 +1,7 @@
 import os
 import openai
 from dotenv import load_dotenv
+from rq import get_current_job
 
 # from prompt_parser import PromptParser
 from NeutrinoAI.logger import FileLogger
@@ -9,6 +10,7 @@ from NeutrinoAI.NeutrinoGPT.response_parser import ModelsResponseParser, Relatio
     relations_to_readable_string, ControllersResponseParser, format_schema_list_to_str, RoutesResponseParser
 
 from Config.logger import logger as flask_logger
+from Config.redis_store import get_redis_queue
 
 load_dotenv()
 
@@ -19,6 +21,27 @@ Uber style ride sharing app but for truck owners to deliver shipments for client
 """
 
 logger = FileLogger()
+q = get_redis_queue()
+
+
+def multi_logger(message, decor=False):
+    """Logs the internal logger and the flask logger"""
+    flask_logger.info(message)
+    if decor:
+        logger.log("====================")
+    logger.log(message)
+    if decor:
+        logger.log("====================\n")
+
+
+def status_tracker(status):
+    """Sets the current status of the redis-queued job"""
+    job_id = get_current_job().id
+    job = q.fetch_job(job_id)
+
+    # Set the initial status of the job
+    job.meta['status'] = status
+    job.save_meta()
 
 
 def call_gpt_api(prompt):
@@ -56,11 +79,9 @@ class NeutrinoGPT:
         self.prompt_parser = PromptParser(app_description=app_description)
 
     def generate_db_tables(self):
-        flask_logger.info("Generating models...")
-        logger.log("====================")
-        logger.log("Generating models...")
-        logger.log("====================\n")
+        multi_logger("Generating models...", decor=True)
         logger.log(self.prompt_parser.tables_prompt, "models_prompt.txt")
+        status_tracker("Designing database schema...")
 
         # automatically retry if call fails the first time
         response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.tables_prompt), n=3)
@@ -82,12 +103,10 @@ class NeutrinoGPT:
         return parsed_models
 
     def generate_relations(self, models: list[str]):
-        flask_logger.info("Generating model relationships...")
-        logger.log("\n====================")
-        logger.log("Generating model relationships...")
-        logger.log("====================\n")
-        self.prompt_parser.parse_relations_prompt(models)
+        multi_logger("Generating model relationships...", decor=True)
+        status_tracker("Designing database relationships...")
 
+        self.prompt_parser.parse_relations_prompt(models)
         logger.log(self.prompt_parser.relations_prompt, "relations_prompt.txt")
 
         # automatically retry if call fails the first time
@@ -116,10 +135,9 @@ class NeutrinoGPT:
             models: list[str],
             relations: list[tuple[str, str, str, str, str, str]]
     ):
-        flask_logger.info("Generating models' schema...")
-        logger.log("\n====================")
-        logger.log("Generating models' schema...")
-        logger.log("====================\n")
+        multi_logger("Generating models' schema...", decor=True)
+        status_tracker("Finalizing database schema...")
+
         rels_str = relations_to_readable_string(relations)
         self.prompt_parser.parse_schema_prompt(models, rels_str)
 
@@ -151,17 +169,15 @@ class NeutrinoGPT:
             models: list[str],
             relations: list[tuple[str, str, str, str, str, str]]
     ):
-        flask_logger.info("Generating controllers...")
-        logger.log("\n====================")
-        logger.log("Generating controllers...")
-        logger.log("====================\n")
+        multi_logger("Generating controllers...", decor=True)
+        status_tracker("Designing API controllers...")
+
         rels_str = relations_to_readable_string(relations)
 
         # remove joint tables so controllers for them don't get created
         models_no_joint = [x for x in models if "*" not in x]
 
         self.prompt_parser.parse_controllers_prompt(models_no_joint, rels_str)
-
         logger.log(self.prompt_parser.controllers_prompt, "controllers_prompt.txt")
 
         # automatically retry if call fails the first time
@@ -202,16 +218,15 @@ class NeutrinoGPT:
             relations: list[tuple[str, str, str, str, str, str]],
             controllers: list[str]
     ):
-        flask_logger.info("Generating routes...")
-        logger.log("\n====================")
-        logger.log("Generating routes...")
-        logger.log("====================\n")
+        multi_logger("Generating API routes...", decor=True)
+        status_tracker("Designing API routes...")
+
         models_str = ", ".join(models)
         rels_str = relations_to_readable_string(relations)
         schema_str = format_schema_list_to_str(schema)
         controllers_str = ", ".join(controllers)
-        self.prompt_parser.parse_routes_prompt(models_str, schema_str, rels_str, controllers_str)
 
+        self.prompt_parser.parse_routes_prompt(models_str, schema_str, rels_str, controllers_str)
         logger.log(self.prompt_parser.routes_prompt, "routes_prompt.txt")
 
         # automatically retry if call fails the first time
@@ -242,8 +257,9 @@ class NeutrinoGPT:
             url: str,
             description: str
     ):
-        flask_logger.info(f"Generating route logic for {method.upper()} {url} {description}...")
-        logger.log(f"Generating route logic for {method.upper()} {url} {description}...\n")
+        multi_logger(f"Generating route logic for {method.upper()} {url} {description}...", decor=False)
+        status_tracker(f"Coding the logic for the following route: {method.upper()} {url} {description}...")
+
         schema_str = format_schema_list_to_str(schema)
         prompt = self.prompt_parser.route_logic_prompt
 

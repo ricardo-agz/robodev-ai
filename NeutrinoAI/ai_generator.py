@@ -1,5 +1,6 @@
 import os
 import json
+from rq import get_current_job
 
 from NeutrinoAI.NeutrinoGPT.generate import NeutrinoGPT
 from NeutrinoAI.BuildfileCompiler.buildfile_compiler import BuildfileCompiler
@@ -54,14 +55,17 @@ class AIBuildfileGenerator:
             json_out = json.dumps(buildfile_data, indent=4)
         except Exception as e:
             flask_logger.info(f"Error compiling to JSON: {e}")
+            logger.log(f"Error compiling to JSON: {e}")
             non_serializable = find_non_serializable(buildfile_data)
             if non_serializable:
                 flask_logger.info(f"Failed to serialize: {non_serializable}")
+                logger.log(f"Failed to serialize: {non_serializable}")
             else:
                 for key, value in buildfile_data.items():
                     try:
                         json_out = json.dumps({key: value})
                     except TypeError as e:
+                        logger.log(f"Failed to serialize key '{key}': {e}")
                         flask_logger.info(f"Failed to serialize key '{key}': {e}")
 
         return json_out

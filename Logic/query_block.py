@@ -29,7 +29,7 @@ class QueryBlock(LogicBlock):
 
         if "_id" in self.params:
             query = "findById"
-            return f"{self.TAB_CHAR * tabs}" + f"const {self.var_name.lower()} = await {self.model}.{query}(id){populate_str}\n"
+            return f"{self.TAB_CHAR * tabs}" + f"const {self.var_name.lower()} = await {self.model}.{query}({self.params}){populate_str}\n"
         elif self.variant == "many":
             query = "find"
             return f"{self.TAB_CHAR * tabs}" + f"const {self.var_name.lower()} = await {self.model}.{query}({self.params}){populate_str}\n"

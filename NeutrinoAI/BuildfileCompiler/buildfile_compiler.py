@@ -43,6 +43,7 @@ class BuildfileCompiler:
         self.routes = routes
         self.routes_logic = routes_logic
         self.model_id_map = {}
+        self.model_name_map = {}
         self.controller_id_map = {}
 
         self.compile_buildfile()
@@ -53,7 +54,8 @@ class BuildfileCompiler:
 
         for key, value in self.model_id_map.items():
             if model_id == value:
-                return key
+                # to avoid edge cases with PascalCase errors
+                return self.model_name_map[key]
 
         return None
 
@@ -84,6 +86,7 @@ class BuildfileCompiler:
 
             # save the id for the model
             self.model_id_map[model.lower()] = model_id
+            self.model_name_map[model.lower()] = model
 
             for field, datatype in params:
                 model_schema["schema"].append({
