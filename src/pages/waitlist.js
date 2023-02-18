@@ -109,7 +109,7 @@ export default function Waitlist() {
                         <option value="building new product">Building a new product</option>
                         <option value="integrating into existing product">Integrating into an existing product</option>
                         <option value="academia">Academic purposes</option>
-                        <option value="expetimenting">Just trying it out</option>
+                        <option value="experimenting">Just trying it out</option>
                         <option value="other">Other</option>
                     </select>
                 </div>
@@ -141,7 +141,7 @@ export default function Waitlist() {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/* yes, this application was built by robodev */"}</code>
+                <code className={styles.code}>{"/* yes, this application was built with AI */"}</code>
                 </p>
             </div>
 

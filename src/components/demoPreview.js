@@ -60,6 +60,11 @@ export default function DemoPreview() {
                 />
             </div>
             <div className={styles.listRow}>
+                <Link href="/access">
+                    <button className={styles.button} style={{marginLeft: 0}}>
+                        try the demo
+                    </button>
+                </Link>
                 <div className="flex-1">
                     {/* <p className='opacity-80 text-xs ml-3'>
                         <code className={styles.code}>(newt will code the backend for a twitter-like app...)</code>

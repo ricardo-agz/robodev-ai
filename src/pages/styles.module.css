@@ -7,6 +7,43 @@
     min-height: 100vh;
   }
 
+  .mainProjectView {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: relative;
+    padding: 1rem;
+    width: 100%;
+    background-color: #ffffff;
+    margin-top: 2rem;
+    border-radius: 0.5rem;
+    max-height: 60vh;
+    overflow-y: scroll;
+  }
+
+  .codeContainer {
+    background-color: black;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .code {
+    background-color: '#00101a';
+    flex: 1;
+    text-align: 'left';
+    border-width: 0;
+    overflow-y: 'scroll';
+    font-size: '.8em';
+    margin: '1em';
+    margin-right: 0;
+    padding: '2em';
+  }
+
   .enter {
     height: 3rem;
     cursor: pointer;
@@ -38,6 +75,38 @@
     background-color: rgba(var(--callout-rgb), 0.5);
     border: 1px solid rgba(var(--callout-border-rgb), 0.3);
     border-radius: var(--border-radius);
+  }
+
+  .button {
+    height: 3rem;
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+    padding: 1rem;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    background-color: rgba(var(--callout-rgb), 0.5);
+    border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+    border-radius: var(--border-radius);
+    width: 5rem;
+    justify-content: center;
+  }
+
+  .buttonPrimary {
+    height: 3rem;
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+    padding: 1rem;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 180, 0.5);
+    border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+    border-radius: var(--border-radius);
+    width: 5rem;
+    justify-content: center;
   }
 
   .previous {

@@ -81,7 +81,7 @@ export default function Login() {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/* yes, this login was built by robodev */"}</code>
+                <code className={styles.code}>{"/* yes, this login was built with AI */"}</code>
                 </p>
             </div>
 

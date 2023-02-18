@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link'
 import Image from 'next/image'
@@ -11,6 +11,13 @@ export default function AccessCode({ verified, message }) {
   const [loading, setLoading] = useState(false);
   const [registerErr, setRegisterErr] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt')
+    if (jwt) {
+    router.push('/demo')
+    }
+}, [])
 
   const handleAccessCodeSubmit = async (e) => {
     e.preventDefault();
@@ -97,7 +104,7 @@ export default function AccessCode({ verified, message }) {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/* yes, this login was built by robodev */"}</code>
+                <code className={styles.code}>{"/* yes, this login was built with AI */"}</code>
                 </p>
             </div>
 

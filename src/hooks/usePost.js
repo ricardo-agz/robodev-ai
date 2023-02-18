@@ -16,17 +16,19 @@ export default function usePost(url) {
             parsedUrl = replaceId(url, id)
         }
 
-        console.log(`post... ${parsedUrl}`)
         setLoading(true)
         setError(null)
 
-        const response = await axios.post(parsedUrl, data)
+        await axios.post(parsedUrl, data)
             .then((res) => {
                 setResponse(res)
                 setLoading(false)
             })
-            .catch((err) => {
-                setError(err.response.data.message);
+            .catch((e) => {
+                let errMessage = e.response && e.response.data.message 
+                    ? e.response.data.message 
+                    : e.message
+                setError(errMessage);
                 setLoading(false);
             })
     }   
