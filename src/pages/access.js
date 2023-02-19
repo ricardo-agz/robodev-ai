@@ -103,11 +103,9 @@ export default function AccessCode({ verified, message }) {
             </div>
             }
 
-            
-
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/*"} don't have an access code? join the <a href="/waitlist" className='underline'>waitlist</a> {"*/"}</code>
+                <code className={styles.code}>{"/*"} don't have an access code? join the <Link href="/waitlist" className='underline'>waitlist</Link> {"*/"}</code>
                 </p>
             </div>
 
