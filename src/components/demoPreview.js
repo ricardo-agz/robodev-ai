@@ -65,16 +65,7 @@ export default function DemoPreview() {
                         try the demo
                     </button>
                 </Link>
-                <div className="flex-1">
-                    {/* <p className='opacity-80 text-xs ml-3'>
-                        <code className={styles.code}>(newt will code the backend for a twitter-like app...)</code>
-                    </p> */}
-                </div>
-                {/* <Link href="/login">
-                    <button className={styles.button}>
-                        log in
-                    </button>
-                </Link> */}
+                <div className="flex-1"/>
                 <Link href="/waitlist">
                     <button className={styles.button}>
                         join waitlist
