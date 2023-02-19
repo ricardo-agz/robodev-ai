@@ -127,11 +127,11 @@ export default function ViewProject() {
             </div>
             <div className='flex items-center pr-5' style={{height: "10vh"}}>
                 <div style={{flex: 1}}/>
-                <div className="flex items-center cursor-pointer" onClick={() => {router.push("/")}}>
+                <Link href="/" className="flex items-center cursor-pointer">
                     <div className={styles.thirteen}>
                         <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
                     </div>
-                </div>
+                </Link>
             </div>
         </div>
     )
