@@ -6,12 +6,10 @@ import axios from 'axios';
 import styles from './styles.module.css'
 import RegisterFlow from '@/components/registerFlow';
 
-export default function AccessCode() {
+export default function AccessCode({ verified, message }) {
     const [accessCode, setAccessCode] = useState('');
     const [loading, setLoading] = useState(false);
     const [registerErr, setRegisterErr] = useState(null);
-    const [verified, setVerified] = useState(false);
-    const [accessCodeMessage, setAccessCodeMessage] = useState("");
     const router = useRouter();
 
     useEffect(() => {
@@ -22,30 +20,8 @@ export default function AccessCode() {
     }, [])
 
     const handleAccessCodeSubmit = async (e) => {
-        let url = `${process.env.NEXT_PUBLIC_NEUTRINO_IDENTITY_URL}waitlist/accesscode/${accessCode}/verify`
-        setAccessCodeMessage(null)
-
-        if (accessCode) {
-            setLoading(true)
-            await axios.post(url, {})
-                .then((res) => {
-                    let verifiedRes = res.data.verified
-                    let message = ""
-                    if (!verifiedRes) 
-                        message = "invalid access code"
-
-                    setVerified(verifiedRes)
-                    setAccessCodeMessage(message)
-                    setLoading(false)
-                })
-                .catch((e) => {
-                    let errMessage = e.response && e.response.data.message 
-                        ? e.response.data.message 
-                        : e.message
-                    setAccessCodeMessage(errMessage)
-                    setLoading(false)
-                })
-        }
+        e.preventDefault();
+        router.push(`/access?accessCode=${accessCode}`);
     };
 
     const handleRegisterSubmit = async (email, username, first, last, password) => {
@@ -77,64 +53,65 @@ export default function AccessCode() {
             .finally(() => {
                 setLoading(false)
             })
-    }
+  }
 
 
-    return (
-        <main className={styles.main}>
+  return (
+    <main className={styles.main}>
 
-                <div className={styles.header}>
-                    <div></div>
-                    <Link href="/waitlist">
-                        <div className="flex items-center cursor-pointer">
-                            <div>join waitlist</div>
-                            <div className={styles.thirteen}>
-                                <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
-                            </div>
+            <div className={styles.header}>
+                <div></div>
+                <Link href="/waitlist">
+                    <div className="flex items-center cursor-pointer">
+                        <div>join waitlist</div>
+                        <div className={styles.thirteen}>
+                            <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
                         </div>
-                    </Link>
-                </div>
+                    </div>
+                </Link>
+            </div>
 
-                { verified ?
-                    <RegisterFlow 
-                        handleSubmit={(email, username, first, last, password) => handleRegisterSubmit(email, username, first, last, password)}
-                        submitError={registerErr}
+            { verified ?
+                <RegisterFlow 
+                    handleSubmit={(email, username, first, last, password) => handleRegisterSubmit(email, username, first, last, password)}
+                    submitError={registerErr}
+                />
+            :
+            <div className={styles.center}>
+                <div className={styles.listRow}>
+                    <input 
+                        type="text" 
+                        className={styles.input} 
+                        value={accessCode} 
+                        placeholder="access code"
+                        onChange={(e) => setAccessCode(e.target.value)} 
                     />
-                :
-                <div className={styles.center}>
-                    <div className={styles.listRow}>
-                        <input 
-                            type="text" 
-                            className={styles.input} 
-                            value={accessCode} 
-                            placeholder="access code"
-                            onChange={(e) => setAccessCode(e.target.value)} 
-                        />
-                    </div>
-                    <div className={styles.listRow}>
-                        <div className="flex-1">
-                            <p className='opacity-80 text-sm text-red-400 ml-3'>
-                            <code className={styles.code}>{accessCodeMessage}</code>
-                            </p>
-                        </div>
-                        <button className={styles.submit} onClick={handleAccessCodeSubmit}>
-                            {loading ? "loading" : "submit"}
-                        </button>
-                    </div>
                 </div>
-                }
-
-                <div>
-                    <p className='mb-8 opacity-60 text-sm'>
-                    <code className={styles.code}>{"/* yes, this login was built with AI */"}</code>
-                    </p>
+                <div className={styles.listRow}>
+                    <div className="flex-1">
+                        <p className='opacity-80 text-sm text-red-400 ml-3'>
+                        <code className={styles.code}>{message}</code>
+                        </p>
+                    </div>
+                    <button className={styles.submit} onClick={handleAccessCodeSubmit}>
+                        {loading ? "loading" : "submit"}
+                    </button>
                 </div>
+            </div>
+            }
 
-            </main>
-    );
+            
+
+            <div>
+                <p className='mb-8 opacity-60 text-sm'>
+                <code className={styles.code}>{"/* yes, this login was built with AI */"}</code>
+                </p>
+            </div>
+
+        </main>
+  );
 }
 
-/*
 export async function getServerSideProps(context) {
     const { accessCode } = context.query;
     let verified = false;
@@ -148,16 +125,11 @@ export async function getServerSideProps(context) {
                 if (!verified) {
                     message = "invalid access code"
                 }
-
-                return {
-                    props: {
-                        verified,
-                        message,
-                    },
-                }
             })
-            .catch((err) => {
-                console.log(err)
+            .catch((e) => {
+                message = e.response && e.response.data.message 
+                    ? e.response.data.message 
+                    : e.message
             })
     }
 
@@ -168,4 +140,3 @@ export async function getServerSideProps(context) {
         },
     };
 }
-*/
