@@ -61,9 +61,9 @@ export default function AccessCode({ verified, message }) {
 
             <div className={styles.header}>
                 <div></div>
-                <Link href="/waitlist">
+                <Link href="/login">
                     <div className="flex items-center cursor-pointer">
-                        <div>join waitlist</div>
+                        <div>log in</div>
                         <div className={styles.thirteen}>
                             <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
                         </div>
@@ -104,7 +104,7 @@ export default function AccessCode({ verified, message }) {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/* yes, this login was built with AI */"}</code>
+                <code className={styles.code}>{"/*"} don't have an access code? join the <a href="/waitlist" className='underline'>waitlist</a> {"*/"}</code>
                 </p>
             </div>
 

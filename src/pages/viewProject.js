@@ -92,7 +92,10 @@ export default function ViewProject() {
                 </button>
             </div>
             <div className='flex flex-1 flex-col md:flex-row lg:flex-row' style={{height: "80vh", overflowY: "scrollx"}}>
-                <div className='m-3 p-3 block md:block lg:block' style={{flex: 1, borderRadius: "0.5rem", border: "1px solid #ffffff50"}}>
+                <div 
+                    className='m-3 p-3 block md:block lg:block' 
+                    style={{flex: 1, borderRadius: "0.5rem", border: "1px solid #ffffff50"}}
+                >
                     <FolderDisplay buildfile={buildfile}/>
                 </div>
                 <div className='m-3' style={{flex: 3, borderRadius: "0.5rem", backgroundColor: "#000", maxHeight: "80vh", overflowY: "scroll", border: "1px solid #ffffff50"}}>
