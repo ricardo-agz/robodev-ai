@@ -23,12 +23,16 @@ export default function ViewProject() {
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { 
-        loading: exportLoading, 
-        response: exportResponse, 
-        error: exportError, 
-        postData: exportPost 
-    } = usePost(`${process.env.NEXT_PUBLIC_NEUTRINO_GENERATOR_URL}generator`);
+    // const { 
+    //     loading: exportLoading, 
+    //     response: exportResponse, 
+    //     error: exportError, 
+    //     postData: exportPost 
+    // } = usePost(`${process.env.NEXT_PUBLIC_NEUTRINO_GENERATOR_URL}generator`);
+
+    const [exportLoading, setExportLoading] = useState(false);
+    const [exportResponse, setExportResponse] = useState(null);
+    const [exportError, setExportError] = useState(null);
 
     // check for authentication
     useEffect(() => {
@@ -65,13 +69,38 @@ export default function ViewProject() {
     }, [asPath]);
 
 
-    const exportProject = () => {
-        exportPost(buildfile)
+    const exportProject = async () => {
+        setExportError(null);
+        setExportLoading(true);
+        await axios.post(
+            `${process.env.NEXT_PUBLIC_NEUTRINO_GENERATOR_URL}generator`, 
+            buildfile,
+            { responseType: "blob" }
+        )
+            .then((res) => {
+                const data = res.data
+                if (data.type !== 'application/x-zip-compressed' && data.type !== 'application/zip') {
+                    setExportError("build failed :/")
+                    console.log("build failed, type: ", data.type)
+                } else {
+                    downloadZipFile(data);
+                }
+                setExportLoading(false);
+            })
+            .catch((e) => {
+                let errMessage = e.response && e.response.data.message 
+                    ? e.response.data.message 
+                    : e.message
+                setExportError(errMessage);
+                setExportLoading(false);
+            });
     }
 
     useEffect(() => {
-        if (exportResponse)
-            downloadZipFile(exportResponse.data)
+        if (exportResponse) {
+            let blob = exportResponse.blob()
+            downloadZipFile(blob)
+        }
     }, [exportResponse])
 
 
