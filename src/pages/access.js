@@ -89,8 +89,11 @@ export default function AccessCode({ verified, message }) {
                 </div>
                 <div className={styles.listRow}>
                     <div className="flex-1">
+                        <p className='opacity-80 text-sm ml-3'>
+                            <code className={styles.code}>already registered? <a className='underline' href='/login'>log in</a></code>
+                        </p>
                         <p className='opacity-80 text-sm text-red-400 ml-3'>
-                        <code className={styles.code}>{message}</code>
+                            <code className={styles.code}>{message}</code>
                         </p>
                     </div>
                     <button className={styles.submit} onClick={handleAccessCodeSubmit}>

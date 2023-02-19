@@ -70,11 +70,11 @@ export default function DemoPreview() {
                         <code className={styles.code}>(newt will code the backend for a twitter-like app...)</code>
                     </p> */}
                 </div>
-                <Link href="/login">
+                {/* <Link href="/login">
                     <button className={styles.button}>
                         log in
                     </button>
-                </Link>
+                </Link> */}
                 <Link href="/waitlist">
                     <button className={styles.button}>
                         join waitlist
