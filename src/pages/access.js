@@ -7,52 +7,52 @@ import styles from './styles.module.css'
 import RegisterFlow from '@/components/registerFlow';
 
 export default function AccessCode({ verified, message }) {
-  const [accessCode, setAccessCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [registerErr, setRegisterErr] = useState(null);
-  const router = useRouter();
+    const [accessCode, setAccessCode] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [registerErr, setRegisterErr] = useState(null);
+    const router = useRouter();
 
-  useEffect(() => {
-    const jwt = localStorage.getItem('jwt')
-    if (jwt) {
-    router.push('/demo')
-    }
-}, [])
+    useEffect(() => {
+        const jwt = localStorage.getItem('jwt')
+        if (jwt) {
+            router.push('/demo')
+        }
+    }, [])
 
-  const handleAccessCodeSubmit = async (e) => {
-    e.preventDefault();
-    router.push(`/access?accessCode=${accessCode}`);
-  };
+    const handleAccessCodeSubmit = async (e) => {
+        e.preventDefault();
+        router.push(`/access?accessCode=${accessCode}`);
+    };
 
-  const handleRegisterSubmit = async (email, username, first, last, password) => {
-    setLoading(true)
-    setRegisterErr(null)
+    const handleRegisterSubmit = async (email, username, first, last, password) => {
+        setLoading(true)
+        setRegisterErr(null)
 
-    console.log("submitting...")
+        console.log("submitting...")
 
-    axios.post(`${process.env.NEXT_PUBLIC_NEUTRINO_IDENTITY_URL}register`, { 
-        email,
-        username, 
-        firstName: first,
-        lastname: last,
-        password,
-        accessCode
-    })
-        .then(res => {
-            // Store the JWT in local storage or a cookie
-            if (res.data.token) 
-                localStorage.setItem('jwt', res.data.token)   
-                router.push(`/demo`);
+        axios.post(`${process.env.NEXT_PUBLIC_NEUTRINO_IDENTITY_URL}register`, { 
+            email,
+            username, 
+            firstName: first,
+            lastname: last,
+            password,
+            accessCode
         })
-        .catch(err => {
-            setRegisterErr(err.response.data.message ? err.response.data.message : "server error...")
-            console.log("error submitting...")
-            console.log(err)
-        })
-        
-        .finally(() => {
-            setLoading(false)
-        })
+            .then(res => {
+                // Store the JWT in local storage or a cookie
+                if (res.data.token) 
+                    localStorage.setItem('jwt', res.data.token)   
+                    router.push(`/demo`);
+            })
+            .catch(err => {
+                setRegisterErr(err.response.data.message ? err.response.data.message : "server error...")
+                console.log("error submitting...")
+                console.log(err)
+            })
+            
+            .finally(() => {
+                setLoading(false)
+            })
   }
 
 
@@ -94,7 +94,7 @@ export default function AccessCode({ verified, message }) {
                         </p>
                     </div>
                     <button className={styles.submit} onClick={handleAccessCodeSubmit}>
-                        submit
+                        {loading ? "loading" : "submit"}
                     </button>
                 </div>
             </div>
