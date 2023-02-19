@@ -125,6 +125,13 @@ export async function getServerSideProps(context) {
                 if (!verified) {
                     message = "invalid access code"
                 }
+
+                return {
+                    props: {
+                        verified,
+                        message,
+                    },
+                }
             })
             .catch((err) => {
                 console.log(err)
