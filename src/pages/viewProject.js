@@ -91,16 +91,16 @@ export default function ViewProject() {
                         : "export"}
                 </button>
             </div>
-            <div className='flex flex-1' style={{height: "80vh", overflowY: "scrollx"}}>
-                <div className='m-3 p-3' style={{flex: 1, backgroundColor: "#202123", borderRadius: "0.5rem"}}>
+            <div className='flex flex-1 flex-col md:flex-row lg:flex-row' style={{height: "80vh", overflowY: "scrollx"}}>
+                <div className='m-3 p-3 block md:block lg:block' style={{flex: 1, borderRadius: "0.5rem", border: "1px solid #ffffff50"}}>
                     <FolderDisplay buildfile={buildfile}/>
                 </div>
-                <div className='bg-orange-400 m-3' style={{flex: 3, borderRadius: "0.5rem", backgroundColor: '#00101a', maxHeight: "80vh", overflowY: "scroll"}}>
+                <div className='m-3' style={{flex: 3, borderRadius: "0.5rem", backgroundColor: "#000", maxHeight: "80vh", overflowY: "scroll", border: "1px solid #ffffff50"}}>
                     <SyntaxHighlighter 
                             language="javascript" 
                             style={dark} 
                             customStyle={{
-                                backgroundColor: '#00101a',
+                                backgroundColor: '#000',
                                 flex: 1,
                                 textAlign: 'left',
                                 borderWidth: 0,
@@ -124,7 +124,7 @@ export default function ViewProject() {
             </div>
             <div className='flex items-center pr-5' style={{height: "10vh"}}>
                 <div style={{flex: 1}}/>
-                <div className="flex items-center cursor-pointer" onClick={() => {}}>
+                <div className="flex items-center cursor-pointer" onClick={() => {router.push("/")}}>
                     <div className={styles.thirteen}>
                         <Image src="/logowhite.svg" alt="13" width={40} height={31} priority />
                     </div>
