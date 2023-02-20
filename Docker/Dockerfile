@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # configure the container to run in an executed manner
-EXPOSE 5000
+EXPOSE 8000
 ENTRYPOINT [ "python" ]
 
 CMD [ "app.py" ]
