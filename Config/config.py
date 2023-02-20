@@ -15,9 +15,11 @@ class Config:
 class ProductionConfig(Config):
     DEBUG = False
     ENV = "prod"
+    NEUTRINO_IDENTITY_URL = os.getenv("NEUTRINO_IDENTITY_URL")
 
 
 class DevConfig(Config):
     DEBUG = True
     ENV = "dev"
+    NEUTRINO_IDENTITY_URL = "http://localhost:8080"
     

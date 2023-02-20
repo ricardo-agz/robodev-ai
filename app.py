@@ -1,11 +1,7 @@
 import os
-import logging
 import json
 from dotenv import load_dotenv
-from sys import stdout
 from waitress import serve
-from redis import Redis
-from rq import Queue
 from rq.job import Job
 from flask import Flask, jsonify, request
 from flask_cors import CORS
