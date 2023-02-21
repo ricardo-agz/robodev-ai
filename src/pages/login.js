@@ -28,7 +28,8 @@ export default function Login() {
 
     useEffect(() => {
         if (response && response.data.token) {
-            localStorage.setItem('jwt', response.data.token)   
+            localStorage.setItem('jwt', response.data.token)
+            localStorage.setItem('user', response.data.user)
             router.push(`/demo`);
         }
     }, [response])

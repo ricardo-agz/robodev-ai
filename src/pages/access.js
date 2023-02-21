@@ -42,6 +42,7 @@ export default function AccessCode({ verified, message }) {
                 // Store the JWT in local storage or a cookie
                 if (res.data.token) 
                     localStorage.setItem('jwt', res.data.token)   
+                    localStorage.setItem('user', response.data.user)
                     router.push(`/demo`);
             })
             .catch(err => {

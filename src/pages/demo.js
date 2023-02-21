@@ -35,7 +35,8 @@ export default function Demo() {
     // check for authentication
     useEffect(() => {
         const jwt = localStorage.getItem('jwt')
-        if (!jwt) {
+        const userId = localStorage.getItem('user')
+        if (!jwt || !userId) {
             router.push('/login')
         }
     }, [])
@@ -112,10 +113,15 @@ export default function Demo() {
         arr.push(m)
         setMessages(arr)
 
+        const userId = localStorage.getItem('user')
+
         // Enqueue the task
         const response = await axios.post(
             `${process.env.NEXT_PUBLIC_NEUTRINO_GENERATOR_URL}enqueue-ai-task`, 
-            { description: appDescription }
+            { 
+                description: appDescription,
+                user: userId
+            }
         )
             .then((res) => {
                 pollForTaskCompletion(res.data.job_id);
