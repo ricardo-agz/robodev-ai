@@ -6,9 +6,9 @@ from Config.logger import logger
 
 
 def sleep(seconds):
-    print(f"Sleeping for {seconds} seconds...")
+    logger.info(f"Sleeping for {seconds} seconds...")
     time.sleep(seconds)
-    print("Done sleeping")
+    logger.info("Done sleeping")
     return f"Slept for {seconds} seconds"
 
 
