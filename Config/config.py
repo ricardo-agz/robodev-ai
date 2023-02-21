@@ -21,5 +21,5 @@ class ProductionConfig(Config):
 class DevConfig(Config):
     DEBUG = True
     ENV = "dev"
-    NEUTRINO_IDENTITY_URL = "http://localhost:8080"
+    NEUTRINO_IDENTITY_URL = "http://host.docker.internal:8080"
     
