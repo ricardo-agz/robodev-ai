@@ -1,5 +1,7 @@
 import os
 import json
+import requests
+from datetime import datetime
 from dotenv import load_dotenv
 from waitress import serve
 from rq.job import Job
@@ -8,7 +10,7 @@ from flask_cors import CORS
 from Config.init import load_config
 from Config.redis_store import store, get_redis_conn, get_redis_queue
 from Config.logger import logger
-from tasks import get_buildfile_neutrinoai
+from tasks import get_buildfile_neutrinoai, sleep
 
 from API.routes import export_project, build_project_directory, compile_logic_code_preview, compile_project_warnings, \
     compile_page_preview, compile_single_logic_block_preview
@@ -26,8 +28,38 @@ q = get_redis_queue()
 
 @app.route('/enqueue-ai-task', methods=["POST"])
 def enqueue_task():
-    description = request.json['description']  # Get the description from the request body
+    description = request.json.get('description', None)  # Get the description from the request body
+    user_id = request.json.get('user', None)  # Get the user id from the request body
+
+    # error check
+    if description is None:
+        return jsonify({'message': 'Error: description is missing from the request JSON'}), 400
+    if user_id is None:
+        return jsonify({'message': 'Error: auth error, no user passed, please log out and log back in'}), 400
+
+    # enqueue task
     job = q.enqueue(get_buildfile_neutrinoai, description)  # Enqueue the task
+    # job = q.enqueue(sleep, 5)  # for testing
+
+    # log analytics
+    try:
+        url = f"{config.NEUTRINO_IDENTITY_URL}/analytics/ai-project-reports"
+        logger.info(url)
+        data = json.dumps({
+            'user': user_id,
+            'prompt': description,
+            'job_id': job.id,
+            'started': str(datetime.today().date())
+        })
+        response = requests.post(
+            url,
+            headers={'Content-Type': 'application/json'},
+            data=data)
+        logger.info(f"Request status code: {response.status_code}")
+        logger.info(f"Request content: {response.content}")
+    except Exception as e:
+        logger.info(f"failed to create ai report: {e}")
+
     return jsonify({'message': 'Task enqueued', 'job_id': job.id})
 
 
@@ -38,6 +70,28 @@ def check_task(job_id):
         return jsonify({'message': f'Job {job_id} not found'}), 404
     elif job.is_finished:
         buildfile = json.loads(job.result)
+        # buildfile = "{ sample buildfile }" # for testing
+
+        # log analytics
+        try:
+            url = f"{config.NEUTRINO_IDENTITY_URL}/analytics/ai-project-reports/complete"
+            logger.info(url)
+            data = json.dumps({
+                'job_id': job.id,
+                'buildfile': json.dumps(buildfile),
+                'failed': job.is_failed,
+                'logs': None,
+                'completed': str(datetime.today().date())
+            })
+            response = requests.put(
+                url,
+                headers={'Content-Type': 'application/json'},
+                data=data)
+            logger.info(f"Request status code: {response.status_code}")
+            logger.info(f"Request content: {response.content}")
+        except Exception as e:
+            logger.info(f"failed to complete ai report: {e}")
+
         return jsonify({'buildfile': buildfile, 'message': 'successfully created project'}), 200
     else:
         # Get the current status of the job
