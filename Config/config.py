@@ -9,6 +9,8 @@ class Config:
     REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
     REDIS_PORT = os.getenv("REDIS_PORT", 6379)
     REDISCLOUD_URL = os.getenv("REDISCLOUD_URL")
+    AZURE_REDIS_HOST = os.getenv("AZURE_REDIS_HOST")
+    AZURE_REDIS_PASSWORD = os.getenv("AZURE_REDIS_PASSWORD")
     FLASK_PORT = os.getenv("FLASK_PORT", 8000)
 
 
