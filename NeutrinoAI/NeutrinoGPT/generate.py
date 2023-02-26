@@ -1,4 +1,5 @@
 import os
+import time
 import openai
 from dotenv import load_dotenv
 from rq import get_current_job
@@ -22,6 +23,9 @@ Uber style ride sharing app but for truck owners to deliver shipments for client
 
 logger = FileLogger()
 q = get_redis_queue()
+
+__location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 def multi_logger(message, decor=False):
@@ -59,7 +63,19 @@ def call_gpt_api(prompt):
     return response
 
 
+def mock_openai(filepath):
+    """Simulates a call to OpenAI's API and returns the appropriate response from the specified filepath"""
+    mock_reply_path = os.path.join(os.path.join(__location__, f"./mock_replies/{filepath}.txt"))
+    with open(mock_reply_path, "r") as file:
+        response = file.read()
+    time.sleep(1)
+    return response
+
+
 def multiple_attempts(api_call, n=2):
+    """
+    Attempts to call the function multiple times if it fails the first time, stops after n attempts
+    """
     for i in range(n):
         try:
             response = api_call()
@@ -74,17 +90,21 @@ def multiple_attempts(api_call, n=2):
 
 class NeutrinoGPT:
 
-    def __init__(self, app_description: str):
+    def __init__(self, app_description: str, mock: bool = False):
         self.app_description = app_description
         self.prompt_parser = PromptParser(app_description=app_description)
+        self.mock = mock
 
     def generate_db_tables(self):
         multi_logger("Generating models...", decor=True)
         logger.log(self.prompt_parser.tables_prompt, "models_prompt.txt")
         status_tracker("Designing database schema...")
 
-        # automatically retry if call fails the first time
-        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.tables_prompt), n=3)
+        if self.mock:
+            response = mock_openai("db_reply")
+        else:
+            # automatically retry if call fails the first time
+            response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.tables_prompt), n=3)
 
         db_tables_str = response.choices[0].text
         logger.log("Models Pre Parsed:")
@@ -109,8 +129,11 @@ class NeutrinoGPT:
         self.prompt_parser.parse_relations_prompt(models)
         logger.log(self.prompt_parser.relations_prompt, "relations_prompt.txt")
 
-        # automatically retry if call fails the first time
-        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.relations_prompt), n=3)
+        if self.mock:
+            response = mock_openai("relations_reply")
+        else:
+            # automatically retry if call fails the first time
+            response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.relations_prompt), n=3)
 
         relations_str = response.choices[0].text
         logger.log("Relations Pre Parsed:")
@@ -143,8 +166,11 @@ class NeutrinoGPT:
 
         logger.log(self.prompt_parser.schema_prompt, "schema_prompt.txt")
 
-        # automatically retry if call fails the first time
-        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.schema_prompt), n=3)
+        if self.mock:
+            response = mock_openai("schema_reply")
+        else:
+            # automatically retry if call fails the first time
+            response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.schema_prompt), n=3)
 
         schema_str = response.choices[0].text
         logger.log("Schema Pre Parsed:")
@@ -180,8 +206,11 @@ class NeutrinoGPT:
         self.prompt_parser.parse_controllers_prompt(models_no_joint, rels_str)
         logger.log(self.prompt_parser.controllers_prompt, "controllers_prompt.txt")
 
-        # automatically retry if call fails the first time
-        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.controllers_prompt), n=3)
+        if self.mock:
+            response = mock_openai("controllers_reply")
+        else:
+            # automatically retry if call fails the first time
+            response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.controllers_prompt), n=3)
 
         controllers_str = response.choices[0].text
         logger.log("Controllers Pre Parsed:")
@@ -229,8 +258,11 @@ class NeutrinoGPT:
         self.prompt_parser.parse_routes_prompt(models_str, schema_str, rels_str, controllers_str)
         logger.log(self.prompt_parser.routes_prompt, "routes_prompt.txt")
 
-        # automatically retry if call fails the first time
-        response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.routes_prompt), n=3)
+        if self.mock:
+            response = mock_openai("routes_reply")
+        else:
+            # automatically retry if call fails the first time
+            response = multiple_attempts(lambda: call_gpt_api(self.prompt_parser.routes_prompt), n=3)
 
         routes_str = response.choices[0].text
         logger.log("Routes Pre Parsed:")
@@ -273,8 +305,11 @@ class NeutrinoGPT:
         logger.log(self.prompt_parser.relations_prompt, "route_logic_prompt.txt")
         logger.log("\n\n--------------------\n\n", "route_logic_prompt.txt")
 
-        # automatically retry if call fails the first time
-        response = multiple_attempts(lambda: call_gpt_api(prompt), n=3)
+        if self.mock:
+            response = mock_openai("route_logic_reply")
+        else:
+            # automatically retry if call fails the first time
+            response = multiple_attempts(lambda: call_gpt_api(prompt), n=3)
 
         # here we don't need to parse, this will be handled by the gpt pseudocode compiler
         logic_str = response.choices[0].text

@@ -17,11 +17,13 @@ class Config:
 class ProductionConfig(Config):
     DEBUG = False
     ENV = "prod"
+    MOCK_AI = False
     NEUTRINO_IDENTITY_URL = os.getenv("NEUTRINO_IDENTITY_URL")
 
 
 class DevConfig(Config):
     DEBUG = True
     ENV = "dev"
+    MOCK_AI = os.getenv("MOCK_AI", True)
     NEUTRINO_IDENTITY_URL = "http://host.docker.internal:8080"
     

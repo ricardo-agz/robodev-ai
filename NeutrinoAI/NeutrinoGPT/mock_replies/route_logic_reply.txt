@@ -1,0 +1,12 @@
+QUERY User; { _id: req.params.id }; false -> user
+IF user
+    UPDATE User; { _id: user._id }; { username: req.params.new_username }
+        =>
+        RETURN 200; "username successfully changed"
+        <=
+        =x
+        ERROR 500; "error changing username"
+        x=
+ELSE
+    ERROR 404; "user not found"
+    PASS

@@ -1,9 +1,7 @@
-import os
 import json
 import requests
 import logging
 from datetime import datetime
-from dotenv import load_dotenv
 from waitress import serve
 from rq.job import Job
 from flask import Flask, jsonify, request
@@ -11,14 +9,12 @@ from flask_cors import CORS
 from Config.init import load_config
 from Config.redis_store import store, get_redis_conn, get_redis_queue
 from Config.logger import logger
-from tasks import get_buildfile_neutrinoai, sleep
+from tasks import get_buildfile_neutrinoai
 
 from API.routes import export_project, build_project_directory, compile_logic_code_preview, compile_project_warnings, \
     compile_page_preview, compile_single_logic_block_preview
 
-load_dotenv()
-ENV = os.getenv('ENV', 'dev')
-config = load_config(ENV)
+config = load_config()
 
 app = Flask(__name__)
 CORS(app)
@@ -180,8 +176,10 @@ if __name__ == "__main__":
     logger.info(f'This is a {"PRODUCTION" if config.ENV == "prod" else "DEVELOPMENT"} environment')
     logger.info(f"Listening on http://localhost:{config.FLASK_PORT}...")
     logger.info(f"Connected to Neutrino Identity Server at {config.NEUTRINO_IDENTITY_URL}...")
+    if config.MOCK_AI:
+        logger.info(f"Simulating AI replies...")
 
-    if ENV == 'prod':
+    if config.ENV == 'prod':
         serve(app, host='0.0.0.0', port=config.FLASK_PORT)
     else:
         app.run(host='0.0.0.0', port=config.FLASK_PORT)

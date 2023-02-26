@@ -1,8 +1,9 @@
-# tasks.py
-
 import time
 from NeutrinoAI.ai_generator import AIBuildfileGenerator
 from Config.logger import logger
+from Config.init import load_config
+
+config = load_config()
 
 
 def sleep(seconds):
@@ -14,7 +15,7 @@ def sleep(seconds):
 
 def get_buildfile_neutrinoai(description):
     logger.info(f"Generating Buildfile for app: {description[:25]}...")
-    neutrino_ai = AIBuildfileGenerator(app_description=description)
+    neutrino_ai = AIBuildfileGenerator(app_description=description, mock=config.MOCK_AI)
     json_buildfile = neutrino_ai.get_buildfile_json()
     
     return json_buildfile

@@ -1,0 +1,37 @@
+Auth:
+POST | /api/login | login | Logs in a user
+POST | /api/register | register | Creates a new user, checks to make sure the username is not already taken
+POST | /api/change-password/:user_id | changePassword | Allows the user with the given id to update their password
+
+User:
+index
+show
+update
+delete
+POST | /api/users/:follower_id/follow/:followed_id | followUser | Follows a user
+DELETE | /api/users/:follower_id/follow/:followed_id | unfollowUser | Unfollow a user
+
+Post:
+index
+show
+create
+update
+delete
+POST | /api/posts/:post_id/users/:user_id/retweet | retweet | Create a retweet for a specific post
+DELETE | /api/posts/:post_id/users/:user_id/retweet | unRetweet | Undoes a retweet for a specific post
+POST | /api/posts/:post_id/users/:user_id/like | like | Like a post
+DELETE | /api/posts/:post_id/users/:user_id/like | unlike | Unlike a post
+
+Comment:
+index
+show
+create
+update
+delete
+
+Group:
+index
+show
+create
+update
+delete
