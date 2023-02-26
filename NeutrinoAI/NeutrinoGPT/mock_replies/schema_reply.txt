@@ -1,0 +1,15 @@
+User
+username: string
+email: string
+password: string
+
+Post
+title: string
+content: string
+
+Comment
+content: string
+
+Group
+name: string
+description: string

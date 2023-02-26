@@ -31,11 +31,24 @@ def find_non_serializable(data, path=''):
 
 
 class AIBuildfileGenerator:
-    def __init__(self, app_description: str):
-        self.app_description = app_description
-        self.neutrino_gpt = NeutrinoGPT(self.app_description)
+    def __init__(self, app_description: str, mock: bool = False):
+        self.failed = False
+        self.error = None
+        self.mock = mock
 
-        models, relations, schema, controllers, routes, routes_logic = self.neutrino_gpt.generate_database_architecture()
+        self.app_description = app_description
+        self.neutrino_gpt = NeutrinoGPT(
+            app_description=self.app_description,
+            mock=self.mock
+        )
+
+        try:
+            models, relations, schema, controllers, routes, routes_logic = \
+                self.neutrino_gpt.generate_database_architecture()
+        except Exception as e:
+            self.failed = True
+            self.error = e
+
         self.buildfile_compiler = BuildfileCompiler(
             models_list=models,
             models_schema=schema,
@@ -54,6 +67,8 @@ class AIBuildfileGenerator:
         try:
             json_out = json.dumps(buildfile_data, indent=4)
         except Exception as e:
+            self.failed = True
+            self.error = e
             flask_logger.info(f"Error compiling to JSON: {e}")
             logger.log(f"Error compiling to JSON: {e}")
             non_serializable = find_non_serializable(buildfile_data)

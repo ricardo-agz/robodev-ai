@@ -37,8 +37,6 @@ class PromptParser:
         __location__ = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-        # path = open(os.path.join(__location__, in_file), "r")
-
         tables_file_path = os.path.join(os.path.join(__location__, "./prompts/db_prompt.txt"))
         relations_file_path = os.path.join(os.path.join(__location__, "./prompts/relations_prompt.txt"))
         schema_file_path = os.path.join(os.path.join(__location__, "./prompts/schema_prompt.txt"))
