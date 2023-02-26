@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import logging
 from datetime import datetime
 from dotenv import load_dotenv
 from waitress import serve
@@ -70,7 +71,7 @@ def check_task(job_id):
         return jsonify({'message': f'Job {job_id} not found'}), 404
     elif job.is_finished:
         buildfile = json.loads(job.result)
-        # buildfile = "{ sample buildfile }" # for testing
+        # buildfile = job.result  # for testing
 
         # log analytics
         try:
@@ -171,8 +172,14 @@ def add_task():
 
 
 if __name__ == "__main__":
+    # getting logs to show up on heroku
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
+
     logger.info(f'This is a {"PRODUCTION" if config.ENV == "prod" else "DEVELOPMENT"} environment')
     logger.info(f"Listening on http://localhost:{config.FLASK_PORT}...")
+    logger.info(f"Connected to Neutrino Identity Server at {config.NEUTRINO_IDENTITY_URL}...")
 
     if ENV == 'prod':
         serve(app, host='0.0.0.0', port=config.FLASK_PORT)
