@@ -62,7 +62,7 @@ export default function AccessCode({ verified, message }) {
 
             <div className={styles.header}>
                 <div></div>
-                <Link href="/login">
+                <Link href="/frontend/src/pages/login">
                     <div className="flex items-center cursor-pointer">
                         <div>log in</div>
                         <div className={styles.thirteen}>
@@ -91,7 +91,7 @@ export default function AccessCode({ verified, message }) {
                 <div className={styles.listRow}>
                     <div className="flex-1">
                         <p className='opacity-80 text-sm ml-3'>
-                            <code className={styles.code}>already registered? <Link className='underline' href='/login'>log in</Link></code>
+                            <code className={styles.code}>already registered? <Link className='underline' href='/frontend/src/pages/login'>log in</Link></code>
                         </p>
                         <p className='opacity-80 text-sm text-red-400 ml-3'>
                             <code className={styles.code}>{message}</code>
@@ -106,7 +106,7 @@ export default function AccessCode({ verified, message }) {
 
             <div>
                 <p className='mb-8 opacity-60 text-sm'>
-                <code className={styles.code}>{"/*"} don&apos;t have an access code? join the <Link href="/waitlist" className='underline'>waitlist</Link> {"*/"}</code>
+                <code className={styles.code}>{"/*"} don&apos;t have an access code? join the <Link href="/frontend/src/pages/waitlist" className='underline'>waitlist</Link> {"*/"}</code>
                 </p>
             </div>
 
