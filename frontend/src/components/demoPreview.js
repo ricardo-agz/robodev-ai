@@ -60,13 +60,13 @@ export default function DemoPreview() {
                 />
             </div>
             <div className={styles.listRow}>
-                <Link href="/frontend/src/pages/access">
+                <Link href="/access">
                     <button className={styles.button} style={{marginLeft: 0}}>
                         try the demo
                     </button>
                 </Link>
                 <div className="flex-1"/>
-                <Link href="/frontend/src/pages/waitlist">
+                <Link href="/waitlist">
                     <button className={styles.button}>
                         join waitlist
                     </button>

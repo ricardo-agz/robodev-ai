@@ -39,7 +39,7 @@ export default function Login() {
 
             <div className={styles.header}>
                 <div></div>
-                <Link href="/frontend/src/pages/waitlist">
+                <Link href="/waitlist">
                     <div className="flex items-center cursor-pointer">
                         <div>join waitlist</div>
                         <div className={styles.thirteen}>

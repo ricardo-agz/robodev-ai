@@ -46,7 +46,7 @@ export default function Waitlist() {
 
             <div className={styles.header}>
                 <div></div>
-                <Link href="/frontend/src/pages/login">
+                <Link href="/login">
                     <div className="flex items-center cursor-pointer">
                         <div>log in</div>
                         <div className={styles.thirteen}>

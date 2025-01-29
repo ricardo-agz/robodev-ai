@@ -144,7 +144,7 @@ export default function Demo() {
 
             <div className={styles.header}>
                 <div></div>
-                <Link href="/frontend/src/pages/login">
+                <Link href="/login">
                     <div className="flex items-center cursor-pointer" onClick={handleLogout}>
                         <div>log out</div>
                         <div className={styles.thirteen}>

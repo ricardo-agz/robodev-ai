@@ -1,1 +1,152 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Metro generated files
+app/models/__pycache__/
+app/controllers/__pycache__/
+app/__pycache__/
+config/__pycache__/
+
+# Metro logs
+*.log
+*.sqlite3
+
+# Pytest cache and logs
+.pytest_cache/
+*.cover
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# MyPy
+.mypy_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VS Code
+.vscode/
+
+# PyCharm
 .idea/
+
+# FastAPI & Uvicorn
+*.pid
+*.pid.lock
+instance/
+
+# MongoDB
+data/db/
+
+# Flask-migrate
+migrations/
+
+# Security
+.env
+.env.*
+.envrc
+frontend/.env
+generator/.env
+
+# Editor swap files
+*~
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Docker
+docker-compose.override.yml
+Dockerfile
+.dockerignore
+
+# Additional
+*.bak
+*.tmp
+code_structure.txt
+my_project/
+examples/
+
+# Next.js
+.next/
+out/
+.vercel
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing
+/coverage
+.nyc_output
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+**/node_modules
+.pnp
+.pnp.js
+
+# Local Netlify folder
+.netlify
+
+# Production build
+/build
+
+# Cache
+.eslintcache
+.parcel-cache
+
+# Redis
+*.rdb
+
+# Local development
+*.dev
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
