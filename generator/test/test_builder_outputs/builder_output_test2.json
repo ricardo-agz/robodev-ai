@@ -1,0 +1,217 @@
+{
+  "project_name": "testdemo3",
+  "db_params": [
+    {
+      "modelName": "user",
+      "auth": true,
+      "schema": [
+        {
+          "name": "username",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "email",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "password",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "name",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "bio",
+          "required": true,
+          "type": "String"
+        }
+      ],
+      "has_many": [
+        "post"
+      ],
+      "belongs_to": [],
+      "one_to_many": [],
+      "many_to_many": [],
+      "route": [
+        {
+          "route": "all",
+          "middleware": "verifyJWT",
+          "logic": ""
+        },
+        {
+          "route": "find",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != data._id.toString()) {\n  hide=password,email\n} else {\n  hide=password\n}"
+        },
+        {
+          "route": "create",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "update",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != data._id.toString()) {\n  error=User cannot perform the specified action\n}"
+        },
+        {
+          "route": "delete",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != data._id.toString()) {\n  error=User cannot perform the specified action\n}"
+        }
+      ]
+    },
+    {
+      "modelName": "post",
+      "auth": false,
+      "schema": [
+        {
+          "name": "title",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "content",
+          "required": true,
+          "type": "Text"
+        }
+      ],
+      "has_many": [
+        "comment"
+      ],
+      "belongs_to": "user",
+      "one_to_many": [],
+      "many_to_many": [],
+      "route": [
+        {
+          "route": "all",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "find",
+          "middleware": "",
+          "logic": ""
+        },
+        {
+          "route": "create",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != req.body.user) {\n    error=Incorrect user parameters\n}"
+        },
+        {
+          "route": "update",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != data.user.toString()) {  \n  error=cannot update another users post\n} else if (req.body.user) {\n  req.body.user = data.user\n}"
+        },
+        {
+          "route": "delete",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != data.user._id.toString()) {\n  error=User cannot perform the specified action\n}"
+        }
+      ]
+    },
+    {
+      "modelName": "comment",
+      "auth": false,
+      "schema": [
+        {
+          "name": "content",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "user",
+          "required": true,
+          "type": "String"
+        }
+      ],
+      "has_many": [],
+      "belongs_to": "post",
+      "one_to_many": [],
+      "many_to_many": [],
+      "route": [
+        {
+          "route": "create",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != req.body.user) {\n    error=Incorrect parameters\n}"
+        },
+        {
+          "route": "delete",
+          "middleware": "verifyJWT",
+          "logic": "if (req.user.id != data.user) {\n    error=Cannot delete another users comment\n}"
+        }
+      ]
+    }
+  ],
+  "auth_object": {
+    "modelName": "user",
+    "auth": true,
+    "schema": [
+      {
+        "name": "username",
+        "required": true,
+        "type": "String"
+      },
+      {
+        "name": "email",
+        "required": true,
+        "type": "String"
+      },
+      {
+        "name": "password",
+        "required": true,
+        "type": "String"
+      },
+      {
+        "name": "name",
+        "required": true,
+        "type": "String"
+      },
+      {
+        "name": "bio",
+        "required": true,
+        "type": "String"
+      }
+    ],
+    "has_many": [
+      "post"
+    ],
+    "belongs_to": [],
+    "one_to_many": [],
+    "many_to_many": [],
+    "route": [
+      {
+        "route": "all",
+        "middleware": "verifyJWT",
+        "logic": ""
+      },
+      {
+        "route": "find",
+        "middleware": "verifyJWT",
+        "logic": "if (req.user.id != data._id.toString()) {\n  hide=password,email\n} else {\n  hide=password\n}"
+      },
+      {
+        "route": "create",
+        "middleware": "",
+        "logic": ""
+      },
+      {
+        "route": "update",
+        "middleware": "verifyJWT",
+        "logic": "if (req.user.id != data._id.toString()) {\n  error=User cannot perform the specified action\n}"
+      },
+      {
+        "route": "delete",
+        "middleware": "verifyJWT",
+        "logic": "if (req.user.id != data._id.toString()) {\n  error=User cannot perform the specified action\n}"
+      }
+    ]
+  },
+  "port": 8080,
+  "mongostr": "undefined",
+  "email": "rgon@seas.upenn.edu"
+}

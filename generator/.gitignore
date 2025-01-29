@@ -1,0 +1,9 @@
+.env
+__pycache__
+__pycache__/
+/__pycache__
+/Deployment
+/NeutrinoAI/logs
+/logs
+/NeutrinoAI/output.json
+/NeutrinoAI/output.txt

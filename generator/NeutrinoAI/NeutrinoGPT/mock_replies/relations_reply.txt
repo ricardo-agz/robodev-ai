@@ -1,0 +1,4 @@
+AuthorshipHandler,User,Post,one-to-many,posts,author;
+CommentHandler,Post,Comment,one-to-many,comments,post;
+MembershipHandler,User,Group,many-to-many,groups,members;
+LikeHandler,User,Post,many-to-many,liked_posts,liked_by,Like;

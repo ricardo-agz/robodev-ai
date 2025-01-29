@@ -1,0 +1,79 @@
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom';
+import MuiAlert from '@mui/material/Alert';
+import {
+  Snackbar,
+  TextField,
+  Button,
+  Checkbox,
+  Stack
+} from '@mui/material'
+
+const Alert = React.forwardRef((props, ref) => {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+export default function ValidatedForm(props) {
+  <$= "const { id } = useParams();" if len(self.model.belongs_to) > 0 else "" $>
+  $$USE_STATES$$
+  const [err, setErr] = useState(null);                       // error message  
+  const [openErr, setOpenErr] = useState(false);              // is error display open
+  const [isLoading, setIsLoading] = useState(props.loading);  // awaiting result
+
+  /* 
+   * Update loading state when props changes 
+   */
+  useEffect(() => {
+    setIsLoading(props.loading);
+  }, [props.loading])
+
+  /* 
+   * Load default values if model passed and model is updated 
+   */
+  useEffect(() => {
+		if (props.model) {
+			<$ for param in self.model.schema $>
+      <$= f"set{pascal_case(param['name'])}(props.model.{param['name']});" $>
+      <$ end $>
+		}
+	}, [props.model]);
+
+  /*
+   * Ensure all required fields are not empty
+   */
+  const validate = () => {
+    $$VALIDATIONS$$
+      setOpenErr(true)
+    }
+  }
+
+  /* 
+   * Close error snackbar
+   */
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenErr(false);
+  };
+
+  return (
+    <div className='container'>
+      <Stack spacing={3}>
+        $$FORM_FIELDS$$
+
+        {/* SUBMIT */}
+        <Button variant="contained" onClick={validate}>
+          {isLoading ? "loading..." : "submit"}
+        </Button>
+      </Stack>
+
+      {/* ERROR ALERT */}
+      <Snackbar open={openErr} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          {err}
+        </Alert>
+      </Snackbar>
+    </div>
+  )
+}

@@ -1,0 +1,237 @@
+{
+    "project_name": "...",
+    "db_params": [
+        {
+            "model_name": "User",
+            "id": 0,
+            "schema": [
+                {
+                    "name": "username",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "name": "email",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "name": "password",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "model_name": "Post",
+            "id": 1,
+            "schema": [
+                {
+                    "name": "title",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "name": "content",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "model_name": "Comment",
+            "id": 2,
+            "schema": [
+                {
+                    "name": "content",
+                    "required": true,
+                    "type": "string"
+                }
+            ]
+        }
+    ],
+    "relations": [
+        {
+            "id": "rel-0",
+            "relation_name": "AuthorshipHandler",
+            "relation_type": "one-to-many",
+            "model_a": "<ID>-User",
+            "model_b": "<ID>-Post",
+            "field_a": "posts",
+            "field_b": "author",
+            "joint_table": null
+        },
+        {
+            "id": "rel-1",
+            "relation_name": "CommentHandler",
+            "relation_type": "one-to-many",
+            "model_a": "<ID>-Post",
+            "model_b": "<ID>-Comment",
+            "field_a": "comments",
+            "field_b": "post",
+            "joint_table": null
+        }
+    ],
+    "controllers": [
+        {
+            "name": "User",
+            "affiliation": "<ID>-User",
+            "id": "crl-0"
+        },
+        {
+            "name": "Post",
+            "affiliation": "<ID>-Post",
+            "id": "crl-1"
+        },
+        {
+            "name": "Comment",
+            "affiliation": "<ID>-Comment",
+            "id": "crl-2"
+        }
+    ],
+    "routes": [
+        {
+            "controller": "crl-0",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "index",
+            "verb": "get"
+        },
+        {
+            "controller": "crl-0",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "show",
+            "verb": "get"
+        },
+        {
+            "controller": "crl-0",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "create",
+            "verb": "post"
+        },
+        {
+            "controller": "crl-0",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "update",
+            "verb": "put"
+        },
+        {
+            "controller": "crl-0",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "delete",
+            "verb": "delete"
+        },
+        {
+            "controller": "crl-1",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "index",
+            "verb": "get"
+        },
+        {
+            "controller": "crl-1",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "show",
+            "verb": "get"
+        },
+        {
+            "controller": "crl-1",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "create",
+            "verb": "post"
+        },
+        {
+            "controller": "crl-1",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "update",
+            "verb": "put"
+        },
+        {
+            "controller": "crl-1",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "delete",
+            "verb": "delete"
+        },
+        {
+            "controller": "crl-2",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "index",
+            "verb": "get"
+        },
+        {
+            "controller": "crl-2",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "show",
+            "verb": "get"
+        },
+        {
+            "controller": "crl-2",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "create",
+            "verb": "post"
+        },
+        {
+            "controller": "crl-2",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "update",
+            "verb": "put"
+        },
+        {
+            "controller": "crl-2",
+            "id": "route-2",
+            "middleware": [],
+            "logic": [],
+            "url": "/<url here...>",
+            "handler": "delete",
+            "verb": "delete"
+        }
+    ],
+    "middlewares": [],
+    "mailers": [],
+    "auth": {},
+    "config": {
+        "email": "",
+        "server_port": 8080,
+        "mongostr": ""
+    }
+}

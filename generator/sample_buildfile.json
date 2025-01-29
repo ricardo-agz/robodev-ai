@@ -1,0 +1,584 @@
+{
+  "project_name": "mynewblog",
+  "db_params": [
+    {
+      "model_name": "User",
+      "id": ":r1:1472",
+      "auth": false,
+      "schema": [
+        {
+          "name": "name",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "email",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "password",
+          "required": true,
+          "type": "String"
+        }
+      ],
+      "has_many": [],
+      "belongs_to": []
+    },
+    {
+      "model_name": "Post",
+      "id": ":r1:4649",
+      "auth": false,
+      "schema": [
+        {
+          "name": "title",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "content",
+          "required": true,
+          "type": "String"
+        }
+      ],
+      "has_many": [],
+      "belongs_to": []
+    },
+    {
+      "model_name": "Comment",
+      "id": ":r1:6430",
+      "auth": false,
+      "schema": [
+        {
+          "name": "content",
+          "required": true,
+          "type": "String"
+        },
+        {
+          "name": "user",
+          "required": true,
+          "type": "mongoose.Schema.Types.ObjectId"
+        }
+      ],
+      "has_many": [],
+      "belongs_to": []
+    }
+  ],
+  "controllers": [
+    {
+      "name": "User",
+      "affiliation": ":r1:1472",
+      "id": ":r1:2793"
+    },
+    {
+      "name": "Post",
+      "affiliation": ":r1:4649",
+      "id": ":r1:4029"
+    },
+    {
+      "name": "Comment",
+      "affiliation": ":r1:6430",
+      "id": ":r1:1532"
+    }
+  ],
+  "routes": [
+    {
+      "controller": ":r1:2793",
+      "id": ":r1:9587",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:95876091",
+          "blockVariant": "query",
+          "varName": "data",
+          "params": "{}",
+          "model": "User",
+          "multiple": true
+        },
+        {
+          "id": ":r1:95878674",
+          "blockVariant": "return",
+          "status": 200,
+          "data": true,
+          "returnContent": "data"
+        }
+      ],
+      "url": "/users",
+      "handler": "index",
+      "verb": "get"
+    },
+    {
+      "controller": ":r1:2793",
+      "id": ":r1:8775",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:87755246",
+          "blockVariant": "query",
+          "varName": "data",
+          "params": "{ _id: id }",
+          "model": "User",
+          "multiple": false
+        },
+        {
+          "id": ":r1:87757843",
+          "blockVariant": "return",
+          "status": 200,
+          "data": true,
+          "returnContent": "data"
+        }
+      ],
+      "url": "/users/:id",
+      "handler": "show",
+      "verb": "get"
+    },
+    {
+      "controller": ":r1:2793",
+      "id": ":r1:6146",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:61464135",
+          "blockVariant": "create",
+          "varName": "newData",
+          "model": "User",
+          "fields": "{ name, email, password }",
+          "success": [
+            {
+              "id": ":r1:61468569",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "New User was successfully created!"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:61469064",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error creating new User"
+            }
+          ]
+        }
+      ],
+      "url": "/users",
+      "handler": "create",
+      "verb": "post"
+    },
+    {
+      "controller": ":r1:2793",
+      "id": ":r1:6831",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:68319923",
+          "blockVariant": "update",
+          "varName": "newData",
+          "params": "{ _id: id }",
+          "updateParams": "{ name, email, password }",
+          "model": "User",
+          "multiple": false,
+          "success": [
+            {
+              "id": ":r1:68313434",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "User was successfully updated!"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:68312718",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error updating User"
+            }
+          ]
+        }
+      ],
+      "url": "/users/:id",
+      "handler": "update",
+      "verb": "put"
+    },
+    {
+      "controller": ":r1:2793",
+      "id": ":r1:4343",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:43432169",
+          "blockVariant": "delete",
+          "varName": "data",
+          "params": "{ _id: id }",
+          "model": "User",
+          "multiple": false,
+          "success": [
+            {
+              "id": ":r1:43439989",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "User was successfully deleted"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:43433888",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error deleting User"
+            }
+          ]
+        }
+      ],
+      "url": "/users/:id",
+      "handler": "delete",
+      "verb": "delete"
+    },
+    {
+      "controller": ":r1:4029",
+      "id": ":r1:1147",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:11471475",
+          "blockVariant": "query",
+          "varName": "data",
+          "params": "{}",
+          "model": "Post",
+          "multiple": true
+        },
+        {
+          "id": ":r1:11477383",
+          "blockVariant": "return",
+          "status": 200,
+          "data": true,
+          "returnContent": "data"
+        }
+      ],
+      "url": "/posts",
+      "handler": "index",
+      "verb": "get"
+    },
+    {
+      "controller": ":r1:4029",
+      "id": ":r1:7789",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:77895512",
+          "blockVariant": "query",
+          "varName": "data",
+          "params": "{ _id: id }",
+          "model": "Post",
+          "multiple": false
+        },
+        {
+          "id": ":r1:77897381",
+          "blockVariant": "return",
+          "status": 200,
+          "data": true,
+          "returnContent": "data"
+        }
+      ],
+      "url": "/posts/:id",
+      "handler": "show",
+      "verb": "get"
+    },
+    {
+      "controller": ":r1:4029",
+      "id": ":r1:542",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:5424837",
+          "blockVariant": "create",
+          "varName": "newData",
+          "model": "Post",
+          "fields": "{ title, content }",
+          "success": [
+            {
+              "id": ":r1:5427964",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "New Post was successfully created!"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:5424093",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error creating new Post"
+            }
+          ]
+        }
+      ],
+      "url": "/posts",
+      "handler": "create",
+      "verb": "post"
+    },
+    {
+      "controller": ":r1:4029",
+      "id": ":r1:3657",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:3657331",
+          "blockVariant": "update",
+          "varName": "newData",
+          "params": "{ _id: id }",
+          "updateParams": "{ title, content }",
+          "model": "Post",
+          "multiple": false,
+          "success": [
+            {
+              "id": ":r1:36577687",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "Post was successfully updated!"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:36578684",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error updating Post"
+            }
+          ]
+        }
+      ],
+      "url": "/posts/:id",
+      "handler": "update",
+      "verb": "put"
+    },
+    {
+      "controller": ":r1:4029",
+      "id": ":r1:500",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:5001165",
+          "blockVariant": "delete",
+          "varName": "data",
+          "params": "{ _id: id }",
+          "model": "Post",
+          "multiple": false,
+          "success": [
+            {
+              "id": ":r1:5007347",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "Post was successfully deleted"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:5009897",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error deleting Post"
+            }
+          ]
+        }
+      ],
+      "url": "/posts/:id",
+      "handler": "delete",
+      "verb": "delete"
+    },
+    {
+      "controller": ":r1:1532",
+      "id": ":r1:2366",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:23662010",
+          "blockVariant": "query",
+          "varName": "data",
+          "params": "{}",
+          "model": "Comment",
+          "multiple": true
+        },
+        {
+          "id": ":r1:23662320",
+          "blockVariant": "return",
+          "status": 200,
+          "data": true,
+          "returnContent": "data"
+        }
+      ],
+      "url": "/comments",
+      "handler": "index",
+      "verb": "get"
+    },
+    {
+      "controller": ":r1:1532",
+      "id": ":r1:271",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:2714234",
+          "blockVariant": "query",
+          "varName": "data",
+          "params": "{ _id: id }",
+          "model": "Comment",
+          "multiple": false
+        },
+        {
+          "id": ":r1:2712812",
+          "blockVariant": "return",
+          "status": 200,
+          "data": true,
+          "returnContent": "data"
+        }
+      ],
+      "url": "/comments/:id",
+      "handler": "show",
+      "verb": "get"
+    },
+    {
+      "controller": ":r1:1532",
+      "id": ":r1:901",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:9015216",
+          "blockVariant": "create",
+          "varName": "newData",
+          "model": "Comment",
+          "fields": "{ content }",
+          "success": [
+            {
+              "id": ":r1:9019886",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "New Comment was successfully created!"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:9011462",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error creating new Comment"
+            }
+          ]
+        }
+      ],
+      "url": "/comments",
+      "handler": "create",
+      "verb": "post"
+    },
+    {
+      "controller": ":r1:1532",
+      "id": ":r1:5109",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:51095172",
+          "blockVariant": "update",
+          "varName": "newData",
+          "params": "{ _id: id }",
+          "updateParams": "{ content }",
+          "model": "Comment",
+          "multiple": false,
+          "success": [
+            {
+              "id": ":r1:51095010",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "Comment was successfully updated!"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:51093115",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error updating Comment"
+            }
+          ]
+        }
+      ],
+      "url": "/comments/:id",
+      "handler": "update",
+      "verb": "put"
+    },
+    {
+      "controller": ":r1:1532",
+      "id": ":r1:8306",
+      "middleware": [],
+      "logic": [
+        {
+          "id": ":r1:83069916",
+          "blockVariant": "delete",
+          "varName": "data",
+          "params": "{ _id: id }",
+          "model": "Comment",
+          "multiple": false,
+          "success": [
+            {
+              "id": ":r1:83061722",
+              "blockVariant": "return",
+              "status": 200,
+              "data": false,
+              "returnContent": "Comment was successfully deleted"
+            }
+          ],
+          "error": [
+            {
+              "id": ":r1:83068625",
+              "blockVariant": "error",
+              "status": 500,
+              "returnContent": "Error deleting Comment"
+            }
+          ]
+        }
+      ],
+      "url": "/comments/:id",
+      "handler": "delete",
+      "verb": "delete"
+    }
+  ],
+  "middlewares": [],
+  "relations": [
+    {
+      "id": 839808720269,
+      "relation_name": "AuthorshipHandler",
+      "relation_type": "one-to-many",
+      "model_a": ":r1:1472",
+      "model_b": ":r1:4649",
+      "field_a": "posts",
+      "field_b": "author"
+    }
+  ],
+  "mailers": [
+    {
+      "id": 701132232105,
+      "name": "AuthMailer",
+      "sender": "myemail@fakeemail.com",
+      "templates": [
+        {
+          "id": ":r1f:-273110286115",
+          "name": "WelcomeEmail",
+          "content": "<h3>Welcome!</h3>\n<br>\n<div>Thank you for registering!</div>"
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "authConfig": null
+  },
+  "auth_object": null,
+  "server_port": 8080,
+  "mongostr": "undefined",
+  "email": ""
+}

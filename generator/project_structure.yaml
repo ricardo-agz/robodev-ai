@@ -1,0 +1,89 @@
+server:
+  id: "server-folder"
+  type: folder
+  name: "server"
+  children:
+
+      # Config
+    - id: "config-folder"
+      type: folder
+      name: "config"
+      children:
+        - id: "database-config"
+          type: file
+          name: "database.js"
+          function: build_db_page
+        - id: "media-config"
+          type: file
+          name: "mediaConfig.js"
+          function: build_media_config_page
+
+
+      # Controllers
+    - id: "controllers-folder"
+      type: folder
+      name: "controllers"
+      children:
+          # List of controller files goes here
+
+    # Mailers
+    - id: "mailers-folder"
+      type: folder
+      name: "mailers"
+      children:
+
+        - id: "templates-folder"
+          type: folder
+          name: "templates"
+          children:
+            - id: "template-layouts-folder"
+              type: folder
+              name: "layouts"
+              children: []
+            - id: "template-partials-folder"
+              type: folder
+              name: "partials"
+              children: []
+
+        - id: "base-mailer-file"
+          type: file
+          name: "baseMailer.js"
+          function: build_base_mailer_page
+          # Rest of `mailer files here...
+
+      # Models
+    - id: "models-folder"
+      type: folder
+      name: "models"
+      children:
+        # List of model files goes here
+
+      # Routes
+    - id: "routes-folder"
+      type: folder
+      name: "routes"
+      children:
+        - id: "routes-file"
+          type: file
+          name: "routes.js"
+          function: build_routes_page
+        - id: "middlewares-file"
+          type: file
+          name: "middlewares.js"
+          function: build_middlewares_page
+
+      # Root files
+    - id: "dotenv-file"
+      type: file
+      name: ".env"
+      function: build_dotenv_page
+
+    - id: "package-file"
+      type: file
+      name: "package.json"
+      function: build_package_json_page
+
+    - id: "server-file"
+      type: file
+      name: "server.js"
+      function: build_server_page
