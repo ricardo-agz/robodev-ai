@@ -1,0 +1,26 @@
+version: "3"
+services:
+  generator:
+    ports: ['8000:8000']
+    volumes: ['.:/app']
+    image: neutrinogenerator.azurecr.io/generator-python-linux
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile
+    depends_on:
+      - redis
+  redis:
+    image: redis:5.0.9
+    ports:
+      - "6379:6379"
+  worker:
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile.worker
+    volumes: ['.:/app']
+    command: python worker.py
+    depends_on:
+        - redis
