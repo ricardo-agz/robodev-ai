@@ -263,6 +263,6 @@
   ],
   "auth_object": "user",
   "server_port": "8080",
-  "mongostr": "mongodb+srv://rgon:Neutrino@neutrinov2.yajh4.mongodb.net/test",
-  "email": "mominayaan71@gmail.com"
+  "mongostr": "...",
+  "email": "r@r.co"
 }
